@@ -183,7 +183,7 @@
         //userPanningEnabled: false,
         //boxSelectionEnabled: false,
         wheelSensitivity: 0.2,
-        autoungrabify: true
+        autoungrabify: !move_nodes
         //autounselectify: true
       });
   

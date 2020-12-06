@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="split.css">
   <title>Hello World!</title>
   <script src='https://cdn.jsdelivr.net/npm/cytoscape@3.15.1/dist/cytoscape.min.js'></script>
-  <script src="cytoscape-node-html-label.js">
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-node-html-label@1.2.1/dist/cytoscape-node-html-label.min.js">
     var cytoscape = require('cytoscape');
     var nodeHtmlLabel = require('cytoscape-node-html-label');
     nodeHtmlLabel(cytoscape); // register extension
@@ -22,7 +22,7 @@
   </script>
 
   <script src="https://unpkg.com/dagre@0.7.4/dist/dagre.js"></script>
-  <script src="cytoscape-dagre.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.3.1/cytoscape-dagre.min.js"></script>
 
   <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
   </script>
@@ -37,6 +37,7 @@
   <div id='cy'  style="padding-top:20px;"></div></div>
 
   <script type="text/javascript" src="jsongraph.txt"></script>
+  <script type="text/javascript" src="config.js"></script>
   <script>var layout_name = 'dagre';</script>
   <script src = displaygraph.js></script>
   <!-- 

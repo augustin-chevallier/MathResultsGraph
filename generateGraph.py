@@ -18,7 +18,7 @@ os.getcwd()
 #os.chdir('/Users/marieelisabethchevallier/Doc/grapheAugustin')
 os.listdir()
 
-texFileName = "manu.tex"#DukeSingular_9-9-15-1.tex"
+texFileName = "examples\DavisNotes\DavisBookNotes.tex"#DukeSingular_9-9-15-1.tex"
 
 pandoc_take_parent = False
 
