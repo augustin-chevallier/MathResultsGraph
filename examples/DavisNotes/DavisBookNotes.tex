@@ -1,0 +1,177 @@
+\documentclass[11pt]{amsart}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx,color,epsfig}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{epstopdf}
+%\usepackage{hyperref}
+\usepackage{bbm,dsfont} % used for \one
+\usepackage{fullpage}
+
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem*{conj}{Conjecture}
+\newtheorem*{theorem*}{Theorem}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem*{terminology}{Terminology}
+\newtheorem*{notation}{Notation}
+
+\theoremstyle{remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+
+\newcommand{\rank}[1]{}
+\newcommand{\depends}[1]{}
+
+\newcommand{\extgen}{\bar{A}}
+\newcommand{\Feqgen}{\mathcal{F}_{\extgen}}
+\newcommand{\VecField}{\Xi}
+
+
+\begin{document}
+
+\section{General results}\label{sec:general-res}
+
+\begin{definition}[local maringale]\label{def:loc-martingale}
+TODO
+\end{definition}
+
+\begin{definition}[bounded variation]\label{def:bounded-variation}
+TODO
+\end{definition}
+
+\begin{proposition}\label{prop:loc-martingale-finite-variation-cst}
+A continuous local martingale with finite variations is almost surely constant i.e.
+\[
+	P(M_t = 0 \, \forall t) = 1
+\]
+\end{proposition}
+\begin{proof}
+th6.13 at 
+http://www.stats.ox.ac.uk/~etheridg/ctsmartingales.pdf
+\end{proof}
+
+\section{Extended generator of a PDMP}\label{sec:Ext-gen-Markov}
+\depends{}
+
+\begin{definition}[Domain of the extended generator of a Markov Process]\label{def:ext-gen-domain}
+\depends{def:loc-martingale}
+Let $\mathcal{D}(\extgen)$ be the subset of measurable functions $f:E\rightarrow \mathbb{R}$ such that there 
+exists a measurable function $h: E \rightarrow \mathbb{R}$ satisfying for every $x_0\in E$:
+\begin{itemize}
+	\item For $P_{x_0}$ almost every $\omega$, $t\rightarrow f(x_t(\omega))$ is integrable
+	\item The process defined by
+	\[
+		C_t^{f,h} = f(x_t) - f(x_0) - \int_0^t h(x_s) ds
+	\]
+	is a local martingale (with respect to $P_{x_0}$).
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Potential zero sets]\label{def:potential-zero-set}
+\begin{enumerate}
+\item Let $A \in \mathcal{E}$ where $\mathcal{E}$ is the sigma algebra of $E$. We say that $A$ has zero potential if for every $x_0\in E$, 
+\[
+	\int_0^\infty 1_A(x_s) ds = 0 \qquad P_{x_0} \text{ almost surely}.
+\]
+For those sets, the process 'spends no time' in $A$ for any starting point in $E$. 
+\item We call $\Feqgen$ the equivalent classes of functions that are equal everywhere but on a potential zero set.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}\label{prop:eq-class-ext-gen}
+\depends{def:ext-gen-domain,def:potential-zero-set}
+Let $f \in \mathcal{D}(\extgen)$.
+\begin{enumerate}
+	\item Let $h_1,h_2$ measurable functions from $E$ to $\mathbb{R}$ such that $C_t^{f,h_1}$ and $C_t^{f,h_2}$ are local martingales. Then the set 
+	\[ 
+	 \{x \in E \, | \,  h_1(x) \neq h_2(x) \}
+	\]
+	is of potential zero, i.e. there exists $h\in \Feqgen$ such that $h_1$ and $h_2$ are representations of $h$.
+	\item  Let $h_1$ measurable functions from $E$ to $\mathbb{R}$ such that $C_t^{f,h_1}$. Let $h_2$ be measurable function $h_2: E \rightarrow \mathbb{R}$ such that $h_2 = h_1$ outside of a zero potential set. Then $C_t^{f,h_2}$ is a local martingale (and $C_t^{f,h_1}  = C_t^{f,h_2}$).
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+1/ Let $A = \{x \in E \, | \, h_1(x) \neq h_2(x) \}$
+We have that for every $x_0 \in E$,
+\[
+	M_t = C_t^{f,h_1} - C_t^{f,h_2} = \int_0^t h_1(x_s) - h_2(x_s) ds
+\]
+is a local martingale. Furthermore, due to its integral form, it is continuous and of bounded variation. Since $M_0 = $ and using prop \ref{prop:loc-martingale-finite-variation-cst}, we see that $P_{x_0}$ almost surely, $M_t = 0$ for all $t \geq 0$.
+For a fixed $\omega$ such that $M_t = 0$ for all $t$, $t \mapsto M_t(\omega)$ admits $h_1(x_t(\omega)) - h_2(x_t(\omega))$ as a weak derivative. This implies that $t \mapsto M_t(\omega)$ has derivative for almost every $t$ and $M_t(\omega)' = h_1(x_t(\omega)) - h_2(x_t(\omega))$ for almost every $t$. Since $M_t(\omega)' = 0$, this implies that $h_1(x_t(\omega)) - h_2(x_t(\omega)) = 0$ for almost every $t$, which implies that
+\[
+	\int_0^\infty 1_A(x_s(\omega)) ds = 0.
+\]
+Hence $A$ is a zero potential set.
+
+2/ It is easy to see that $C_t^{f,h_1}  = C_t^{f,h_2}$.
+\end{proof}
+
+\begin{definition}[Extended generator]\label{def:ext-gen}
+\depends{prop:eq-class-ext-gen,def:potential-zero-set,def:ext-gen-domain}
+For any $f \in \mathcal{D}(\extgen)$, we write $\extgen f \in \Feqgen$ the equivalent class of function such that for every representation $h$ of $\extgen f$, $C_t^{f,h}$ is a local martingale.
+\end{definition}
+
+\begin{proposition}[Link of infinitesimal generator with extended generator]\label{prop:link-gen-ext-gen}
+\depends{def:ext-gen}
+\begin{enumerate}
+	\item $\mathcal{D}(A) \subset \mathcal{D}(\extgen)$
+	\item $Af = \extgen f$ for all $f \in \mathcal{D}(A)$ (in the sense that $Af$ is a function of the equivalent class of functions $\extgen f$)
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+If $f \in \mathcal{D}(A)$, then $C_t^{f,Af}$ is a Martingale (Dynkin formula), hence it is a local martingale, which implies the result.
+\end{proof}
+
+\section{Construction of a PDMP}\label{sec:constr-pdmp}
+
+\begin{definition}\label{def:point-process-p}
+Let $(x_t)$ be a jump process  taking values in $X \cup \{\Delta_\infty\}$ with $X$ a Borel space and $\Delta_\infty$ an isolated point. For $A \in \mathcal{B}(X)$ (the Borel sets of $X$?) and $t \geq $ we define
+\[
+	p(t,A): \omega \mapsto 1_{t \geq T}(\omega) 1_{Z\in A}(\omega)
+\]
+\end{definition}
+
+\begin{definition}[$L_1(p)$]\label{def:L1-p}
+
+\end{definition}
+
+\begin{definition}[$L_1^{loc}(p)$]\label{def:L1-loc-p}
+We say that $g \in L_1^{loc}(p)$ if $g \, 1_{t < \tau_n} \in L_1(p)$. WHAT IS $\tau_n$?
+\end{definition}
+
+
+\section{Extended generator of a PDMP}\label{sec:ext-gen-pdmp}
+
+\begin{theorem}[Extended generator of a PDMP]\label{th:ext-gen-pdmp}
+\depends{def:ext-gen,def:L1-loc-p}
+Let $(x_t)$ be a PDMP satisfying standard conditions (TODO: write them). Then the domain $\mathcal{D}(\extgen)$ consist of measurable functions from $E$ to $\mathbb{R}$ such that:
+\begin{enumerate}
+	\item for all $x = (v,\zeta) \in \Gamma$, $\lim_{t \downarrow 0} f(\phi_v(-t,\zeta))$ exists
+	\item For all $x = (v,\zeta) \in E$, the function $t\mapsto f(\phi_v(t,\zeta))$ is absolutely continuous on $[0,s_\star(x)[$ with 
+	\[
+		s_\star(x) = \inf \{t : P_x(T_1 > t) = 0 \}
+	\]
+	and $T_1$ is the time of the first jump.
+	\item Boundary condition: for all $x\in \Gamma$,
+	\[
+		f(x) = \int_E f(y) Q(dy;x)
+	\]
+	\item $\mathcal{B} f \in L_1^{loc}(p)$ where
+	\[
+		\mathcal{B} f(x,s,\omega) = f(x) - f(x_{s^-}(\omega)).
+	\]
+\end{enumerate}
+For $f \in \mathcal{D}(\extgen)$, 
+\[
+	\extgen f = \VecField f (x) + \lambda(x) \int_E (f(y)-f(x))Q(dy;x)
+\]
+Where $\VecField f$ can be any representant of the weak derivative of $f$ along the vector field (which are known to exists since $f$ is absolutely continuous along the flow). QUESTION: can we write every function of the equivalent class of $\extgen f$ using the previous formula? (I guess so)
+\end{theorem}
+
+\end{document}
