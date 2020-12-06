@@ -164,7 +164,7 @@ def findAllNodes(partition):
 
 
 def texToHtml(full_text,partition,nodeL):
-    htmlText = pypandoc.convert_text(full_text,'html5', format = 'tex', extra_args=['--mathjax',])    
+    htmlText = pypandoc.convert_text(full_text,'html5', format = 'tex', extra_args=['--mathml',])    
     #print(htmlText)
     html = BeautifulSoup(htmlText)
     for i in range(len(partition)):
@@ -260,7 +260,7 @@ def getCyGraph(texFile,outFile):
         #print("type:",node["data"]["text"][0:100])
         #print("html name",node["data"]["html_name"])
     
-    f = open(outFile, "wt")
+    f = open(outFile, "wt",encoding="utf-8")
     n = f.write("var graph = " + str(cyGraph) + ";")
     f.close()
 
