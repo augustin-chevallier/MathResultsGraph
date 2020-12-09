@@ -250,10 +250,25 @@
       });
   
   
-      setTimeout(function () { MathJax.typesetPromise() }, 250);
-      setTimeout(function () { MathJax.typesetPromise() }, 750);
-      setTimeout(function () { MathJax.typesetPromise() }, 3500);
-      window.setInterval(function () { MathJax.typesetPromise() }, 1000);
+      if(!hasMathML){
+        console.log("mathjax",MathJax);
+        var istypesetting = false;
+        window.setInterval(function () {
+          if(istypesetting == false){
+            istypesetting == true;
+            MathJax.typesetClear();
+            MathJax.typeset();
+            istypesetting == false;
+          }
+          else{
+            console.log("no typesetting")
+          }
+          }, 2000);
+      }
+
+
+
+
       setTimeout(function () {
   
         var resizedStyle = [
@@ -355,7 +370,7 @@
           }).run();
       }, 500);
   
-      MathJax.typesetPromise();
+      //MathJax.typesetPromise();
   
   
       //there should be a  better way to do this
