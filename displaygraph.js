@@ -183,9 +183,13 @@
         //userPanningEnabled: false,
         //boxSelectionEnabled: false,
         wheelSensitivity: 0.2,
-        autoungrabify: !move_nodes
+        autoungrabify: !move_nodes,
         //autounselectify: true
       });
+
+      //cy.panzoom();
+      //var panzoom = require('cytoscape-panzoom');
+      //panzoom( cyInstance );
   
       function getLabelFromText(text, index) {
         return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`'>` + text + String.raw`</div>`;
@@ -239,6 +243,7 @@
         for(var i = 0; i < ancestors.length; i++){
           ancestors[i].addClass('highlight');
         }
+        if(!move_nodes) e.target.panify();
       });
       cyInstance.on('mouseout', 'node', function(e){
         var sel = e.target;
