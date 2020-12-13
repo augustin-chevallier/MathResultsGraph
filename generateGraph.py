@@ -18,7 +18,7 @@ os.getcwd()
 #os.chdir('/Users/marieelisabethchevallier/Doc/grapheAugustin')
 os.listdir()
 
-texFileName = "examples\DavisNotes\DavisBookNotes.tex"#DukeSingular_9-9-15-1.tex"
+#texFileName = "examples\DavisNotes\DavisBookNotes.tex"#DukeSingular_9-9-15-1.tex"
 
 pandoc_take_parent = False
 
@@ -264,7 +264,7 @@ def getCyGraph(texFile,outFile):
     n = f.write("var graph = " + str(cyGraph) + ";")
     f.close()
 
-getCyGraph(texFileName,"jsongraph.txt")
+#getCyGraph(texFileName,"jsongraph.txt")
 
 #print("\n JSON \n",json.dumps(nodeL))
 #print(partitions[0])
