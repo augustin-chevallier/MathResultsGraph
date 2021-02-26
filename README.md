@@ -3,6 +3,8 @@
 Set of tools to extract a graph of mathematical results from a .tex file, and display said graph in a Browser. 
 Note that Firefox and Safari have better support of mathamatical notations and hence work better than Chrome and Edge.
 
+This is very much a Work in Progress and feel free to contact me for any question.
+
 ## Generating the graph
 use the Python script generateGraph.py
 
