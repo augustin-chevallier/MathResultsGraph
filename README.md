@@ -29,7 +29,7 @@ in the child node (inside \begin{theorem/definition/...}\end{theorem/definition/
 use the Python script generateGraph.py
 
 ## Displaying the graph
-copy the generated file jsongraph.txt to the baseHtml folder, and open graph.html or graph_dagree.html. Note that you may need to change adresses (for now) if you are hosting the graph remotely. 
+Open graph.html or graph_dagree.html. Note that you may need to change adresses (for now) if you are hosting the graph remotely. 
 
 ## Moving nodes
 open the file config.js and change the value of move_nodes to true or false.
