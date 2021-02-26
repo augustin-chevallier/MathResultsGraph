@@ -8,6 +8,23 @@ This is very much a Work in Progress and feel free to contact me for any questio
 ## Example:
 http://www.emmanuelchevallier.eu/graphSite/graph.html
 
+## Anotate the .tex file
+Add at the begining of your tex file the following:
+``` 
+\newcommand{\rank}[1]{}
+\newcommand{\depends}[1]{}
+``` 
+
+### Nodes
+A node will be generated for each section, subsection, theorem, definition, remark, proposition of the .tex that is given a latex label. 
+
+### Edges
+To specify a dependency relation between two results, add
+``` 
+\depends{label-to-parent-node}
+``` 
+in the child node (inside \begin{theorem/definition/...}\end{theorem/definition/...})
+
 ## Generating the graph
 use the Python script generateGraph.py
 
