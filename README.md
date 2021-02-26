@@ -5,6 +5,9 @@ Note that Firefox and Safari have better support of mathamatical notations and h
 
 This is very much a Work in Progress and feel free to contact me for any question.
 
+## Example:
+http://www.emmanuelchevallier.eu/graphSite/graph.html
+
 ## Generating the graph
 use the Python script generateGraph.py
 
