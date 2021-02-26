@@ -8,7 +8,7 @@ This is very much a Work in Progress and feel free to contact me for any questio
 ## Example:
 http://www.emmanuelchevallier.eu/graphSite/graph.html
 
-## Anotate the .tex file
+## Anotating the .tex file
 Add at the begining of your tex file the following:
 ``` 
 \newcommand{\rank}[1]{}
