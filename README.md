@@ -26,7 +26,7 @@ A node will be generated for each section, subsection, theorem, definition, rema
 ### Edges
 To specify a dependency relation between two results, add
 ``` 
-\depends{label-to-parent-node}
+\depends{label-of-parent-node}
 ``` 
 in the child node (inside \begin{theorem/definition/...}\end{theorem/definition/...})
 
