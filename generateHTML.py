@@ -7,29 +7,33 @@ Created on Wed Dec  9 12:40:59 2020
 
 import generateGraph as gg
 import os
-
 import shutil
 import bs4
 
-
-#where the html files will be generated
-outputFolder = "site"
-
-#if this is set to true, you should set the URL of the website
-website = True
-url = "augustin-chevallier.fr/testGraph/"
+## How to use this script: set the following variables:
 
 #tex file
 texFileName = "examples/DavisNotes/DavisBookNotes.tex"
 
-#move nodes
-moveNodes = True
+#where the html files will be generated
+outputFolder = "site"
 
-import os
+#if this is set to true, the script will create another www folder that with the URL configured for your website
+website = True
+url = "augustin-chevallier.fr/testGraph/"
+
+
+
+
+
+
+
+
+## no need to look at what follows
+
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
 
-#os.mkdir(outputFolder)
 
 gg.getCyGraph(texFileName,"site/jsongraph.txt")
 
