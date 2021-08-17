@@ -8,8 +8,7 @@ This is very much a Work in Progress and feel free to contact me for any questio
 ## Example:
 http://www.emmanuelchevallier.eu/graphSite/graph.html
 
-![GitHub Logo](examples/graphEx.png)
-Format: ![Alt Text](url)
+![Example text](examples/graphEx.png)
 
 
 ## Anotating the .tex file
