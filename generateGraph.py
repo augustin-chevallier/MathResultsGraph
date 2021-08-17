@@ -13,14 +13,24 @@ from bs4 import BeautifulSoup
 import json
 import random
 import string
+from packaging import version
 
+pandoc_version = pypandoc.get_pandoc_version()
+pandoc_good_version = "2.14"
+
+pandoc_take_parent = False
+
+if version.parse(pandoc_version) < version.parse(pandoc_good_version):
+    print("WARNING: Pandoc version detected is old. Activating a fallback mode.\n The graph should be displayed, but the node names will not be pretty. If nodes are empty (but the titles), go in generateHTML.py and comment line 23 (using a #).")
+    pandoc_take_parent = True
+else:
+    print("Pandoc version ", pandoc_version, " is suffisently recent.")
 os.getcwd()
 #os.chdir('/Users/marieelisabethchevallier/Doc/grapheAugustin')
 os.listdir()
 
 #texFileName = "examples\DavisNotes\DavisBookNotes.tex"#DukeSingular_9-9-15-1.tex"
 
-pandoc_take_parent = False
 
 nodeTypeListDefault = ["theorem","proposition","definition","lemma","remark","corollary"]
 

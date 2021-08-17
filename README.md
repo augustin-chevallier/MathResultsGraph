@@ -35,3 +35,7 @@ Open graph.html or graph_dagree.html. Note that you may need to change adresses 
 open the file config.js and change the value of move_nodes to true or false.
 
 Use the graph_dagree.html as a base to move nodes around, save the position, and then open it in graph.html
+
+
+## Pandoc Version
+This software is incompatible with older versions of Pandoc. It is working with version 2.14.1. If you cannot install a newer version of Pandoc and still want to use this software, change line 23 of generateGraph.py pandoc_take_parent = False to pandoc_take_parent = True. This will allow the graph to be built and mostly displayed, but it will not look as it should.
