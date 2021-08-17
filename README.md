@@ -60,22 +60,22 @@ pip install pypandoc
     website = True
     ``` 
     and change the url variable
-4.    Run the script using
-``` 
-python3 generateHTML.py
-``` 
+4.  Run the script using
+    ``` 
+    python3 generateHTML.py
+    ``` 
 5.    Go to the output folder
 6.    Open graph_dagree.html with your web browser
 7.    Adjust the nodes positions to your liking
 8.    Hit the save button
 9.    Locate the file graph_with_pos.txt which should be in your download folder, and copy it in the output directory
 10.   Open graph.html, you should see the graph with the positions you saved
-11.   Optional: open config.js and change
-``` 
-var move_nodes = true;
-``` 
-to
-``` 
-var move_nodes = false;
-``` 
-to prevent nodes from moving
+11. Optional: open config.js and change
+    ``` 
+    var move_nodes = true;
+    ``` 
+    to
+    ``` 
+    var move_nodes = false;
+    ``` 
+    to prevent nodes from moving
