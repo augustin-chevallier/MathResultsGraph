@@ -1,1 +1,1 @@
-var move_nodes = false;
+var move_nodes = true;
