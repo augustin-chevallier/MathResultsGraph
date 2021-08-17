@@ -55,7 +55,7 @@ pip install pypandoc
 # Usage
 1.    Open generateHTML.py in your favorite text editor
 2.    Modify the variable texFileName to your tex file
-3.    If you want to generate a page for a website, set
+3.  If you want to generate a page for a website, set
     ``` 
     website = True
     ``` 
