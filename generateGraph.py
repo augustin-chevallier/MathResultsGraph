@@ -48,14 +48,22 @@ partitionNames = ['\section','\subsection']
 
 ######################################################################################################
 
-def get_random_string(length):
-    """get a random string"""
-    letters = string.ascii_lowercase
-    result_str = ''.join(random.choice(letters) for i in range(length))
-    return result_str
-
 def findProp(text,index,nextNode,propName):
-    """Find a property of a node (for example, it's label)"""
+    """
+    Find a property of a node (for example, it's label)
+    --> Parameters :
+    ----------------
+    text : str
+        Text containing the node
+    index : int
+        Where to start reading the text
+    nextNode : int
+        Index of the start of the next node
+    propName: str
+        Name of the property we are looking for
+    --> Output :
+    ------------
+        String containing asked property"""
     propLen = len(propName) + 1
     propPosStart = text.find(propName,index)
     if propPosStart == -1 or propPosStart >= nextNode:
@@ -65,10 +73,19 @@ def findProp(text,index,nextNode,propName):
     return prop
 
 def findNodeInfo(text,index,nextNode):
-    """Extract informations from a node: 
-        -label
-        -what it depends on
-        -rank of the node
+    """
+    Extract informations from a node
+    --> Parameters :
+    ----------------
+    text : str
+        Text containing the node
+    index : int
+        Where to start reading the text
+    nextNode : int
+        Index of the start of the next node
+    --> Output :
+    ------------
+        JSON structure containing the label, rank; and a list of dependencies
     """
     label = findProp(text,index,nextNode,"\\label")
     if label == "": #if no label, assign random label
@@ -86,7 +103,19 @@ def findNodeInfo(text,index,nextNode):
     return {"label": label,"depends": depends,"rank": rank}
 
 def findPartitions(text,partitionName,parentLabel):
-    """Find all sub ... in a given section/subsection/...."""
+    """
+    Find all partition in a given text
+    --> Parameters :
+    ----------------
+    text : str
+        Text containing the partition
+    partitionName : str
+        What kind of partition are we looking for (i.e. section, subsection,etc)
+    parentLabel: str
+        Label of the partition upper in the hierarchy
+    --> Output :
+    ------------
+        List of nodes, where each node is a partition (i.e. a section, subsection,etc)"""
     n = text.find(partitionName)
     nodes = []
     while n!=-1:
@@ -120,7 +149,15 @@ def findPartitions(text,partitionName,parentLabel):
 
 
 def findAllPartitions(text):
-    """Find a hierachical partition of the tex file in section/subsection/etc"""
+    """
+    Find a hierachical partition of the tex file in section/subsection/etc
+    --> Parameters :
+    ----------------
+    text : str
+        Text containing the partition
+    --> Output :
+    ------------
+        List of nodes, where each node is a partition (i.e. a section, subsection,etc)"""
     partitions = []
         
     for i in range(len(partitionNames)):
@@ -142,7 +179,21 @@ def findAllPartitions(text):
                 
 
 def findNode(text,typeName,index,parentLabel):
-    """Find the first node of a given type starting at an index in the text in a given section/subsection/etc. The parentLabel is the label of the section/subsection/..."""
+    """
+    Find the first node of a given type starting at an index in the text in a given section/subsection/etc. The parentLabel is the label of the section/subsection/...
+    --> Parameters :
+    ----------------
+    text : str
+        Text containing the node
+    typeName : str
+        What kind of node (theorem, proposition,etc)
+    index : int
+        At what position in the text do we start looking
+    parentLabel: str
+        Label of the section/subsection/...
+    --> Output :
+    ------------
+        A Node"""
     typeLen = len(typeName)+8
     posStart = text.find('\\begin{'+typeName+'}',index)
     if posStart == -1:
@@ -158,7 +209,19 @@ def findNode(text,typeName,index,parentLabel):
         return (node,posEnd)
 
 def findNodes(text,typeName,parentLabel):
-    """Find nodes of a given type in a given section/subsection/etc. The parentLabel is the label of the section/subsection/..."""
+    """
+    Find nodes of a given type in a given section/subsection/etc. The parentLabel is the label of the section/subsection/...
+    --> Parameters :
+    ----------------
+    text : str
+        Text containing the node
+    typeName : str
+        What kind of node (theorem, proposition,etc)
+    parentLabel: str
+        Label of the section/subsection/...
+    --> Output :
+    ------------
+        A list of nodes"""
     nodeList = []
     index = 0
     node, index = findNode(text,typeName,0,parentLabel)
@@ -169,7 +232,17 @@ def findNodes(text,typeName,parentLabel):
     return nodeList
 
 def findNodesAllTypes(text,parentLabel):
-    """Find all nodes in a given section/subsection/etc. The parentLabel is the label of the section/subsection/..."""
+    """
+    Find all nodes in a given section/subsection/etc. The parentLabel is the label of the section/subsection/...
+    --> Parameters :
+    ----------------
+    text : str
+        Text containing the node
+    parentLabel: str
+        Label of the section/subsection/...
+    --> Output :
+    ------------
+        A list of nodes"""
     nodeList = []
     for name in nodeTypeList:
         nodeList = nodeList + findNodes(text,name,parentLabel)
@@ -178,7 +251,13 @@ def findNodesAllTypes(text,parentLabel):
 
 def findAllNodes(partition):
     """Returns a list of all node in the partition. The partition is a decomposition of the .tex document in section/subsetction/etc. 
-    It attach the node to the relevant section/subsection/whatever)"""
+    It attach the node to the relevant section/subsection/whatever)
+    --> Parameters :
+    ----------------
+    partition : hierachical tree
+    --> Output :
+    ------------
+        A list of nodes"""
     nodes = []
     for i in range(len(partition)):
         for j in range(len(partition[i])):
@@ -189,7 +268,19 @@ def findAllNodes(partition):
 
 
 def texToHtml(full_text,partition,nodeL):
-    """Convert latex to html using pandoc, and save the results in our graph"""
+    """
+    Convert latex to html using pandoc, and save the results in our graph
+    --> Parameters :
+    ----------------
+    full_text : str
+        latex text
+    partition : 
+        Partition of the Latex file
+    nodeL: list 
+        List of nodes extracted from the latex
+    --> Output :
+    ------------
+        None"""
     htmlText = pypandoc.convert_text(full_text,'html5', format = 'tex', extra_args=['--mathml',])    
     #print(htmlText)
     html = BeautifulSoup(htmlText)
@@ -206,7 +297,17 @@ def texToHtml(full_text,partition,nodeL):
 
 
 def getNode(label,nodeList):
-    """Get a node with a given label from the list"""
+    """
+    Get a node with a given label from the list
+    --> Parameters :
+    ----------------
+    label : str
+        Label of the node
+    nodeList : list
+        List of nodes
+    --> Output :
+    ------------
+        A node"""
     for node in nodeList:
         if node["label"] == label:
             return node
@@ -214,7 +315,15 @@ def getNode(label,nodeList):
     print("Error: node not found. Label: ",label)
 
 def toCytoscapeGraph(fullNodeList):
-    """Create a graph that can be read by Cytoscape (the graph displaying library) in JSON format"""
+    """
+    Create a graph that can be read by Cytoscape (the graph displaying library) in JSON format
+    --> Parameters :
+    ----------------
+    fullNodeList : list
+        List containing all the nodes (inclusing nodes associated with partition)
+    --> Output :
+    ------------
+        A JSON structure"""
     cyEdges = []
     cyNodes = []
     for node in fullNodeList:
@@ -248,7 +357,17 @@ def toCytoscapeGraph(fullNodeList):
 
 
 def getCyGraph(texFile,outFile):
-    """Parse a tex file and save the associated cytoscape graph in a JSON file"""
+    """
+    Parse a tex file and save the associated cytoscape graph in a JSON file
+    --> Parameters :
+    ----------------
+    texFile : str
+        Name of the .tex file to parse
+    outFile : str
+        Name of the output file
+    --> Output :
+    ------------
+        None"""
     with open(texFile, "r",encoding='utf-8') as text_file:
         full_text = text_file.read()
     
@@ -270,7 +389,6 @@ def getCyGraph(texFile,outFile):
     
 
     cyGraph = toCytoscapeGraph(fullNodeList)
-
     
     f = open(outFile, "wt",encoding="utf-8")
     n = f.write("var graph = " + str(cyGraph) + ";")
