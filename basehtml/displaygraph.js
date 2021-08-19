@@ -1,6 +1,7 @@
 
 
 
+// styles of the nodes (color,alpha, type of border, etc). See cytoscape doc
 var nodeStyles = {
   'theorem': {
     nodeType: 'theorem',
@@ -134,68 +135,36 @@ var nodeStyles = {
   }
 };
 
-
-//var graph = ;
+//the graph has been loaded in another script
 console.log(graph);
 
 
-var elements = graph;//[];
+var elements = graph;
 
-
-var defaultStyle = [
-  {
-    selector: 'node(data.name = "theorem")',
-    style: {
-      'background-color': '#11479e',
-      'background-opacity': 0.5,
-      'width': 200,//document.getElementById('t1').getBoundingClientRect().width,//200,
-      'height': 20,
-      'border-color': 'red',
-      'border-style': 'dashed',
-      shape: 'roundrectangle'
-    }
-  },
-
-  {
-    selector: 'edge',
-    style: {
-      'width': 4,
-      'target-arrow-shape': 'triangle',
-      //'line-color': '#9dbaea',
-      //'target-arrow-color': '#9dbaea',
-      //'curve-style': 'bezier'
-    },
-    /*css: {
-    "line-fill": "radial-gradient",
-    "line-gradient-stop-colors": "red green blue",
-    "line-gradient-stop-positions": "25 50 75"
-    }*/
-  }
-];
 // create Cy instance
 var cyInstance = cytoscape({
   container: document.getElementById('cy'),
   layout: {
     name: layout_name
   },
-  style: defaultStyle,
   elements: elements,
-  //userPanningEnabled: false,
-  //boxSelectionEnabled: false,
   wheelSensitivity: 0.2,
   autoungrabify: !move_nodes,
   //autounselectify: true
 });
 
-//cy.panzoom();
-//var panzoom = require('cytoscape-panzoom');
-//panzoom( cyInstance );
 
+/**
+ * Create an HTML label that cytoscape can use from a latex text
+ * @param {*} text 
+ * @param {*} index given to the div so that we can find it later if needed
+ * @returns {String}
+ */
 function getLabelFromText(text, index) {
   return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`'>` + text + String.raw`</div>`;
 }
 
-
+//More cytoscape style for nodes with HTML labels
 cyInstance.nodeHtmlLabel([{
   query: '.l0',
   valign: "center",
@@ -219,42 +188,16 @@ cyInstance.nodeHtmlLabel([{
 ]);
 
 
-function getAncestors(node, currentAncestors) {
-  var ancestors = node.incomers();
+//===============================================================================================================================
+//===============================================================================================================================
+//===============================================================================================================================
+// MathJax
 
-  var node_in_ancestors = false;
-  for (var i = 0; i < currentAncestors.length; i++) {
-    if (currentAncestors[i] == node) node_in_ancestors = true;
-  }
-  if (!node_in_ancestors) currentAncestors.push(node);
-  for (var i = 0; i < ancestors.size(); i++) {
-    var elem = ancestors[i];
-    if (!currentAncestors.includes(elem)) {
-      currentAncestors.concat(getAncestors(elem, currentAncestors));
-    }
-  }
-  return currentAncestors;
-}
-
-cyInstance.on('mouseover', 'node', function (e) {
-  var sel = e.target;
-  var ancestors = getAncestors(sel, []);
-  console.log(ancestors);
-  for (var i = 0; i < ancestors.length; i++) {
-    ancestors[i].addClass('highlight');
-  }
-  if (!move_nodes) e.target.panify();
-});
-cyInstance.on('mouseout', 'node', function (e) {
-  var sel = e.target;
-  var ancestors = getAncestors(sel, []);
-  console.log(ancestors);
-  for (var i = 0; i < ancestors.length; i++) {
-    ancestors[i].removeClass('highlight');
-  }
-});
-
-
+//Many browser do not have MathML support (Edge, chrome, and everything chrome based). In that case we need to enable MathJax
+//When moving a node, it breaks the typesetting and equations stops beeing displayed correctly, hence we call mathjax every
+//2 seconds.
+//This is a horrible hack, and there should be a way to do that only when a node moves, but I couldn't find how.
+//Besides, the nodes are not resized, so the typesetting should not break in the first place...
 if (!hasMathML) {
   console.log("mathjax", MathJax);
   var istypesetting = false;
@@ -271,9 +214,15 @@ if (!hasMathML) {
   }, 2000);
 }
 
+//===============================================================================================================================
+//===============================================================================================================================
+//===============================================================================================================================
+// Set correct style for nodes
 
-
-
+//this sets the size of the node so that the text fits inside the node. Sadly, it means creating one specific nodeStyle per node.
+//We wait 500ms before doing this so that the page is loaded properly and the typesetting of Latex equation is done, otherwise
+//the size of the nodes can wrong
+//500ms is entierly arbitrary and there should be a better way to do this
 setTimeout(function () {
 
   var resizedStyle = [
@@ -375,11 +324,19 @@ setTimeout(function () {
     }).run();
 }, 500);
 
-//MathJax.typesetPromise();
 
 
-//there should be a  better way to do this
+//=============================================================================================================
+//=============================================================================================================
+//Saving the graph
+
+/**
+ * Return a node of a given ID
+ * @param {str} id Id of the node
+ * @returns {Node}
+ */
 function getCyNode(id) {
+  //there should be a  better way to do this
   nodes = cyInstance.nodes();
   for (var i = 0; i < nodes.length; i++) {
     if (nodes[i].id() == id) {
@@ -390,6 +347,10 @@ function getCyNode(id) {
   console.log("not found");
 }
 
+
+/**
+ * Save the graph with the current positions of the nodes to a file that the user can download.
+ */
 function savePositions() {
   for (var i = 0; i < graph.length; i++) {
     if (graph[i].group == 'nodes') {
@@ -406,4 +367,53 @@ function savePositions() {
   a.click();
 }
 document.getElementById("saveButton").onclick = savePositions;
-      //download(graph.json, 'json.txt', 'text/plain');
+
+
+//=============================================================================================================
+//=============================================================================================================
+//interactive ancestors
+
+/**
+ * Get all the ancestors of a node
+ * @param {Node} node which we search the ancestor
+ * @param {Node} currentAncestors List of all found ancestors
+ * @returns 
+ */
+ function getAncestors(node, currentAncestors) {
+  var ancestors = node.incomers();
+
+  var node_in_ancestors = false;
+  for (var i = 0; i < currentAncestors.length; i++) {
+    if (currentAncestors[i] == node) node_in_ancestors = true;
+  }
+  if (!node_in_ancestors) currentAncestors.push(node);
+  for (var i = 0; i < ancestors.size(); i++) {
+    var elem = ancestors[i];
+    if (!currentAncestors.includes(elem)) {
+      currentAncestors.concat(getAncestors(elem, currentAncestors));
+    }
+  }
+  return currentAncestors;
+}
+
+//change the style of the ancestors when the user hover the mouse on top of a node
+cyInstance.on('mouseover', 'node', function (e) {
+  var sel = e.target;
+  var ancestors = getAncestors(sel, []);
+  console.log(ancestors);
+  for (var i = 0; i < ancestors.length; i++) {
+    ancestors[i].addClass('highlight');
+  }
+  if (!move_nodes) e.target.panify();
+});
+cyInstance.on('mouseout', 'node', function (e) {
+  var sel = e.target;
+  var ancestors = getAncestors(sel, []);
+  console.log(ancestors);
+  for (var i = 0; i < ancestors.length; i++) {
+    ancestors[i].removeClass('highlight');
+  }
+});
+
+//=============================================================================================================
+//=============================================================================================================
