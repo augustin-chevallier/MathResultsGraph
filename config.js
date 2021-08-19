@@ -1,1 +1,0 @@
-var move_nodes = false;
