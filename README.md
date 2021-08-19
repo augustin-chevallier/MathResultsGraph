@@ -74,3 +74,9 @@ To specify a dependency relation between two results, add
 \depends{label-of-parent-node}
 ``` 
 in the child node (inside \begin{theorem/definition/...}\end{theorem/definition/...})
+
+
+# TODO:
+*   Update graph with positions
+*   When selecting a node, make non dependant nodes more transparant
+*   Summary graph
