@@ -356,7 +356,7 @@ def toCytoscapeGraph(fullNodeList):
     return cy
 
 
-def getCyGraph(texFile,outFile):
+def getCyGraph(texFile,outFile,oldGraph = "",outFileWithPos = ""):
     """
     Parse a tex file and save the associated cytoscape graph in a JSON file
     --> Parameters :
@@ -365,6 +365,8 @@ def getCyGraph(texFile,outFile):
         Name of the .tex file to parse
     outFile : str
         Name of the output file
+    oldGraph : str
+        Name of the file of a previously generated graph. Extract positions, and only positions from this graph
     --> Output :
     ------------
         None"""
@@ -389,7 +391,27 @@ def getCyGraph(texFile,outFile):
     
 
     cyGraph = toCytoscapeGraph(fullNodeList)
-    
+
+
+    json_object = json.dumps(cyGraph) 
+
     f = open(outFile, "wt",encoding="utf-8")
-    n = f.write("var graph = " + str(cyGraph) + ";")
+    n = f.write("var graph = " + str(json_object) + ";")
     f.close()
+
+    if oldGraph != "":
+        with open(oldGraph,"r",encoding="utf-8") as json_file:
+            data = json_file.read()
+            data = data[12:-1]
+            data = json.loads(data)
+            for elem in data:
+                if "position" in elem:
+                    label = elem["data"]["id"]
+                    for elem2 in cyGraph:
+                        if "data" in elem2:
+                            if elem2["data"]["id"] == label:
+                                elem2.update({'position' : elem["position"]})
+        json_object = json.dumps(cyGraph) 
+        f = open(outFileWithPos, "wt",encoding="utf-8")
+        n = f.write("var graph = " + str(json_object) + ";")
+        f.close()

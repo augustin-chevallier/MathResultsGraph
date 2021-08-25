@@ -22,9 +22,10 @@ outputFolder = "site"
 website = True
 url = "augustin-chevallier.fr/testGraph/"
 
-
-
-
+#If you have a graph with saved positions and you want to update it, use this:
+oldGraph = "graph_with_pos.txt"
+#otherwise use uncomment the following:
+#oldGraph = ""
 
 
 
@@ -35,7 +36,7 @@ if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
 
 
-gg.getCyGraph(texFileName,"site/jsongraph.txt")
+gg.getCyGraph(texFileName,outputFolder + "/" + "jsongraph.txt",oldGraph,outputFolder + "/" + "graph_with_pos.txt")
 
 print(os.getcwd())
 
