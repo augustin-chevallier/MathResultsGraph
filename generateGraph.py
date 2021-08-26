@@ -293,6 +293,7 @@ def texToHtml(full_text,partition,nodeL):
             nodeL[i].update({"html": str(html.find(id = nodeL[i]["label"]).parent)})
         else:
             nodeL[i].update({"html": str(html.find(id = nodeL[i]["label"]))})
+    return htmlText
 
 
 
@@ -381,8 +382,10 @@ def getCyGraph(texFile,outFile,oldGraph = "",outFileWithPos = ""):
     
     nodeL = findAllNodes(partition)
     
-    texToHtml(full_text,partition,nodeL)
-    
+    htmlText = texToHtml(full_text,partition,nodeL)
+    f = open("tex.html", "wt",encoding="utf-8")
+    n = f.write(htmlText)
+    f.close()
     
     fullNodeList = []
     fullNodeList += nodeL

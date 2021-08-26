@@ -250,11 +250,11 @@ setTimeout(function () {
     //console.log(ths[i])
     if (graph[i].group == "nodes") {
       //if(graph[i].data.html_name != ""){
-      console.log(graph[i].data.id);
+      //console.log(graph[i].data.id);
       var elemid = '_graph_internal_' + graph[i].data.id;
       var width1 = document.getElementById(elemid).offsetWidth + 80;//getBoundingClientRect().width;
       var height1 = document.getElementById(elemid).offsetHeight + 100;//getBoundingClientRect().height;
-      console.log(nodeStyles[graph[i].data.name]);
+      //console.log(nodeStyles[graph[i].data.name]);
       var nodeStyle = {
         selector: 'node[id = "' + graph[i].data.id + '"]',
         style: {
@@ -340,11 +340,11 @@ function getCyNode(id) {
   nodes = cyInstance.nodes();
   for (var i = 0; i < nodes.length; i++) {
     if (nodes[i].id() == id) {
-      console.log("found");
+      //console.log("found");
       return nodes[i];
     }
   }
-  console.log("not found");
+  //console.log("not found");
 }
 
 
@@ -356,7 +356,7 @@ function savePositions() {
     if (graph[i].group == 'nodes') {
       node = getCyNode(graph[i].data.id);
       graph[i].position = node.position();
-      console.log(graph[i]);
+      //console.log(graph[i]);
     }
   }
   fileName = "graph_with_pos.txt";
@@ -400,7 +400,7 @@ document.getElementById("saveButton").onclick = savePositions;
 cyInstance.on('mouseover', 'node', function (e) {
   var sel = e.target;
   var ancestors = getAncestors(sel, []);
-  console.log(ancestors);
+  //console.log(ancestors);
   for (var i = 0; i < ancestors.length; i++) {
     ancestors[i].addClass('highlight');
   }
@@ -409,7 +409,7 @@ cyInstance.on('mouseover', 'node', function (e) {
 cyInstance.on('mouseout', 'node', function (e) {
   var sel = e.target;
   var ancestors = getAncestors(sel, []);
-  console.log(ancestors);
+  //console.log(ancestors);
   for (var i = 0; i < ancestors.length; i++) {
     ancestors[i].removeClass('highlight');
   }
@@ -417,3 +417,9 @@ cyInstance.on('mouseout', 'node', function (e) {
 
 //=============================================================================================================
 //=============================================================================================================
+
+
+cyInstance.on('click', 'node', function(evt){
+  console.log( 'clicked ' + this.id() );
+  window.location="#" + this.id();
+});
