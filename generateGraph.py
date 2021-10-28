@@ -98,9 +98,13 @@ def findNodeInfo(text,index,nextNode):
     if depends == [""]:
         depends = []
     rank = findProp(text,index,nextNode,"\\rank")
+
+    summary = findProp(text,index,nextNode,"\\summary")
+    mainText = findProp(text,index,nextNode,"\\mainText")
+
     if rank == "":
         rank = "0"
-    return {"label": label,"depends": depends,"rank": rank}
+    return {"label": label,"depends": depends,"rank": rank, "summary": summary, "mainText": mainText}
 
 def findPartitions(text,partitionName,parentLabel):
     """
@@ -265,6 +269,10 @@ def findAllNodes(partition):
     return nodes
 
 
+def summaryTex(full_text,nodeL):
+    full_text = full_text.replace("\\newcommand{\\summary}[1]{}","\\newcommand{\\summary}[1]{#1}")
+    full_text = full_text.replace("\\newcommand{\\mainText}[1]{#1}","\\newcommand{\\mainText}[1]{}")
+    return full_text
 
 
 def texToHtml(full_text,partition,nodeL):
@@ -282,8 +290,10 @@ def texToHtml(full_text,partition,nodeL):
     ------------
         None"""
     htmlText = pypandoc.convert_text(full_text,'html5', format = 'tex', extra_args=['--mathml',])    
+    htmlTextSummary = pypandoc.convert_text(summaryTex(full_text,nodeL),'html5', format = 'tex', extra_args=['--mathml',])
     #print(htmlText)
     html = BeautifulSoup(htmlText)
+    htmlSummary = BeautifulSoup(htmlTextSummary)
     for i in range(len(partition)):
         for j in range(len(partition[i])):
             partition[i][j].update({"html": str(html.find(id = partition[i][j]["label"]))})
@@ -291,8 +301,10 @@ def texToHtml(full_text,partition,nodeL):
     for i in range(len(nodeL)):
         if pandoc_take_parent:
             nodeL[i].update({"html": str(html.find(id = nodeL[i]["label"]).parent)})
+            nodeL[i].update({"htmlSummary": str(htmlSummary.find(id = nodeL[i]["label"]).parent)})
         else:
             nodeL[i].update({"html": str(html.find(id = nodeL[i]["label"]))})
+            nodeL[i].update({"htmlSummary": str(htmlSummary.find(id = nodeL[i]["label"]))})
     return htmlText
 
 
@@ -339,7 +351,7 @@ def toCytoscapeGraph(fullNodeList):
                 
         if "\\" + node["type"] not in partitionNames:
             data = {"id": node["label"], "name": node["type"], "text": node["html"], 
-                "parent": node["parentLabel"], "rank": node["rank"], "html_name": node["label"]}
+                "parent": node["parentLabel"], "rank": node["rank"], "html_name": node["label"], "summary": node["htmlSummary"]}
             cyNode = {"group": "nodes", "data": data, "classes": "l0"}
             cyNodes.append(cyNode)
         else:

@@ -27,6 +27,8 @@
 
 \newcommand{\rank}[1]{}
 \newcommand{\depends}[1]{}
+\newcommand{\summary}[1]{}
+\newcommand{\mainText}[1]{#1}
 
 \newcommand{\extgen}{\bar{A}}
 \newcommand{\Feqgen}{\mathcal{F}_{\extgen}}
@@ -61,7 +63,8 @@ http://www.stats.ox.ac.uk/~etheridg/ctsmartingales.pdf
 
 \begin{definition}[Domain of the extended generator of a Markov Process]\label{def:ext-gen-domain}
 \depends{def:loc-martingale}
-Let $\mathcal{D}(\extgen)$ be the subset of measurable functions $f:E\rightarrow \mathbb{R}$ such that there 
+\summary{TEST SUMMARY}
+\mainText{Let $\mathcal{D}(\extgen)$ be the subset of measurable functions $f:E\rightarrow \mathbb{R}$ such that there 
 exists a measurable function $h: E \rightarrow \mathbb{R}$ satisfying for every $x_0\in E$:
 \begin{itemize}
 	\item For $P_{x_0}$ almost every $\omega$, $t\rightarrow f(x_t(\omega))$ is integrable
@@ -70,7 +73,7 @@ exists a measurable function $h: E \rightarrow \mathbb{R}$ satisfying for every 
 		C_t^{f,h} = f(x_t) - f(x_0) - \int_0^t h(x_s) ds
 	\]
 	is a local martingale (with respect to $P_{x_0}$).
-\end{itemize}
+\end{itemize}}
 \end{definition}
 
 \begin{definition}[Potential zero sets]\label{def:potential-zero-set}

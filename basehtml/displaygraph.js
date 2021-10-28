@@ -172,7 +172,12 @@ cyInstance.nodeHtmlLabel([{
   valignBox: "center",
   halignBox: "center",
   tpl: function (data) {
-    return getLabelFromText(data.text, data.id);
+    if(display_summary && data.hasOwnProperty("summary")){
+      return getLabelFromText(data.summary, data.id);
+    }
+    else{
+      return getLabelFromText(data.text, data.id);
+    }
   }
 },
 {
@@ -182,7 +187,12 @@ cyInstance.nodeHtmlLabel([{
   valignBox: "top",
   halignBox: "left",
   tpl: function (data) {
-    return getLabelFromText(data.text, data.id);
+    if(display_summary && data.hasOwnProperty("summary")){
+      return getLabelFromText(data.summary, data.id);
+    }
+    else{
+      return getLabelFromText(data.text, data.id);
+    }
   }
 }
 ]);
@@ -425,5 +435,5 @@ cyInstance.on('click', 'node', function(evt){
   node = getCyNode(evt.target.id());
   console.log(node.data());
   //window.location="#" + this.id();
-  document.getElementById("LatexPage").innerHTML = node.data().text;
+  document.getElementById("LatexPage").innerHTML = node.data().text
 });
