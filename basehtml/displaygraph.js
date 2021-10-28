@@ -421,5 +421,9 @@ cyInstance.on('mouseout', 'node', function (e) {
 
 cyInstance.on('click', 'node', function(evt){
   console.log( 'clicked ' + this.id() );
-  window.location="#" + this.id();
+  console.log(evt.target)
+  node = getCyNode(evt.target.id());
+  console.log(node.data());
+  //window.location="#" + this.id();
+  document.getElementById("LatexPage").innerHTML = node.data().text;
 });
