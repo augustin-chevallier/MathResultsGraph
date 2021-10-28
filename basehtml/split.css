@@ -37,7 +37,7 @@ body {
 }
 
 #cy {
-    width: 50%;
+    width: 70%;
     height: 100%;
     position: absolute;
     top: 20px;
@@ -47,10 +47,11 @@ body {
  /* Split the screen in half */
  .split {
   height: 100%;
-  width: 50%;
+  width: 30%;
   position: fixed;
   z-index: 1;
   top: 0;
   overflow-x: hidden;
   padding-top: 20px;
+  border-left: 2px solid black;
 }
