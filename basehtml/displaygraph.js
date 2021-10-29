@@ -435,14 +435,14 @@ cyInstance.on('click', 'node', function(evt){
   node = getCyNode(evt.target.id());
   console.log(node.data());
   //window.location="#" + this.id();
-  document.getElementById("MainNode").innerHTML =  node.data().text
+  document.getElementById("MainNode").innerHTML =  String.raw`<hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(9, 84, 132);border:none;border-top: solid 2px;" />` + node.data().text
 
   var ancestors = node.incomers();
   var ancestorsText = "";
   for (var i = 0; i < ancestors.size(); i++) {
     var elem = ancestors[i];
     if(elem.data().hasOwnProperty("text"))
-      ancestorsText += String.raw`<hr style="border-top: dotted 2px;" />` + elem.data().text;
+      ancestorsText += String.raw`<hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(9, 84, 132);border:none;border-top: solid 2px;" />` + elem.data().text;
   }
   document.getElementById("AncestorsNodes").innerHTML = ancestorsText;
 
