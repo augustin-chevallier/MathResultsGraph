@@ -40,9 +40,13 @@ body {
     width: 70%;
     height: 100%;
     position: absolute;
-    top: 20px;
+    /*top: 20px;*/
     left: 0px;
     box-shadow: 10px 0 5px -2px #888;
+    font-size: 40px;
+    /*font-smooth: always;
+    font-family: Verdana;*/
+    -webkit-font-smoothing: antialiased;
 }
 
  /* Split the screen in half */
@@ -53,7 +57,7 @@ body {
   z-index: 1;
   top: 0;
   overflow-x: hidden;
-  padding-top: 20px;
+  /*padding-top: 20px;*/
   border-left: 2px solid black;
   box-shadow: 10px 5px 5px red;
 }

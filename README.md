@@ -77,6 +77,8 @@ in the child node (inside \begin{theorem/definition/...}\end{theorem/definition/
 
 
 # TODO:
-*   Update graph with positions
 *   When selecting a node, make non dependant nodes more transparant
-*   Summary graph
+*   Display of ancestors of all degrees
+*   Rank for dependencies
+*   Option to not display edges between different sections
+*   When clicking a node, the ancestors are red

@@ -7,12 +7,12 @@ var nodeStyles = {
     nodeType: 'theorem',
     nodeStyle: {
       'background-color': '#006474',
-      'background-opacity': 0.7,
+      'background-opacity': 0.2,
       'width': 200,
       'height': 20,
-      'border-color': 'black',
+      'border-color': '#006474',
       'border-style': 'solid',
-      'border-width': 3,
+      'border-width': 8,
       shape: 'roundrectangle'
     }
   },
@@ -20,12 +20,12 @@ var nodeStyles = {
     nodeType: 'definition',
     nodeStyle: {
       'background-color': '#018a7a',
-      'background-opacity': 0.7,
+      'background-opacity': 0.2,
       'width': 200,
       'height': 20,
-      'border-color': 'black',
+      'border-color': '#018a7a',
       'border-style': 'solid',
-      'border-width': 4,
+      'border-width': 8,
       shape: 'roundrectangle'
     }
   },
@@ -33,12 +33,12 @@ var nodeStyles = {
     nodeType: 'proposition',
     nodeStyle: {
       'background-color': '#0093ab',
-      'background-opacity': 0.5,
+      'background-opacity': 0.2,
       'width': 200,
       'height': 20,
-      'border-color': 'black',
+      'border-color': '#0093ab',
       'border-style': 'solid',
-      'border-width': 2,
+      'border-width': 4,
       shape: 'roundrectangle'
     }
   },
@@ -46,12 +46,12 @@ var nodeStyles = {
     nodeType: 'lemma',
     nodeStyle: {
       'background-color': '#00b9ff',
-      'background-opacity': 0.3,
+      'background-opacity': 0.2,
       'width': 200,
       'height': 20,
-      'border-color': 'black',
+      'border-color': '#00b9ff',
       'border-style': 'solid',
-      'border-width': 1,
+      'border-width': 2,
       shape: 'roundrectangle'
     }
   },
@@ -361,22 +361,24 @@ function getCyNode(id) {
 /**
  * Save the graph with the current positions of the nodes to a file that the user can download.
  */
-function savePositions() {
-  for (var i = 0; i < graph.length; i++) {
-    if (graph[i].group == 'nodes') {
-      node = getCyNode(graph[i].data.id);
-      graph[i].position = node.position();
-      //console.log(graph[i]);
+if(document.getElementById("saveButton")){
+  function savePositions() {
+    for (var i = 0; i < graph.length; i++) {
+      if (graph[i].group == 'nodes') {
+        node = getCyNode(graph[i].data.id);
+        graph[i].position = node.position();
+        //console.log(graph[i]);
+      }
     }
+    fileName = "graph_with_pos.txt";
+    var a = document.createElement("a");
+    var file = new Blob(['var graph = ' + JSON.stringify(graph) + ';'], { type: 'application/json' });
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
   }
-  fileName = "graph_with_pos.txt";
-  var a = document.createElement("a");
-  var file = new Blob(['var graph = ' + JSON.stringify(graph) + ';'], { type: 'application/json' });
-  a.href = URL.createObjectURL(file);
-  a.download = fileName;
-  a.click();
+  document.getElementById("saveButton").onclick = savePositions;
 }
-document.getElementById("saveButton").onclick = savePositions;
 
 
 //=============================================================================================================

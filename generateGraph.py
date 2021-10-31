@@ -21,7 +21,7 @@ pandoc_take_parent = False
 
 if version.parse(pandoc_version) < version.parse(pandoc_good_version):
     print("WARNING: Pandoc version detected is old. Activating a fallback mode.\n The graph should be displayed, but the node names will not be pretty. If nodes are empty (but the titles), go in generateHTML.py and comment line 23 (using a #).")
-    print("Pandoc version ", pandoc_version, " requires > 2.14")
+    print("Pandoc version ", pandoc_version, " requires >", pandoc_good_version)
     pandoc_take_parent = True
 else:
     print("Pandoc version ", pandoc_version, " is suffisently recent.")
