@@ -103,9 +103,11 @@ def findNodeInfo(text,index,nextNode):
     summary = findProp(text,index,nextNode,"\\summary")
     mainText = findProp(text,index,nextNode,"\\mainText")
 
+    hasSummary = (summary != "")
+
     if rank == "":
         rank = "0"
-    return {"label": label,"depends": depends,"rank": rank, "summary": summary, "mainText": mainText}
+    return {"label": label,"depends": depends,"rank": rank, "summary": summary, "mainText": mainText, "hasSummary": hasSummary}
 
 def findPartitions(text,partitionName,parentLabel):
     """
@@ -205,9 +207,11 @@ def findNode(text,typeName,index,parentLabel):
         return ({},-1)
     else:
         posEnd = text.find('\\end{'+ typeName + '}',posStart) 
+        hasTitle = (text[posStart+typeLen] == "[")
+        print("hasTitle", hasTitle,text[posStart+typeLen])
         content = text[posStart+typeLen:posEnd]
         info = findNodeInfo(text,posStart,posEnd)
-        node = {"type": typeName,"content": content, "parentLabel": parentLabel}
+        node = {"type": typeName,"content": content, "parentLabel": parentLabel, "hasTitle": hasTitle}
         if useTypeConversion:
             node["type"] = nodeTypeListConversion[typeName]
         node.update(info)
@@ -276,6 +280,39 @@ def summaryTex(full_text,nodeL):
     return full_text
 
 
+def find_parentesis(s):
+    toret = {}
+    pstack = []
+
+    open_index = -1
+    close_index = -1
+
+    for i, c in enumerate(s):
+        if c == '(':
+            pstack.append(i)
+            if open_index == -1:
+                open_index = i
+        elif c == ')':
+            if len(pstack) == 0:
+                raise IndexError("No matching closing parens at: " + str(i))
+            if len(pstack) == 1:
+                close_index = i
+            toret[pstack.pop()] = i
+        if close_index != -1:
+            break
+
+    if len(pstack) > 0:
+        raise IndexError("No matching opening parens at: " + str(pstack.pop()))
+
+    return (open_index,close_index)
+
+def getTitle(htmlText):
+    p = find_parentesis(htmlText)
+    print(p)
+    print(htmlText[p[0]:(p[1]+1)])
+    return htmlText[p[0]:(p[1]+1)]
+    #title = htmlText[parentesis]
+
 def texToHtml(full_text,partition,nodeL):
     """
     Convert latex to html using pandoc, and save the results in our graph
@@ -306,6 +343,13 @@ def texToHtml(full_text,partition,nodeL):
         else:
             nodeL[i].update({"html": str(html.find(id = nodeL[i]["label"]))})
             nodeL[i].update({"htmlSummary": str(htmlSummary.find(id = nodeL[i]["label"]))})
+            titleHTML = ""
+            hasTitle = False
+            if nodeL[i]["hasTitle"]:
+                titleHTML = getTitle(str(html.find(id = nodeL[i]["label"])))
+                hasTitle = True
+            nodeL[i].update({"htmlTitle": titleHTML})
+            nodeL[i].update({"hasTitle": hasTitle})
     return htmlText
 
 
@@ -352,17 +396,18 @@ def toCytoscapeGraph(fullNodeList):
                 
         if "\\" + node["type"] not in partitionNames:
             data = {"id": node["label"], "name": node["type"], "text": node["html"], 
-                "parent": node["parentLabel"], "rank": node["rank"], "html_name": node["label"], "summary": node["htmlSummary"]}
+                "parent": node["parentLabel"], "rank": node["rank"], "html_name": node["label"], "summary": node["htmlSummary"], "hasSummary": node["hasSummary"],
+                "hasTitle": node["hasTitle"], "title": node["htmlTitle"]}
             cyNode = {"group": "nodes", "data": data, "classes": "l0"}
             cyNodes.append(cyNode)
         else:
             data = {"id": node["label"], "name": node["type"], "text": "", 
-                "parent": node["parentLabel"], "rank": node["rank"], "html_name": node["label"]}
+                "parent": node["parentLabel"], "rank": node["rank"], "html_name": node["label"],"hasSummary": False, "hasTitle": False}
             cyNode = {"group": "nodes", "data": data, "classes": "l0"}
             cyNodes.append(cyNode)
             
             dataTitle = {"id": "title" + node["label"], "name": node["type"]+"Title", "text": node["html"], 
-                "parent": node["label"], "rank": node["rank"], "html_name": node["label"]}
+                "parent": node["label"], "rank": node["rank"], "html_name": node["label"], "hasSummary": False, "hasTitle": False}
             cyNodeTitle = {"group": "nodes", "data": dataTitle, "classes": "l0"}
             cyNodes.append(cyNodeTitle)
     cy = cyNodes + cyEdges

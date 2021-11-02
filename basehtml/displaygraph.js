@@ -1,4 +1,8 @@
+var zoomLevelsChanges = [0.4,0.2];
 
+var zoomLevels = ['test','summary','title'];
+
+var currentZoomLevel = 0;
 
 
 // styles of the nodes (color,alpha, type of border, etc). See cytoscape doc
@@ -148,7 +152,7 @@ var cyInstance = cytoscape({
     name: layout_name
   },
   elements: elements,
-  wheelSensitivity: 0.2,
+  //wheelSensitivity: 0.2,
   autoungrabify: !move_nodes,
   //autounselectify: true
 });
@@ -160,8 +164,8 @@ var cyInstance = cytoscape({
  * @param {*} index given to the div so that we can find it later if needed
  * @returns {String}
  */
-function getLabelFromText(text, index) {
-  return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`'>` + text + String.raw`</div>`;
+function getLabelFromText(text, index,fontSize = 20) {
+  return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + `px;">` + text + String.raw`</div>`;
 }
 
 //More cytoscape style for nodes with HTML labels
@@ -172,12 +176,28 @@ cyInstance.nodeHtmlLabel([{
   valignBox: "center",
   halignBox: "center",
   tpl: function (data) {
-    if(display_summary && data.hasOwnProperty("summary")){
+
+    //console.log(cyInstance.zoom());
+
+    if(currentZoomLevel == 1){
+      if(data["hasSummary"]){
+        return getLabelFromText(data.summary, data.id,40);
+      }
+    }
+    if(currentZoomLevel >= 1){
+      if(data["hasTitle"]){
+        return getLabelFromText(data.title, data.id,50);
+      }
+    }  
+      //console.log(getLabelFromText(data.text, data.id,20));
+    return getLabelFromText(data.text, data.id,20);
+    
+    /*if(display_summary && data.hasOwnProperty("summary")){
       return getLabelFromText(data.summary, data.id);
     }
     else{
       return getLabelFromText(data.text, data.id);
-    }
+    }*/
   }
 },
 {
@@ -187,6 +207,25 @@ cyInstance.nodeHtmlLabel([{
   valignBox: "top",
   halignBox: "left",
   tpl: function (data) {
+    if(display_summary && data.hasOwnProperty("summary")){
+      return getLabelFromText(data.summary, data.id);
+    }
+    else{
+      return getLabelFromText(data.text, data.id);
+    }
+  }
+},
+{
+  query: '.l2',
+  valign: "center",
+  halign: "center",
+  valignBox: "center",
+  halignBox: "center",
+  tpl: function (data) {
+
+    return "prout";
+    console.log(cyInstance.zoom());
+
     if(display_summary && data.hasOwnProperty("summary")){
       return getLabelFromText(data.summary, data.id);
     }
@@ -233,8 +272,8 @@ if (!hasMathML) {
 //We wait 500ms before doing this so that the page is loaded properly and the typesetting of Latex equation is done, otherwise
 //the size of the nodes can wrong
 //500ms is entierly arbitrary and there should be a better way to do this
-setTimeout(function () {
 
+function setStyle(){
   var resizedStyle = [
     {
       selector: 'edge',
@@ -332,7 +371,9 @@ setTimeout(function () {
     {
       name: layout_name
     }).run();
-}, 500);
+}
+
+setTimeout(setStyle, 500);
 
 
 
@@ -432,10 +473,10 @@ cyInstance.on('mouseout', 'node', function (e) {
 
 
 cyInstance.on('click', 'node', function(evt){
-  console.log( 'clicked ' + this.id() );
-  console.log(evt.target)
+  //console.log( 'clicked ' + this.id() );
+  //console.log(evt.target.parents().data())
   node = getCyNode(evt.target.id());
-  console.log(node.data());
+  //console.log(node.data());
   //window.location="#" + this.id();
   document.getElementById("MainNode").innerHTML =  String.raw`<hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(9, 84, 132);border:none;border-top: solid 2px;" />` + node.data().text
 
@@ -448,4 +489,43 @@ cyInstance.on('click', 'node', function(evt){
   }
   document.getElementById("AncestorsNodes").innerHTML = ancestorsText;
 
+});
+
+cyInstance.on('zoom', function(evt){
+
+  var zoomLevelChanged = false;
+  if(currentZoomLevel == 0){
+    if(cyInstance.zoom() < zoomLevelsChanges[0]){
+      currentZoomLevel = 1;
+      zoomLevelChanged = true;
+    }
+  }
+  if(currentZoomLevel == 2){
+    if(cyInstance.zoom() > zoomLevelsChanges[1]){
+      currentZoomLevel = 1;
+      zoomLevelChanged = true;
+    }
+  }
+  if(currentZoomLevel == 1){
+    if(cyInstance.zoom() > zoomLevelsChanges[0]){
+      currentZoomLevel = 0;
+      zoomLevelChanged = true;
+    }
+    if(cyInstance.zoom() < zoomLevelsChanges[1]){
+      currentZoomLevel = 2;
+      zoomLevelChanged = true;
+    }
+  }
+  //console.log( cyInstance.zoom());
+  nodes = cyInstance.nodes();
+  if(zoomLevelChanged == true){
+    console.log("zoomLevel",currentZoomLevel,cyInstance.zoom())
+    for (var i = 0; i < nodes.length; i++) {
+      nodes[i].addClass('.highlight');
+      nodes[i].removeClass('.highlight');
+    }
+    //setStyle();
+  }
+  //setStyle();
+  //console.log(nodes);
 });
