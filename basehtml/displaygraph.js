@@ -1,4 +1,4 @@
-var zoomLevelsChanges = [0.4,0.2];
+
 
 var zoomLevels = ['test','summary','title'];
 
@@ -181,23 +181,23 @@ cyInstance.nodeHtmlLabel([{
 
     if(currentZoomLevel == 1){
       if(data["hasSummary"]){
-        return getLabelFromText(data.summary, data.id,40);
+        return getLabelFromText(data.summary, data.id,fontsSize[1]);
       }
     }
     if(currentZoomLevel >= 1){
       if(data["hasTitle"]){
-        return getLabelFromText(data.title, data.id,50);
+        return getLabelFromText(data.title, data.id,fontsSize[2]);
       }
     }  
       //console.log(getLabelFromText(data.text, data.id,20));
-    return getLabelFromText(data.text, data.id,20);
+    //return getLabelFromText(data.text, data.id,20);
     
-    /*if(display_summary && data.hasOwnProperty("summary")){
-      return getLabelFromText(data.summary, data.id);
+    if(display_summary && data.hasOwnProperty("summary")){
+      return getLabelFromText(data.summary, data.id,fontsSize[1]);
     }
     else{
-      return getLabelFromText(data.text, data.id);
-    }*/
+      return getLabelFromText(data.text, data.id,fontsSize[0]);
+    }
   }
 },
 {
