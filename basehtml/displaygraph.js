@@ -211,8 +211,13 @@ var cyInstance = cytoscape({
  * @param {*} index given to the div so that we can find it later if needed
  * @returns {String}
  */
-function getLabelFromText(text, index,fontSize = 20) {
-  return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width=`+ nodeWidth.toString() + String.raw`px;">` + text + String.raw`</div>`;
+function getLabelFromText(text, index,fontSize = 20,bold=false) {
+  if(bold){
+    return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width=`+ nodeWidth.toString() + String.raw`px;"><b>` + text + String.raw`</b></div>`;
+  }
+  else{
+    return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width=`+ nodeWidth.toString() + String.raw`px;">` + text + String.raw`</div>`;
+  }
 }
 
 //More cytoscape style for nodes with HTML labels
@@ -233,7 +238,7 @@ cyInstance.nodeHtmlLabel([{
     }
     if(currentZoomLevel >= 1){
       if(data["hasTitle"]){
-        return getLabelFromText(data.title, data.id,fontsSize[2]);
+        return getLabelFromText(data.title, data.id,fontsSize[2],true);
       }
     }  
       //console.log(getLabelFromText(data.text, data.id,20));
