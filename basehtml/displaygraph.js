@@ -150,43 +150,76 @@ var elements = graph;
 for (var i = 0; i < graph.length; i++) {
   var node = graph[i];
   if(node.group == 'nodes'){
-    var div = document.createElement("div");
-    div.style.width = nodeWidth.toString() + "px";
-    div.style.fontSize = fontsSize[0].toString() + "px";
-    div.innerHTML = node.data.text;
-    //var text = document.createTextNode(node.data.text);
-    //div.appendChild(text);
-    document.getElementById("testdiv").appendChild(div);
-    console.log("height",div.offsetHeight);
-    node.data["height"] = div.offsetHeight + 100;
-    node.data["width"] = div.offsetWidth + 80;
-    div.remove();
 
-    if(node.data.hasSummary){
-      var divs = document.createElement("div");
-      divs.style.width = nodeWidth.toString() + "px";
-      divs.style.fontSize = fontsSize[1].toString() + "px";
-      divs.innerHTML = node.data.summary;
+    switch(node.data.name){
+    case "sectionTitle":
+      var div = document.createElement("div");
+      div.style.width = nodeWidth.toString() + "px";
+      div.style.fontSize = fontSizeSection["section"].toString() + "px";
+      console.log("fontsize",fontSizeSection["section"].toString(),node.data.id);
+      div.innerHTML = node.data.text;
       //var text = document.createTextNode(node.data.text);
       //div.appendChild(text);
-      document.getElementById("testdiv").appendChild(divs);
-      console.log("height",divs.offsetHeight);
-      node.data["height"] = Math.max(node.data["height"],divs.offsetHeight + 100);
-      node.data["width"] = Math.max(node.data["width"],divs.offsetWidth + 80);
-      divs.remove();
-    }
-    if(node.data.hasTitle){
-      var divt = document.createElement("div");
-      divt.style.width = nodeWidth.toString() + "px";
-      divt.style.fontSize = fontsSize[2].toString() + "px";
-      divt.innerHTML = node.data.title;
+      document.getElementById("testdiv").appendChild(div);
+      console.log("height",div.offsetHeight,div.getBoundingClientRect().height);
+      node.data["height"] = div.offsetHeight + 100;
+      node.data["width"] = div.offsetWidth + 350;
+      console.log(node.data["height"])
+      div.remove();
+      break;
+    
+    case "subsectionTitle":
+      var div = document.createElement("div");
+      div.style.width = nodeWidth.toString() + "px";
+      div.style.fontSize = fontSizeSection["subsection"].toString() + "px";
+      div.innerHTML = node.data.text;
       //var text = document.createTextNode(node.data.text);
       //div.appendChild(text);
-      document.getElementById("testdiv").appendChild(divt);
-      console.log("width",divt.offsetWidth);
-      node.data["height"] = Math.max(node.data["height"],divt.offsetHeight + 100);
-      node.data["width"] = Math.max(node.data["width"],divt.offsetWidth + 80);
-      divt.remove();
+      document.getElementById("testdiv").appendChild(div);
+      console.log("height",div.offsetHeight);
+      node.data["height"] = div.offsetHeight + 100;
+      node.data["width"] = div.offsetWidth + 80;
+      div.remove();
+      break;
+    default:
+      var div = document.createElement("div");
+      div.style.width = nodeWidth.toString() + "px";
+      div.style.fontSize = fontsSize[0].toString() + "px";
+      div.innerHTML = node.data.text;
+      //var text = document.createTextNode(node.data.text);
+      //div.appendChild(text);
+      document.getElementById("testdiv").appendChild(div);
+      //console.log("height",div.offsetHeight);
+      node.data["height"] = div.offsetHeight + 100;
+      node.data["width"] = div.offsetWidth + 80;
+      div.remove();
+
+      if(node.data.hasSummary){
+        var divs = document.createElement("div");
+        divs.style.width = nodeWidth.toString() + "px";
+        divs.style.fontSize = fontsSize[1].toString() + "px";
+        divs.innerHTML = node.data.summary;
+        //var text = document.createTextNode(node.data.text);
+        //div.appendChild(text);
+        document.getElementById("testdiv").appendChild(divs);
+        //console.log("height",divs.offsetHeight);
+        node.data["height"] = Math.max(node.data["height"],divs.offsetHeight + 100);
+        node.data["width"] = Math.max(node.data["width"],divs.offsetWidth + 80);
+        divs.remove();
+      }
+      if(node.data.hasTitle){
+        var divt = document.createElement("div");
+        divt.style.width = nodeWidth.toString() + "px";
+        divt.style.fontSize = fontsSize[2].toString() + "px";
+        divt.innerHTML = node.data.title;
+        //var text = document.createTextNode(node.data.text);
+        //div.appendChild(text);
+        document.getElementById("testdiv").appendChild(divt);
+        //console.log("width",divt.offsetWidth);
+        node.data["height"] = Math.max(node.data["height"],divt.offsetHeight + 100);
+        node.data["width"] = Math.max(node.data["width"],divt.offsetWidth + 80);
+        divt.remove();
+      }
     }
   }
 }
@@ -229,6 +262,13 @@ cyInstance.nodeHtmlLabel([{
   halignBox: "center",
   tpl: function (data) {
 
+
+    if(data.name == "sectionTitle"){
+      return getLabelFromText(data.text, data.id,fontSizeSection["section"]);
+    }
+    if(data.name == "subsectionTitle"){
+      return getLabelFromText(data.text, data.id,fontSizeSection["subsection"]);
+    }
     //console.log(cyInstance.zoom());
 
     if(currentZoomLevel == 1){
@@ -359,8 +399,8 @@ function setStyle(){
         var elemid = '_graph_internal_' + graph[i].data.id;
         var width1 = document.getElementById(elemid).offsetWidth + 80;//getBoundingClientRect().width;
         var height1 = document.getElementById(elemid).offsetHeight + 100;//getBoundingClientRect().height;
-        console.log("width1",width1);
-        console.log("height1",height1);
+        //console.log("width1",width1);
+        console.log("height1",height1,graph[i].data.height,graph[i].data.id);
         /*if(!graph[i].data.hasOwnProperty("width")){
           graph[i].data["width"] = width1;
           graph[i].data["height"] = height1;
