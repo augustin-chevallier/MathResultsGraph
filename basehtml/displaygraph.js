@@ -145,6 +145,53 @@ console.log(graph);
 
 var elements = graph;
 
+
+//get the heights of the nodes for each zoom level
+for (var i = 0; i < graph.length; i++) {
+  var node = graph[i];
+  if(node.group == 'nodes'){
+    var div = document.createElement("div");
+    div.style.width = nodeWidth.toString() + "px";
+    div.style.fontSize = fontsSize[0].toString() + "px";
+    div.innerHTML = node.data.text;
+    //var text = document.createTextNode(node.data.text);
+    //div.appendChild(text);
+    document.getElementById("testdiv").appendChild(div);
+    console.log("height",div.offsetHeight);
+    node.data["height"] = div.offsetHeight + 100;
+    node.data["width"] = div.offsetWidth + 80;
+    div.remove();
+
+    if(node.data.hasSummary){
+      var divs = document.createElement("div");
+      divs.style.width = nodeWidth.toString() + "px";
+      divs.style.fontSize = fontsSize[1].toString() + "px";
+      divs.innerHTML = node.data.summary;
+      //var text = document.createTextNode(node.data.text);
+      //div.appendChild(text);
+      document.getElementById("testdiv").appendChild(divs);
+      console.log("height",divs.offsetHeight);
+      node.data["height"] = Math.max(node.data["height"],divs.offsetHeight + 100);
+      node.data["width"] = Math.max(node.data["width"],divs.offsetWidth + 80);
+      divs.remove();
+    }
+    if(node.data.hasTitle){
+      var divt = document.createElement("div");
+      divt.style.width = nodeWidth.toString() + "px";
+      divt.style.fontSize = fontsSize[2].toString() + "px";
+      divt.innerHTML = node.data.title;
+      //var text = document.createTextNode(node.data.text);
+      //div.appendChild(text);
+      document.getElementById("testdiv").appendChild(divt);
+      console.log("width",divt.offsetWidth);
+      node.data["height"] = Math.max(node.data["height"],divt.offsetHeight + 100);
+      node.data["width"] = Math.max(node.data["width"],divt.offsetWidth + 80);
+      divt.remove();
+    }
+  }
+}
+
+
 // create Cy instance
 var cyInstance = cytoscape({
   container: document.getElementById('cy'),
@@ -152,7 +199,7 @@ var cyInstance = cytoscape({
     name: layout_name
   },
   elements: elements,
-  //wheelSensitivity: 0.2,
+  wheelSensitivity: 0.2,
   autoungrabify: !move_nodes,
   //autounselectify: true
 });
@@ -165,7 +212,7 @@ var cyInstance = cytoscape({
  * @returns {String}
  */
 function getLabelFromText(text, index,fontSize = 20) {
-  return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + `px;">` + text + String.raw`</div>`;
+  return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width=`+ nodeWidth.toString() + String.raw`px;">` + text + String.raw`</div>`;
 }
 
 //More cytoscape style for nodes with HTML labels
@@ -273,107 +320,128 @@ if (!hasMathML) {
 //the size of the nodes can wrong
 //500ms is entierly arbitrary and there should be a better way to do this
 
-function setStyle(){
-  var resizedStyle = [
-    {
-      selector: 'edge',
-      style: {
-        'width': 4,
-        'target-arrow-shape': 'triangle',
-        'line-color': 'black',//'#2972E8',
-        'target-arrow-color': 'black',//'#2972E8',
-        'arrow-scale': 3,
-        //"curve-style": 'straight'//"unbundled-bezier",
-        "curve-style": "unbundled-bezier",
-        "control-point-distances": [40, -40],
-        "control-point-weights": [0.250, 0.75],
-        //"font-size" : 100
-        "line-fill": "linear-gradient",
-        "line-gradient-stop-colors": "black blue",
-        "line-gradient-stop-positions": "0 100"
-      }
-    }
-  ];
+var styleAlreadySet = false;
 
-  for (var i = 0; i < graph.length; i++) {
-    //console.log(ths[i])
-    if (graph[i].group == "nodes") {
-      //if(graph[i].data.html_name != ""){
-      //console.log(graph[i].data.id);
-      var elemid = '_graph_internal_' + graph[i].data.id;
-      var width1 = document.getElementById(elemid).offsetWidth + 80;//getBoundingClientRect().width;
-      var height1 = document.getElementById(elemid).offsetHeight + 100;//getBoundingClientRect().height;
-      //console.log(nodeStyles[graph[i].data.name]);
-      var nodeStyle = {
-        selector: 'node[id = "' + graph[i].data.id + '"]',
+function setStyle(){
+
+    console.log("cuurentZoom",currentZoomLevel);
+    var resizedStyle = [
+      {
+        selector: 'edge',
         style: {
-          //'background-color': '#11479e',
-          //'background-opacity': 0.5,
-          'width': width1,//document.getElementById('t1').getBoundingClientRect().width,//200,
-          'height': height1,
-          //'border-color': 'red',
-          //'border-width': 3,
-          //'border-style': 'dashed',
-          //shape: 'roundrectangle'
+          'width': 4,
+          'target-arrow-shape': 'triangle',
+          'line-color': 'black',//'#2972E8',
+          'target-arrow-color': 'black',//'#2972E8',
+          'arrow-scale': 3,
+          //"curve-style": 'straight'//"unbundled-bezier",
+          "curve-style": "unbundled-bezier",
+          "control-point-distances": [40, -40],
+          "control-point-weights": [0.250, 0.75],
+          //"font-size" : 100
+          "line-fill": "linear-gradient",
+          "line-gradient-stop-colors": "black blue",
+          "line-gradient-stop-positions": "0 100"
         }
-      };
-      Object.assign(nodeStyle.style, nodeStyles[graph[i].data.name].nodeStyle);
-      nodeStyle.style.width = width1;
-      nodeStyle.style.height = height1;
-      resizedStyle.push(nodeStyle);
-      var nodeStyleH = {
-        selector: 'node[id = "' + graph[i].data.id + '"].highlight',
-        style: {
-          //'background-color': '#11479e',
-          //'background-opacity': 0.5,
-          'width': width1,//document.getElementById('t1').getBoundingClientRect().width,//200,
-          'height': height1,
-          //'border-color': 'red',
-          //'border-width': 8,
-          //'border-style': 'dashed',
-          //shape: 'roundrectangle'
+      }
+    ];
+
+    for (var i = 0; i < graph.length; i++) {
+      //console.log(ths[i])
+      if (graph[i].group == "nodes") {
+        //if(graph[i].data.html_name != ""){
+        //console.log(graph[i].data.id);
+        var elemid = '_graph_internal_' + graph[i].data.id;
+        var width1 = document.getElementById(elemid).offsetWidth + 80;//getBoundingClientRect().width;
+        var height1 = document.getElementById(elemid).offsetHeight + 100;//getBoundingClientRect().height;
+        console.log("width1",width1);
+        console.log("height1",height1);
+        /*if(!graph[i].data.hasOwnProperty("width")){
+          graph[i].data["width"] = width1;
+          graph[i].data["height"] = height1;
         }
-      };
-      Object.assign(nodeStyleH.style, nodeStyles[graph[i].data.name].nodeStyle);
-      nodeStyleH.style.width = width1;
-      nodeStyleH.style.height = height1;
-      nodeStyleH.style['border-color'] = 'red';
-      nodeStyleH.style['border-width'] = 10;
-      resizedStyle.push(nodeStyleH);
+        graph[i].data["width"] = Math.max(graph[i].data["width"],width1);
+        graph[i].data["height"] = Math.max(graph[i].data["height"],height1);
+        if(i==0){
+          console.log("width",width1,graph[i].data["width"]);
+        }*/
+        //console.log(nodeStyles[graph[i].data.name]);
+        var nodeStyle = {
+          selector: 'node[id = "' + graph[i].data.id + '"]',
+          style: {
+            //'background-color': '#11479e',
+            //'background-opacity': 0.5,
+            'width': graph[i].data["width"],//document.getElementById('t1').getBoundingClientRect().width,//200,
+            'height': graph[i].data["height"],
+            //'border-color': 'red',
+            //'border-width': 3,
+            //'border-style': 'dashed',
+            //shape: 'roundrectangle'
+          }
+        };
+        Object.assign(nodeStyle.style, nodeStyles[graph[i].data.name].nodeStyle);
+        nodeStyle.style.width = graph[i].data["width"];
+        nodeStyle.style.height = graph[i].data["height"];
+        resizedStyle.push(nodeStyle);
+        var nodeStyleH = {
+          selector: 'node[id = "' + graph[i].data.id + '"].highlight',
+          style: {
+            //'background-color': '#11479e',
+            //'background-opacity': 0.5,
+            'width': graph[i].data["width"],//document.getElementById('t1').getBoundingClientRect().width,//200,
+            'height': graph[i].data["height"],
+            //'border-color': 'red',
+            //'border-width': 8,
+            //'border-style': 'dashed',
+            //shape: 'roundrectangle'
+          }
+        };
+        Object.assign(nodeStyleH.style, nodeStyles[graph[i].data.name].nodeStyle);
+        nodeStyleH.style.width = graph[i].data["width"];
+        nodeStyleH.style.height = graph[i].data["height"];
+        nodeStyleH.style['border-color'] = 'red';
+        nodeStyleH.style['border-width'] = 10;
+        resizedStyle.push(nodeStyleH);
+      }
+      else {
+        /*var nodeStyle = {
+          selector: 'node[id = "' + graph[i].data.id + '"]',
+          style: {
+          }
+        };
+        console.log("prout");
+        console.log(graph[i].data);
+        Object.assign(nodeStyle.style, nodeStyles[graph[i].data.name].nodeStyle);
+        nodeStyle.style.width = width1;
+        nodeStyle.style.height = height1;
+        resizedStyle.push(nodeStyle);
+        var nodeStyleH = {
+          selector: 'node[id = "' + graph[i].data.id + '"].highlight',
+          style: {
+          }
+        };
+        Object.assign(nodeStyleH.style, nodeStyles[graph[i].data.name].nodeStyle);
+        nodeStyleH.style.width = width1;
+        nodeStyleH.style.height = height1;
+        nodeStyleH.style['border-color'] = 'red';
+        resizedStyle.push(nodeStyleH);*/
+      }
+      //}
     }
-    else {
-      /*var nodeStyle = {
-        selector: 'node[id = "' + graph[i].data.id + '"]',
-        style: {
-        }
-      };
-      console.log("prout");
-      console.log(graph[i].data);
-      Object.assign(nodeStyle.style, nodeStyles[graph[i].data.name].nodeStyle);
-      nodeStyle.style.width = width1;
-      nodeStyle.style.height = height1;
-      resizedStyle.push(nodeStyle);
-      var nodeStyleH = {
-        selector: 'node[id = "' + graph[i].data.id + '"].highlight',
-        style: {
-        }
-      };
-      Object.assign(nodeStyleH.style, nodeStyles[graph[i].data.name].nodeStyle);
-      nodeStyleH.style.width = width1;
-      nodeStyleH.style.height = height1;
-      nodeStyleH.style['border-color'] = 'red';
-      resizedStyle.push(nodeStyleH);*/
-    }
-    //}
-  }
-  cyInstance.style().fromJson(resizedStyle).update();
-  cyInstance.layout(
-    {
-      name: layout_name
-    }).run();
+    cyInstance.style().fromJson(resizedStyle).update();
+    cyInstance.layout(
+      {
+        name: layout_name
+      }).run();
+  
+  currentZoomLevel = 0;
+  styleAlreadySet = true;
 }
 
+
 setTimeout(setStyle, 500);
+
+
 
 
 
@@ -492,39 +560,40 @@ cyInstance.on('click', 'node', function(evt){
 });
 
 cyInstance.on('zoom', function(evt){
-
-  var zoomLevelChanged = false;
-  if(currentZoomLevel == 0){
-    if(cyInstance.zoom() < zoomLevelsChanges[0]){
-      currentZoomLevel = 1;
-      zoomLevelChanged = true;
+  if(styleAlreadySet){
+    var zoomLevelChanged = false;
+    if(currentZoomLevel == 0){
+      if(cyInstance.zoom() < zoomLevelsChanges[0]){
+        currentZoomLevel = 1;
+        zoomLevelChanged = true;
+      }
     }
-  }
-  if(currentZoomLevel == 2){
-    if(cyInstance.zoom() > zoomLevelsChanges[1]){
-      currentZoomLevel = 1;
-      zoomLevelChanged = true;
+    if(currentZoomLevel == 2){
+      if(cyInstance.zoom() > zoomLevelsChanges[1]){
+        currentZoomLevel = 1;
+        zoomLevelChanged = true;
+      }
     }
-  }
-  if(currentZoomLevel == 1){
-    if(cyInstance.zoom() > zoomLevelsChanges[0]){
-      currentZoomLevel = 0;
-      zoomLevelChanged = true;
+    if(currentZoomLevel == 1){
+      if(cyInstance.zoom() > zoomLevelsChanges[0]){
+        currentZoomLevel = 0;
+        zoomLevelChanged = true;
+      }
+      if(cyInstance.zoom() < zoomLevelsChanges[1]){
+        currentZoomLevel = 2;
+        zoomLevelChanged = true;
+      }
     }
-    if(cyInstance.zoom() < zoomLevelsChanges[1]){
-      currentZoomLevel = 2;
-      zoomLevelChanged = true;
+    //console.log( cyInstance.zoom());
+    nodes = cyInstance.nodes();
+    if(zoomLevelChanged == true){
+      console.log("zoomLevel",currentZoomLevel,cyInstance.zoom(),styleAlreadySet)
+      for (var i = 0; i < nodes.length; i++) {
+        nodes[i].addClass('.highlight');
+        nodes[i].removeClass('.highlight');
+      }
+      //setStyle();
     }
-  }
-  //console.log( cyInstance.zoom());
-  nodes = cyInstance.nodes();
-  if(zoomLevelChanged == true){
-    console.log("zoomLevel",currentZoomLevel,cyInstance.zoom())
-    for (var i = 0; i < nodes.length; i++) {
-      nodes[i].addClass('.highlight');
-      nodes[i].removeClass('.highlight');
-    }
-    //setStyle();
   }
   //setStyle();
   //console.log(nodes);
