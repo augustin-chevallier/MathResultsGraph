@@ -309,8 +309,8 @@ def find_parentesis(s):
 def getTitle(htmlText):
     p = find_parentesis(htmlText)
     print(p)
-    print(htmlText[p[0]:(p[1]+1)])
-    return htmlText[p[0]:(p[1]+1)]
+    print(htmlText[(p[0]+1):(p[1])])
+    return htmlText[(p[0]+1):(p[1])]
     #title = htmlText[parentesis]
 
 def texToHtml(full_text,partition,nodeL):
