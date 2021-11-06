@@ -195,17 +195,22 @@ for (var i = 0; i < graph.length; i++) {
       div.remove();
       break;
     default:
-      var div = document.createElement("div");
-      div.style.width = nodeWidth.toString() + "px";
-      div.style.fontSize = fontsSize[0].toString() + "px";
-      div.innerHTML = node.data.text;
-      //var text = document.createTextNode(node.data.text);
-      //div.appendChild(text);
-      document.getElementById("testdiv").appendChild(div);
-      //console.log("height",div.offsetHeight);
-      node.data["height"] = div.scrollHeight + 100;
-      node.data["width"] = div.scrollWidth + 80;
-      div.remove();
+      node.data["height"] = 0;
+      node.data["width"] = 0;
+      console.log(node.data.id,node.data.hasSummary,node.data.hasTitle,((!node.data.hasSummary) && (!node.data.hasTitle)))
+      if((display_main_text) || ((!node.data.hasSummary) || (!node.data.hasTitle))){
+        var div = document.createElement("div");
+        div.style.width = nodeWidth.toString() + "px";
+        div.style.fontSize = fontsSize[0].toString() + "px";
+        div.innerHTML = node.data.text;
+        //var text = document.createTextNode(node.data.text);
+        //div.appendChild(text);
+        document.getElementById("testdiv").appendChild(div);
+        //console.log("height",div.offsetHeight);
+        node.data["height"] = div.scrollHeight + 100;
+        node.data["width"] = div.scrollWidth + 80;
+        div.remove();
+      }
 
       if(node.data.hasSummary){
         var divs = document.createElement("div");
@@ -298,12 +303,17 @@ cyInstance.nodeHtmlLabel([{
       //console.log(getLabelFromText(data.text, data.id,20));
     //return getLabelFromText(data.text, data.id,20);
     
-    if(display_summary && data.hasOwnProperty("summary")){
-      return getLabelFromText(data.summary, data.id,fontsSize[1]);
+    if(!display_main_text && data.hasSummary){
+      //if(data.hasSummary)
+        return getLabelFromText(data.summary, data.id,fontsSize[1]);
     }
-    else{
-      return getLabelFromText(data.text, data.id,fontsSize[0]);
+    
+    if(!display_main_text && data.hasTitle){
+      return getLabelFromText(data.title, data.id,fontsSize[2],true);
     }
+
+    return getLabelFromText(data.text, data.id,fontsSize[0]);
+    
   }
 },
 {
