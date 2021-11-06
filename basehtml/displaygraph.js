@@ -33,6 +33,19 @@ var nodeStyles = {
       shape: 'roundrectangle'
     }
   },
+  'assumption': {
+    nodeType: 'assumption',
+    nodeStyle: {
+      'background-color': '#9900ff',
+      'background-opacity': 0.2,
+      'width': 200,
+      'height': 20,
+      'border-color': '#9900ff',
+      'border-style': 'solid',
+      'border-width': 8,
+      shape: 'roundrectangle'
+    }
+  },
   'proposition': {
     nodeType: 'proposition',
     nodeStyle: {
@@ -162,8 +175,8 @@ for (var i = 0; i < graph.length; i++) {
       //div.appendChild(text);
       document.getElementById("testdiv").appendChild(div);
       console.log("height",div.offsetHeight,div.getBoundingClientRect().height);
-      node.data["height"] = div.offsetHeight + 100;
-      node.data["width"] = div.offsetWidth + 350;
+      node.data["height"] = div.scrollHeight + 100;
+      node.data["width"] = div.scrollWidth + 350;
       console.log(node.data["height"])
       div.remove();
       break;
@@ -177,8 +190,8 @@ for (var i = 0; i < graph.length; i++) {
       //div.appendChild(text);
       document.getElementById("testdiv").appendChild(div);
       console.log("height",div.offsetHeight);
-      node.data["height"] = div.offsetHeight + 100;
-      node.data["width"] = div.offsetWidth + 80;
+      node.data["height"] = div.scrollHeight + 100;
+      node.data["width"] = div.scrollWidth + 80;
       div.remove();
       break;
     default:
@@ -190,21 +203,22 @@ for (var i = 0; i < graph.length; i++) {
       //div.appendChild(text);
       document.getElementById("testdiv").appendChild(div);
       //console.log("height",div.offsetHeight);
-      node.data["height"] = div.offsetHeight + 100;
-      node.data["width"] = div.offsetWidth + 80;
+      node.data["height"] = div.scrollHeight + 100;
+      node.data["width"] = div.scrollWidth + 80;
       div.remove();
 
       if(node.data.hasSummary){
         var divs = document.createElement("div");
         divs.style.width = nodeWidth.toString() + "px";
         divs.style.fontSize = fontsSize[1].toString() + "px";
+        divs.style.border = "2px solid black";
         divs.innerHTML = node.data.summary;
         //var text = document.createTextNode(node.data.text);
         //div.appendChild(text);
         document.getElementById("testdiv").appendChild(divs);
-        //console.log("height",divs.offsetHeight);
-        node.data["height"] = Math.max(node.data["height"],divs.offsetHeight + 100);
-        node.data["width"] = Math.max(node.data["width"],divs.offsetWidth + 80);
+        //console.log("marginleft",divs.currentStyle.marginLeft);
+        node.data["height"] = Math.max(node.data["height"],divs.scrollHeight + 100);
+        node.data["width"] = Math.max(node.data["width"],divs.scrollWidth+80);
         divs.remove();
       }
       if(node.data.hasTitle){
@@ -216,8 +230,8 @@ for (var i = 0; i < graph.length; i++) {
         //div.appendChild(text);
         document.getElementById("testdiv").appendChild(divt);
         //console.log("width",divt.offsetWidth);
-        node.data["height"] = Math.max(node.data["height"],divt.offsetHeight + 100);
-        node.data["width"] = Math.max(node.data["width"],divt.offsetWidth + 80);
+        node.data["height"] = Math.max(node.data["height"],divt.scrollHeight + 100);
+        node.data["width"] = Math.max(node.data["width"],divt.scrollWidth + 80);
         divt.remove();
       }
     }
