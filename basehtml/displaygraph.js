@@ -268,7 +268,7 @@ function getLabelFromText(text, index,fontSize = 20,bold=false) {
     return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width:`+ nodeWidth.toString() + String.raw`px;"><b>` + text + String.raw`</b></div>`;
   }
   else{
-    return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width:`+ nodeWidth.toString() + String.raw`px;>` + text + String.raw`</div>`;
+    return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width:`+ nodeWidth.toString() + String.raw`px;">` + text + String.raw`</div>`;
   }
 }
 
