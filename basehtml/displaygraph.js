@@ -265,10 +265,10 @@ var cyInstance = cytoscape({
  */
 function getLabelFromText(text, index,fontSize = 20,bold=false) {
   if(bold){
-    return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width=`+ nodeWidth.toString() + String.raw`px;"><b>` + text + String.raw`</b></div>`;
+    return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width:`+ nodeWidth.toString() + String.raw`px;"><b>` + text + String.raw`</b></div>`;
   }
   else{
-    return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width=`+ nodeWidth.toString() + String.raw`px;">` + text + String.raw`</div>`;
+    return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width:`+ nodeWidth.toString() + String.raw`px;>` + text + String.raw`</div>`;
   }
 }
 
@@ -276,9 +276,9 @@ function getLabelFromText(text, index,fontSize = 20,bold=false) {
 cyInstance.nodeHtmlLabel([{
   query: '.l0',
   valign: "center",
-  halign: "center",
+  halign: "left",
   valignBox: "center",
-  halignBox: "center",
+  halignBox: "right",
   tpl: function (data) {
 
 
@@ -434,7 +434,7 @@ function setStyle(){
         if(i==0){
           console.log("width",width1,graph[i].data["width"]);
         }*/
-        //console.log(nodeStyles[graph[i].data.name]);
+        console.log(graph[i].data.id,document.getElementById(elemid).style);
         var nodeStyle = {
           selector: 'node[id = "' + graph[i].data.id + '"]',
           style: {
