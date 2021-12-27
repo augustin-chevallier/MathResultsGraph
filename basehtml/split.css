@@ -4,8 +4,9 @@ body {
 }
 
 .topnav {
-  overflow: hidden;
+  /*overflow: hidden;*/
   background-color: #333;
+  z-index: 100;
 }
 
 .topnav a {

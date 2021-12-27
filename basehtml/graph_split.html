@@ -12,10 +12,46 @@
     nodeHtmlLabel(cytoscape); // register extension
   </script>
   <script>
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function demo() {
+      console.log("^prout")
+        while(typeof computeNodeSizes !== "function") {
+            await sleep(1000);
+        }
+        computeNodeSizes(true);
+    }
+
+
     MathJax = {
       //loader: {
       //load: ['output/svg']
       //},
+      startup: {
+        pageReady: () => {
+          console.log('MathJax is loaded, but not yet initialized');
+          MathJax.typeset();
+          //MathJax.startup.defaultReady();
+          demo().then(setStyle);
+          //setStyle();
+          mathJaxLoaded = true;
+          console.log('MathJax is initialized, and the initial typeset is queued');
+          var istypesetting = false;
+          window.setInterval(function () {
+            if (istypesetting == false) {
+              istypesetting == true;
+              MathJax.typesetClear();
+              MathJax.typeset();
+              istypesetting == false;
+            }
+            else {
+              console.log("no typesetting")
+            }
+          }, 2000);
+        }
+      },
       tex: {
         inlineMath: [['$', '$'], ['\\(', '\\)']]
       }
@@ -51,7 +87,7 @@
       scriptTag.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
 
       document.getElementsByTagName("head")[0].appendChild(scriptTag);
-      mathJaxLoaded = true;
+      //mathJaxLoaded = true;
     }
   </script>
 
