@@ -396,9 +396,9 @@ function setStyle(){
     console.log("cuurentZoom",currentZoomLevel);
     var resizedStyle = [
       {
-        selector: 'edge',
+        selector: 'edge[type="strong"]',
         style: {
-          'width': 4,
+          'width': 6,
           'target-arrow-shape': 'triangle',
           'line-color': 'black',//'#2972E8',
           'target-arrow-color': 'black',//'#2972E8',
@@ -410,6 +410,25 @@ function setStyle(){
           //"font-size" : 100
           "line-fill": "linear-gradient",
           "line-gradient-stop-colors": "black blue",
+          "line-gradient-stop-positions": "0 100"
+        }
+      },
+      {
+        selector: 'edge[type="weak"]',
+        style: {
+          'width': 2,
+          'target-arrow-shape': 'triangle',
+          'line-color': 'red',//'#2972E8',
+          'target-arrow-color': 'black',//'#2972E8',
+          'arrow-scale': 3,
+          //"curve-style": 'straight'//"unbundled-bezier",
+          "curve-style": "unbundled-bezier",
+          "control-point-distances": [40, -40],
+          "control-point-weights": [0.250, 0.75],
+          //"font-size" : 100
+          "line-fill": "linear-gradient",
+          "line-gradient-stop-colors": "black blue",
+          'line-style': 'dashed',
           "line-gradient-stop-positions": "0 100"
         }
       }

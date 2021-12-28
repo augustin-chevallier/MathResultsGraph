@@ -98,6 +98,9 @@ def findNodeInfo(text,index,nextNode):
     depends = findProp(text,index,nextNode,"\\depends").split(",")
     if depends == [""]:
         depends = []
+    weakdepends = findProp(text,index,nextNode,"\\weakdepends").split(",")
+    if weakdepends == [""]:
+        weakdepends = []        
     rank = findProp(text,index,nextNode,"\\rank")
 
     summary = findProp(text,index,nextNode,"\\summary")
@@ -107,7 +110,7 @@ def findNodeInfo(text,index,nextNode):
 
     if rank == "":
         rank = "0"
-    return {"label": label,"depends": depends,"rank": rank, "summary": summary, "mainText": mainText, "hasSummary": hasSummary}
+    return {"label": label,"depends": depends,"weakdepends": weakdepends, "rank": rank, "summary": summary, "mainText": mainText, "hasSummary": hasSummary}
 
 def findPartitions(text,partitionName,parentLabel):
     """
@@ -390,9 +393,20 @@ def toCytoscapeGraph(fullNodeList):
                 source = getNode(label,fullNodeList)
                 if source is None:
                     print("Wrong label \"", label,"\"  in depends for node: ", node["label"])
-                data = {"id": node["label"] + source["label"], "source": source["label"], "target": node["label"]}
-                cyEdge = {"data": data}
-                cyEdges.append(cyEdge)
+                else:
+                    data = {"id": node["label"] + source["label"], "source": source["label"], "target": node["label"], "type":"strong"}
+                    cyEdge = {"data": data}
+                    cyEdges.append(cyEdge)
+
+        if node["weakdepends"] != []:
+            for label in node["weakdepends"]:
+                source = getNode(label,fullNodeList)
+                if source is None:
+                    print("Wrong label \"", label,"\"  in depends for node: ", node["label"])
+                else:
+                    data = {"id": node["label"] + source["label"], "source": source["label"], "target": node["label"], "type":"weak"}
+                    cyEdge = {"data": data}
+                    cyEdges.append(cyEdge)
                 
         if "\\" + node["type"] not in partitionNames:
             data = {"id": node["label"], "name": node["type"], "text": node["html"], 
