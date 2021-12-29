@@ -245,7 +245,7 @@ class MainWindow(QMainWindow):
             print("found existing graph, importing positions")
             oldGraph = self.buildFolder + "/graph_with_pos.txt"
 
-        gg.getCyGraph(self.tex,self.buildFolder + "/" + "graph_with_pos.txt",oldGraph,self.buildFolder + "/" + "graph_with_pos.txt")
+        gg.getCyGraph(self.tex,oldGraph,self.buildFolder + "/" + "graph_with_pos.txt")
         destination = copytree("basehtml/", self.buildFolder) 
         self.getDisplayOptions()
         strJS = self.generateJSConfig()
