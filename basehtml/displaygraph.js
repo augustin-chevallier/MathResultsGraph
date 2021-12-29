@@ -611,7 +611,7 @@ cyInstance.on('mouseover', 'node', function (e) {
   var ancestors = getAncestors(sel, []);
   //console.log(ancestors);
   for (var i = 0; i < ancestors.length; i++) {
-    ancestors[i].addClass('highlight');
+    //ancestors[i].addClass('highlight');
   }
   if (!move_nodes) e.target.panify();
 });
@@ -620,15 +620,21 @@ cyInstance.on('mouseout', 'node', function (e) {
   var ancestors = getAncestors(sel, []);
   //console.log(ancestors);
   for (var i = 0; i < ancestors.length; i++) {
-    ancestors[i].removeClass('highlight');
+    //ancestors[i].removeClass('highlight');
   }
 });
 
 //=============================================================================================================
 //=============================================================================================================
 
+var highlighted_nodes = [];
 
 cyInstance.on('click', 'node', function(evt){
+
+  //for (var i = 0; i < ancestors.length; i++) {
+  //  ancestors[i].removeClass('highlight');
+  //}
+
   //console.log( 'clicked ' + this.id() );
   //console.log(evt.target.parents().data())
   node = getCyNode(evt.target.id());
@@ -645,6 +651,16 @@ cyInstance.on('click', 'node', function(evt){
   }
   document.getElementById("AncestorsNodes").innerHTML = ancestorsText;
 
+
+  for (var i = 0; i < highlighted_nodes.length; i++) {
+    highlighted_nodes[i].removeClass('highlight');
+  }
+
+  var sel = evt.target;
+  highlighted_nodes = getAncestors(sel, []);
+  for (var i = 0; i < highlighted_nodes.length; i++) {
+    highlighted_nodes[i].addClass('highlight');
+  }
 });
 
 cyInstance.on('zoom', function(evt){

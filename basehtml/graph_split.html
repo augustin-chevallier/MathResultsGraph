@@ -16,8 +16,7 @@
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function demo() {
-      console.log("^prout")
+    async function asyncComputeNodeSizes() {
         while(typeof computeNodeSizes !== "function") {
             await sleep(1000);
         }
@@ -34,7 +33,7 @@
           console.log('MathJax is loaded, but not yet initialized');
           MathJax.typeset();
           //MathJax.startup.defaultReady();
-          demo().then(setStyle);
+          asyncComputeNodeSizes().then(setStyle);
           //setStyle();
           mathJaxLoaded = true;
           console.log('MathJax is initialized, and the initial typeset is queued');
@@ -117,7 +116,6 @@
 
   <script type="text/javascript" src="graph_with_pos.txt"></script>
   <script type="text/javascript" src="config.js"></script>
-  <script>var layout_name = 'preset';</script>
   <script src = displaygraph.js></script>
 
 
