@@ -196,7 +196,7 @@ class MainWindow(QMainWindow):
                 self.fixedNodes = not context.move_nodes
                 self.nodeWidth = context.nodeWidth
                 self.zoomChanges1 =  context.zoomLevelsChanges[0]
-                self.zoomChanges1 =  context.zoomLevelsChanges[1]
+                self.zoomChanges2 =  context.zoomLevelsChanges[1]
                 self.textSize = context.fontsSize[0]
                 self.summarySize = context.fontsSize[1]
                 self.titleSize = context.fontsSize[2]
