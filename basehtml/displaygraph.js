@@ -470,6 +470,9 @@ function setStyle(){
         Object.assign(nodeStyle.style, nodeStyles[graph[i].data.name].nodeStyle);
         nodeStyle.style.width = graph[i].data["width"];
         nodeStyle.style.height = graph[i].data["height"];
+        nodeStyle.style['background-opacity'] = nodeStyle.style['background-opacity'] /4;        
+        nodeStyle.style['border-width'] = nodeStyle.style['border-width']/4;
+        nodeStyle.style['border-style'] = 'dashed';
         resizedStyle.push(nodeStyle);
         var nodeStyleH = {
           selector: 'node[id = "' + graph[i].data.id + '"].highlight',
@@ -487,8 +490,8 @@ function setStyle(){
         Object.assign(nodeStyleH.style, nodeStyles[graph[i].data.name].nodeStyle);
         nodeStyleH.style.width = graph[i].data["width"];
         nodeStyleH.style.height = graph[i].data["height"];
-        nodeStyleH.style['border-color'] = 'red';
-        nodeStyleH.style['border-width'] = 10;
+        //nodeStyleH.style['border-color'] = 'red';
+        //nodeStyleH.style['border-width'] = 10;
         resizedStyle.push(nodeStyleH);
       }
       else {
@@ -628,6 +631,7 @@ cyInstance.on('mouseout', 'node', function (e) {
 //=============================================================================================================
 
 var highlighted_nodes = [];
+var selectedNode = null;
 
 cyInstance.on('click', 'node', function(evt){
 
@@ -638,8 +642,28 @@ cyInstance.on('click', 'node', function(evt){
   //console.log( 'clicked ' + this.id() );
   //console.log(evt.target.parents().data())
   node = getCyNode(evt.target.id());
-  //console.log(node.data());
-  //window.location="#" + this.id();
+
+
+  //Highlighting
+  for (var i = 0; i < highlighted_nodes.length; i++) {
+    highlighted_nodes[i].removeClass('highlight');
+  }
+
+  if(node == selectedNode){
+    selectedNode = null;
+    highlighted_nodes = [];
+  }
+  else{
+    var sel = evt.target;
+    highlighted_nodes = getAncestors(sel, []);
+    selectedNode = node;
+  }
+
+  for (var i = 0; i < highlighted_nodes.length; i++) {
+    highlighted_nodes[i].addClass('highlight');
+  }
+
+  //displaying text on the right
   document.getElementById("MainNode").innerHTML =  String.raw`<hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(9, 84, 132);border:none;border-top: solid 2px;" />` + node.data().text
 
   var ancestors = node.incomers();
@@ -651,16 +675,6 @@ cyInstance.on('click', 'node', function(evt){
   }
   document.getElementById("AncestorsNodes").innerHTML = ancestorsText;
 
-
-  for (var i = 0; i < highlighted_nodes.length; i++) {
-    highlighted_nodes[i].removeClass('highlight');
-  }
-
-  var sel = evt.target;
-  highlighted_nodes = getAncestors(sel, []);
-  for (var i = 0; i < highlighted_nodes.length; i++) {
-    highlighted_nodes[i].addClass('highlight');
-  }
 });
 
 cyInstance.on('zoom', function(evt){
