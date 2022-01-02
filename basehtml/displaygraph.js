@@ -642,7 +642,7 @@ cyInstance.on('click', 'node', function(evt){
   //console.log( 'clicked ' + this.id() );
   //console.log(evt.target.parents().data())
   node = getCyNode(evt.target.id());
-
+  var sel = evt.target;
 
   //Highlighting
   for (var i = 0; i < highlighted_nodes.length; i++) {
@@ -654,7 +654,6 @@ cyInstance.on('click', 'node', function(evt){
     highlighted_nodes = [];
   }
   else{
-    var sel = evt.target;
     highlighted_nodes = getAncestors(sel, []);
     selectedNode = node;
   }
