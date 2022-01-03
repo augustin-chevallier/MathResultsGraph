@@ -414,6 +414,24 @@ function setStyle(){
         }
       },
       {
+        selector: 'edge[type="strong"].highlight',
+        style: {
+          'width': 6,
+          'target-arrow-shape': 'triangle',
+          'line-color': 'black',//'#2972E8',
+          'target-arrow-color': 'black',//'#2972E8',
+          'arrow-scale': 3,
+          //"curve-style": 'straight'//"unbundled-bezier",
+          "curve-style": "unbundled-bezier",
+          "control-point-distances": [40, -40],
+          "control-point-weights": [0.250, 0.75],
+          //"font-size" : 100
+          "line-fill": "linear-gradient",
+          "line-gradient-stop-colors": "red red",
+          "line-gradient-stop-positions": "0 100"
+        }
+      },
+      {
         selector: 'edge[type="weak"]',
         style: {
           'width': 2,
@@ -428,6 +446,25 @@ function setStyle(){
           //"font-size" : 100
           "line-fill": "linear-gradient",
           "line-gradient-stop-colors": "black blue",
+          'line-style': 'dashed',
+          "line-gradient-stop-positions": "0 100"
+        }
+      },
+      {
+        selector: 'edge[type="weak"].highlight',
+        style: {
+          'width': 2,
+          'target-arrow-shape': 'triangle',
+          'line-color': 'red',//'#2972E8',
+          'target-arrow-color': 'black',//'#2972E8',
+          'arrow-scale': 3,
+          //"curve-style": 'straight'//"unbundled-bezier",
+          "curve-style": "unbundled-bezier",
+          "control-point-distances": [40, -40],
+          "control-point-weights": [0.250, 0.75],
+          //"font-size" : 100
+          "line-fill": "linear-gradient",
+          "line-gradient-stop-colors": "red red",
           'line-style': 'dashed',
           "line-gradient-stop-positions": "0 100"
         }
@@ -581,60 +618,60 @@ if(document.getElementById("saveButton")){
 }
 
 
+//disable node movement if needed
+cyInstance.on('mouseover', 'node', function (e) {
+  if (!move_nodes) e.target.panify();
+});
+cyInstance.on('mouseout', 'node', function (e) {
+});
+
+
 //=============================================================================================================
 //=============================================================================================================
 //interactive ancestors
 
 /**
- * Get all the ancestors of a node
+ * Get all the ancestors of a node (only strong links)
  * @param {Node} node which we search the ancestor
  * @param {Node} currentAncestors List of all found ancestors
+ * @param {Edge} currentAncestorsEdges List of all edges found between ancestors
  * @returns 
  */
- function getAncestors(node, currentAncestors) {
-  var ancestors = node.incomers();
+ function getAncestors(node, currentAncestors,currentAncestorsEdges) {
 
-  var node_in_ancestors = false;
   for (var i = 0; i < currentAncestors.length; i++) {
-    if (currentAncestors[i] == node) node_in_ancestors = true;
+    if (currentAncestors[i] == node) return [currentAncestors,currentAncestorsEdges];
   }
-  if (!node_in_ancestors) currentAncestors.push(node);
+
+  currentAncestors.push(node);
+
+  var ancestors = node.incomers('edge[type="strong"]');
+  //currentAncestorsEdges.concat(ancestors);
+  //console.log("ii",currentAncestorsEdges);
+  //console.log("aa",ancestors)
   for (var i = 0; i < ancestors.size(); i++) {
-    var elem = ancestors[i];
+    currentAncestorsEdges.push(ancestors[i]);
+    var elem = ancestors[i].source();
     if (!currentAncestors.includes(elem)) {
-      currentAncestors.concat(getAncestors(elem, currentAncestors));
+      var val = getAncestors(elem, currentAncestors,currentAncestorsEdges);
+      //currentAncestors.concat(val[0]);
+      //currentAncestorsEdges.concat(val[1]);
     }
   }
-  return currentAncestors;
+  //console.log("i",currentAncestorsEdges);
+  return [currentAncestors,currentAncestorsEdges];
 }
 
-//change the style of the ancestors when the user hover the mouse on top of a node
-cyInstance.on('mouseover', 'node', function (e) {
-  var sel = e.target;
-  var ancestors = getAncestors(sel, []);
-  //console.log(ancestors);
-  for (var i = 0; i < ancestors.length; i++) {
-    //ancestors[i].addClass('highlight');
-  }
-  if (!move_nodes) e.target.panify();
-});
-cyInstance.on('mouseout', 'node', function (e) {
-  var sel = e.target;
-  var ancestors = getAncestors(sel, []);
-  //console.log(ancestors);
-  for (var i = 0; i < ancestors.length; i++) {
-    //ancestors[i].removeClass('highlight');
-  }
-});
-
 //=============================================================================================================
 //=============================================================================================================
 
-var highlighted_nodes = [];
+var highlighted_items = [];
 var selectedNode = null;
 
 cyInstance.on('click', 'node', function(evt){
 
+
+  //evt.target.connectedEdges().addClass('highlight');
   //for (var i = 0; i < ancestors.length; i++) {
   //  ancestors[i].removeClass('highlight');
   //}
@@ -645,22 +682,28 @@ cyInstance.on('click', 'node', function(evt){
   var sel = evt.target;
 
   //Highlighting
-  for (var i = 0; i < highlighted_nodes.length; i++) {
-    highlighted_nodes[i].removeClass('highlight');
+  for (var i = 0; i < highlighted_items.length; i++) {
+    highlighted_items[i].removeClass('highlight');
   }
 
   if(node == selectedNode){
     selectedNode = null;
-    highlighted_nodes = [];
+    highlighted_items = [];
   }
   else{
-    highlighted_nodes = getAncestors(sel, []);
+    var val = getAncestors(sel, [],[]);
+    highlighted_items = val[0].concat(val[1]); //add nodes
     selectedNode = node;
   }
 
-  for (var i = 0; i < highlighted_nodes.length; i++) {
-    highlighted_nodes[i].addClass('highlight');
+  for (var i = 0; i < highlighted_items.length; i++) {
+    highlighted_items[i].addClass('highlight');
   }
+
+  //in addition to that, we hightight any degree 1 ancestors, even with weak dependencies
+  var incomers = node.incomers();
+  highlighted_items = highlighted_items.concat(incomers);
+  incomers.addClass('highlight');
 
   //displaying text on the right
   document.getElementById("MainNode").innerHTML =  String.raw`<hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(9, 84, 132);border:none;border-top: solid 2px;" />` + node.data().text
