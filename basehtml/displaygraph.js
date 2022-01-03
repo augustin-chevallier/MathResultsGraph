@@ -659,10 +659,9 @@ var selectedNode = null;
 
 cyInstance.on('click', 'node', function(evt){
 
-
   node = getCyNode(evt.target.id());
   var sel = evt.target;
-
+  parent = node.parent();
   //Highlighting
   for (var i = 0; i < highlighted_items.length; i++) {
     highlighted_items[i].removeClass('highlight');
@@ -678,7 +677,11 @@ cyInstance.on('click', 'node', function(evt){
     //in addition to that, we hightight any degree 1 ancestors, even with weak dependencies
     var incomers = node.incomers();
     highlighted_items = highlighted_items.concat(incomers);
+    //we also add the ancestors of the section/subsection/whatever containing the node 
+    var val2 = getAncestors(parent, [],[]);
+    highlighted_items = highlighted_items.concat(val2[0].concat(val2[1]));
     selectedNode = node;
+
   }
 
   for (var i = 0; i < highlighted_items.length; i++) {
