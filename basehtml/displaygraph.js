@@ -434,6 +434,7 @@ function setStyle(){
       {
         selector: 'edge[type="weak"]',
         style: {
+          'display': 'none',
           'width': 2,
           'target-arrow-shape': 'triangle',
           'line-color': 'red',//'#2972E8',
@@ -453,6 +454,7 @@ function setStyle(){
       {
         selector: 'edge[type="weak"].highlight',
         style: {
+          'display': 'element',
           'width': 2,
           'target-arrow-shape': 'triangle',
           'line-color': 'red',//'#2972E8',
@@ -671,13 +673,6 @@ var selectedNode = null;
 cyInstance.on('click', 'node', function(evt){
 
 
-  //evt.target.connectedEdges().addClass('highlight');
-  //for (var i = 0; i < ancestors.length; i++) {
-  //  ancestors[i].removeClass('highlight');
-  //}
-
-  //console.log( 'clicked ' + this.id() );
-  //console.log(evt.target.parents().data())
   node = getCyNode(evt.target.id());
   var sel = evt.target;
 
