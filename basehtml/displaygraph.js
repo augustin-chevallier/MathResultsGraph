@@ -502,17 +502,8 @@ function setStyle(){
         var width1 = document.getElementById(elemid).offsetWidth + 80;//getBoundingClientRect().width;
         var height1 = document.getElementById(elemid).offsetHeight + 100;//getBoundingClientRect().height;
         //console.log("width1",width1);
-        console.log("height1",height1,graph[i].data.height,graph[i].data.id);
-        /*if(!graph[i].data.hasOwnProperty("width")){
-          graph[i].data["width"] = width1;
-          graph[i].data["height"] = height1;
-        }
-        graph[i].data["width"] = Math.max(graph[i].data["width"],width1);
-        graph[i].data["height"] = Math.max(graph[i].data["height"],height1);
-        if(i==0){
-          console.log("width",width1,graph[i].data["width"]);
-        }*/
-        console.log(graph[i].data.id,document.getElementById(elemid).style);
+        //console.log("height1",height1,graph[i].data.height,graph[i].data.id);
+        //console.log(graph[i].data.id,document.getElementById(elemid).style);
         var nodeStyle = {
           selector: 'node[id = "' + graph[i].data.id + '"]',
           style: {
@@ -553,30 +544,6 @@ function setStyle(){
         //nodeStyleH.style['border-width'] = 10;
         resizedStyle.push(nodeStyleH);
       }
-      else {
-        /*var nodeStyle = {
-          selector: 'node[id = "' + graph[i].data.id + '"]',
-          style: {
-          }
-        };
-        console.log("prout");
-        console.log(graph[i].data);
-        Object.assign(nodeStyle.style, nodeStyles[graph[i].data.name].nodeStyle);
-        nodeStyle.style.width = width1;
-        nodeStyle.style.height = height1;
-        resizedStyle.push(nodeStyle);
-        var nodeStyleH = {
-          selector: 'node[id = "' + graph[i].data.id + '"].highlight',
-          style: {
-          }
-        };
-        Object.assign(nodeStyleH.style, nodeStyles[graph[i].data.name].nodeStyle);
-        nodeStyleH.style.width = width1;
-        nodeStyleH.style.height = height1;
-        nodeStyleH.style['border-color'] = 'red';
-        resizedStyle.push(nodeStyleH);*/
-      }
-      //}
     }
     cyInstance.style().fromJson(resizedStyle).update();
     cyInstance.layout(
@@ -708,6 +675,9 @@ cyInstance.on('click', 'node', function(evt){
   else{
     var val = getAncestors(sel, [],[]);
     highlighted_items = val[0].concat(val[1]); //add nodes
+    //in addition to that, we hightight any degree 1 ancestors, even with weak dependencies
+    var incomers = node.incomers();
+    highlighted_items = highlighted_items.concat(incomers);
     selectedNode = node;
   }
 
@@ -715,10 +685,6 @@ cyInstance.on('click', 'node', function(evt){
     highlighted_items[i].addClass('highlight');
   }
 
-  //in addition to that, we hightight any degree 1 ancestors, even with weak dependencies
-  var incomers = node.incomers();
-  highlighted_items = highlighted_items.concat(incomers);
-  incomers.addClass('highlight');
 
   //displaying text on the right
   document.getElementById("MainNode").innerHTML =  String.raw`<hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(9, 84, 132);border:none;border-top: solid 2px;" />` + node.data().text
