@@ -400,7 +400,26 @@ function setStyle(){
         style: {
           'width': 6,
           'target-arrow-shape': 'triangle',
-          'line-color': 'black',//'#2972E8',
+          'line-color': 'yellow',//'#2972E8',
+          'target-arrow-color': 'black',//'#2972E8',
+          'arrow-scale': 3,
+          //"curve-style": 'straight'//"unbundled-bezier",
+          "curve-style": "unbundled-bezier",
+          "control-point-distances": [40, -40],
+          "control-point-weights": [0.250, 0.75],
+          //"font-size" : 100
+          "line-fill": "linear-gradient",
+          "line-gradient-stop-colors": "black blue",
+          "line-gradient-stop-positions": "0 100"
+        }
+      },
+      {
+        selector: 'edge[type="strong"][visibility=0]',
+        style: {
+          'display' : 'none',
+          'width': 6,
+          'target-arrow-shape': 'triangle',
+          'line-color': 'yellow',//'#2972E8',
           'target-arrow-color': 'black',//'#2972E8',
           'arrow-scale': 3,
           //"curve-style": 'straight'//"unbundled-bezier",
@@ -416,6 +435,7 @@ function setStyle(){
       {
         selector: 'edge[type="strong"].highlight',
         style: {
+          'display' : 'element',
           'width': 6,
           'target-arrow-shape': 'triangle',
           'line-color': 'black',//'#2972E8',

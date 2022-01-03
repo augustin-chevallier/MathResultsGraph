@@ -375,6 +375,28 @@ def getNode(label,nodeList):
     
     print("Error: node not found. Label: ",label)
 
+
+def getNodeSection(node,fullNodeList):
+    print("parent",node["parentLabel"])
+    if node["parentLabel"] == "":
+        return ""
+    parent = getNode(node["parentLabel"],fullNodeList)
+    print(parent["type"],partitionNames[0],parent["type"] == partitionNames[0])
+    if parent["type"] == "section":
+        return node["parentLabel"]
+    else:
+        return getNodeSection(parent,fullNodeList)
+
+def getEdgeVisibility(source,target,fullNodeList):
+    sourceSection = getNodeSection(source,fullNodeList)
+    targetSection = getNodeSection(target,fullNodeList)
+    print("SS",sourceSection,targetSection)
+    if sourceSection == targetSection:
+        return 1
+    else:
+        return 0
+
+
 def toCytoscapeGraph(fullNodeList):
     """
     Create a graph that can be read by Cytoscape (the graph displaying library) in JSON format
@@ -391,10 +413,11 @@ def toCytoscapeGraph(fullNodeList):
         if node["depends"] != []:
             for label in node["depends"]:
                 source = getNode(label,fullNodeList)
+                visibility = getEdgeVisibility(source,node,fullNodeList)
                 if source is None:
                     print("Wrong label \"", label,"\"  in depends for node: ", node["label"])
                 else:
-                    data = {"id": node["label"] + source["label"], "source": source["label"], "target": node["label"], "type":"strong"}
+                    data = {"id": node["label"] + source["label"], "source": source["label"], "target": node["label"], "type":"strong", "visibility": visibility}
                     cyEdge = {"data": data}
                     cyEdges.append(cyEdge)
 
