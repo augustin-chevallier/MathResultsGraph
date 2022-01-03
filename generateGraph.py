@@ -211,7 +211,7 @@ def findNode(text,typeName,index,parentLabel):
     else:
         posEnd = text.find('\\end{'+ typeName + '}',posStart) 
         hasTitle = (text[posStart+typeLen] == "[")
-        print("hasTitle", hasTitle,text[posStart+typeLen])
+        #print("hasTitle", hasTitle,text[posStart+typeLen])
         content = text[posStart+typeLen:posEnd]
         info = findNodeInfo(text,posStart,posEnd)
         node = {"type": typeName,"content": content, "parentLabel": parentLabel, "hasTitle": hasTitle}
@@ -311,8 +311,8 @@ def find_parentesis(s):
 
 def getTitle(htmlText):
     p = find_parentesis(htmlText)
-    print(p)
-    print(htmlText[(p[0]+1):(p[1])])
+    #print(p)
+    #print(htmlText[(p[0]+1):(p[1])])
     return htmlText[(p[0]+1):(p[1])]
     #title = htmlText[parentesis]
 
@@ -413,10 +413,10 @@ def toCytoscapeGraph(fullNodeList):
         if node["depends"] != []:
             for label in node["depends"]:
                 source = getNode(label,fullNodeList)
-                visibility = getEdgeVisibility(source,node,fullNodeList)
                 if source is None:
                     print("Wrong label \"", label,"\"  in depends for node: ", node["label"])
                 else:
+                    visibility = getEdgeVisibility(source,node,fullNodeList)
                     data = {"id": node["label"] + source["label"], "source": source["label"], "target": node["label"], "type":"strong", "visibility": visibility}
                     cyEdge = {"data": data}
                     cyEdges.append(cyEdge)
