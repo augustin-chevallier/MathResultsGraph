@@ -94,30 +94,90 @@
     <input type="button" value="save positions" id="saveButton" >
   </div> -->
   <div id = 'testdiv'></div>
-  <div><div id='cy'></div></div>
+    <div><div id='cy'></div></div>
 
-  <div class = 'split right' id='LatexPage' >
-    <div style = "padding-left:10px">
-      <b>Selected node </b><br>
-      <div id='MainNode' , style="margin-left: 10px;margin-right: 10px;font-size: 12px;"></div>
+    
+    <div class = 'container__right' id='RightPage' >
+      <div class="resizer" id="dragMe"></div>
+      <div class="latex_page" id='LatexPage'>
+        <div style = "padding-left:10px">
+          <b>Selected node </b><br>
+          <div id='MainNode' , style="margin-left: 10px;margin-right: 10px;font-size: 12px;"></div>
 
-      <!--
-      <br><hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(10, 10, 10);border:none;border-top: solid 2px;"><br>
-      <b>Proof (if any) </b><br><br>
-      <div id='Proof' , style="margin-left: 10px;margin-right: 10px;"></div>-->
+          <!--
+          <br><hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(10, 10, 10);border:none;border-top: solid 2px;"><br>
+          <b>Proof (if any) </b><br><br>
+          <div id='Proof' , style="margin-left: 10px;margin-right: 10px;"></div>-->
 
-      <hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(10, 10, 10);border:none;border-top: solid 2px;">
-      <b>Ancestor nodes </b><br>
-      <div id='AncestorsNodes', style="margin-left: 10px;margin-right: 10px;font-size: 12px;" ></div>
-      <br>
-      <!-- <object type="text/html" data="tex.html" class="split right"></object> -->
+          <hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(10, 10, 10);border:none;border-top: solid 2px;">
+          <b>Ancestor nodes </b><br>
+          <div id='AncestorsNodes', style="margin-left: 10px;margin-right: 10px;font-size: 12px;" ></div>
+          <br>
+          <!-- <object type="text/html" data="tex.html" class="split right"></object> -->
+        </div>
+      </div>
     </div>
-  </div>
 
   <script type="text/javascript" src="graph_with_pos.txt"></script>
   <script type="text/javascript" src="config.js"></script>
   <script src = displaygraph.js></script>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Query the element
+        const resizer = document.getElementById('dragMe');
+        const latexPage = document.getElementById('RightPage');
+
+        // The current position of mouse
+        let x = 0;
+        let y = 0;
+        let latexWidth = 0;
+
+        // Handle the mousedown event
+        // that's triggered when user drags the resizer
+        const mouseDownHandler = function (e) {
+            // Get the current mouse position
+            x = e.clientX;
+            y = e.clientY;
+            latexWidth = latexPage.getBoundingClientRect().width;
+
+            // Attach the listeners to `document`
+            document.addEventListener('mousemove', mouseMoveHandler);
+            document.addEventListener('mouseup', mouseUpHandler);
+        };
+
+        const mouseMoveHandler = function (e) {
+            // How far the mouse has been moved
+            const dx = -e.clientX + x;
+            const dy = -e.clientY + y;
+
+            const newLatexWidth = ((latexWidth + dx));
+            console.log(newLatexWidth);
+            latexPage.style.width = `${newLatexWidth}px`;
+
+            resizer.style.cursor = 'col-resize';
+            document.body.style.cursor = 'col-resize';
+
+            latexPage.style.userSelect = 'none';
+            latexPage.style.pointerEvents = 'none';
+        };
+
+        const mouseUpHandler = function () {
+            resizer.style.removeProperty('cursor');
+            document.body.style.removeProperty('cursor');
+
+            latexPage.style.removeProperty('user-select');
+            latexPage.style.removeProperty('pointer-events');
+
+            // Remove the handlers of `mousemove` and `mouseup`
+            document.removeEventListener('mousemove', mouseMoveHandler);
+            document.removeEventListener('mouseup', mouseUpHandler);
+        };
+
+        // Attach the handler
+        resizer.addEventListener('mousedown', mouseDownHandler);
+    });
+</script>
 
 </body>
 
