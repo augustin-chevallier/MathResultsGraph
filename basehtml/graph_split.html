@@ -25,9 +25,6 @@
 
 
     MathJax = {
-      //loader: {
-      //load: ['output/svg']
-      //},
       startup: {
         pageReady: () => {
           console.log('MathJax is loaded, but not yet initialized');
@@ -41,8 +38,15 @@
           window.setInterval(function () {
             if (istypesetting == false) {
               istypesetting == true;
-              MathJax.typesetClear();
-              MathJax.typeset();
+              //MathJax.typesetClear();
+              console.log(divsToTypeset);
+              var divs = [];
+              for (var i = 0; i < divsToTypeset.length; i++) {
+                if(document.getElementById(divsToTypeset[i]))
+                  divs.push(document.getElementById(divsToTypeset[i]));
+              }
+              MathJax.typeset(divs);
+              divsToTypeset = [];
               istypesetting == false;
             }
             else {

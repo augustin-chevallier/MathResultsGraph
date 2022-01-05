@@ -5,18 +5,20 @@ var zoomLevels = ['test','summary','title'];
 var currentZoomLevel = 0;
 
 
+var border_width = 16;
+
 // styles of the nodes (color,alpha, type of border, etc). See cytoscape doc
 var nodeStyles = {
   'theorem': {
     nodeType: 'theorem',
     nodeStyle: {
-      'background-color': '#006474',
-      'background-opacity': 0.2,
+      'background-color': '#0097ff',
+      'background-opacity': 0.3,
       'width': 200,
       'height': 20,
-      'border-color': '#006474',
+      'border-color': '#0097ff',
       'border-style': 'solid',
-      'border-width': 8,
+      'border-width': border_width,
       shape: 'roundrectangle'
     }
   },
@@ -29,7 +31,7 @@ var nodeStyles = {
       'height': 20,
       'border-color': '#018a7a',
       'border-style': 'solid',
-      'border-width': 8,
+      'border-width': border_width,
       shape: 'roundrectangle'
     }
   },
@@ -42,7 +44,7 @@ var nodeStyles = {
       'height': 20,
       'border-color': '#9900ff',
       'border-style': 'solid',
-      'border-width': 8,
+      'border-width': border_width,
       shape: 'roundrectangle'
     }
   },
@@ -55,7 +57,7 @@ var nodeStyles = {
       'height': 20,
       'border-color': '#0093ab',
       'border-style': 'solid',
-      'border-width': 4,
+      'border-width': border_width,
       shape: 'roundrectangle'
     }
   },
@@ -68,20 +70,20 @@ var nodeStyles = {
       'height': 20,
       'border-color': '#00b9ff',
       'border-style': 'solid',
-      'border-width': 2,
+      'border-width': border_width,
       shape: 'roundrectangle'
     }
   },
   'remark': {
     nodeType: 'lemma',
     nodeStyle: {
-      'background-color': '#00b9ff',
-      'background-opacity': 0.3,
+      'background-color': '#ffe400',
+      'background-opacity': 0.2,
       'width': 200,
       'height': 20,
-      'border-color': 'black',
+      'border-color': '#ffe400',
       'border-style': 'solid',
-      'border-width': 1,
+      'border-width': border_width,
       shape: 'roundrectangle'
     }
   },
@@ -89,12 +91,12 @@ var nodeStyles = {
     nodeType: 'lemma',
     nodeStyle: {
       'background-color': '#0093ab',
-      'background-opacity': 0.3,
+      'background-opacity': 0.2,
       'width': 200,
       'height': 20,
       'border-color': 'black',
       'border-style': 'solid',
-      'border-width': 1,
+      'border-width': border_width,
       shape: 'roundrectangle'
     }
   },
@@ -102,12 +104,12 @@ var nodeStyles = {
     nodeType: 'section',
     nodeStyle: {
       'background-color': '#d8d8d8',
-      'background-opacity': 0.3,
+      'background-opacity': 0.2,
       'width': 200,
       'height': 20,
       'border-color': 'black',
       'border-style': 'solid',
-      'border-width': 5,
+      'border-width': border_width,
       shape: 'roundrectangle'
     }
   },
@@ -133,7 +135,7 @@ var nodeStyles = {
       'height': 20,
       'border-color': 'black',
       'border-style': 'dashed',
-      'border-width': 4,
+      'border-width': border_width,
       shape: 'roundrectangle'
     }
   },
@@ -264,6 +266,7 @@ var cyInstance = cytoscape({
  * @returns {String}
  */
 function getLabelFromText(text, index,fontSize = 20,bold=false) {
+  console.log("div name",'_graph_internal_' + index)
   if(bold){
     return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width:`+ nodeWidth.toString() + String.raw`px;"><b>` + text + String.raw`</b></div>`;
   }
@@ -363,7 +366,7 @@ cyInstance.nodeHtmlLabel([{
 //2 seconds.
 //This is a horrible hack, and there should be a way to do that only when a node moves, but I couldn't find how.
 //Besides, the nodes are not resized, so the typesetting should not break in the first place...
-if (!hasMathML) {
+/*if (!hasMathML) {
   console.log("mathjax", MathJax);
   var istypesetting = false;
   window.setInterval(function () {
@@ -376,8 +379,8 @@ if (!hasMathML) {
     else {
       console.log("no typesetting")
     }
-  }, 2000);
-}
+  }, 10000);
+}*/
 
 //===============================================================================================================================
 //===============================================================================================================================
@@ -398,7 +401,7 @@ function setStyle(){
       {
         selector: 'edge[type="strong"]',
         style: {
-          'width': 6,
+          'width': 2,
           'target-arrow-shape': 'triangle',
           'line-color': 'yellow',//'#2972E8',
           'target-arrow-color': 'black',//'#2972E8',
@@ -410,6 +413,8 @@ function setStyle(){
           //"font-size" : 100
           "line-fill": "linear-gradient",
           "line-gradient-stop-colors": "black blue",
+          'line-style': 'dashed',
+          'line-dash-offset': 500,
           "line-gradient-stop-positions": "0 100"
         }
       },
@@ -448,6 +453,7 @@ function setStyle(){
           //"font-size" : 100
           "line-fill": "linear-gradient",
           "line-gradient-stop-colors": "red red",
+          'line-style': 'solid',          
           "line-gradient-stop-positions": "0 100"
         }
       },
@@ -607,12 +613,22 @@ if(document.getElementById("saveButton")){
 }
 
 
+
+cyInstance.filter('node').panify();
+
+var divsToTypeset = []; //only used if mathjax is used
+
 //disable node movement if needed
 cyInstance.on('mouseover', 'node', function (e) {
-  if (!move_nodes) e.target.panify();
+  //if (!move_nodes) e.target.panify();
+  if(!hasMathML){
+    divName = '_graph_internal_' + e.target.id();
+    if(!divsToTypeset.includes(divName))
+      divsToTypeset.push(divName);
+  }
 });
-cyInstance.on('mouseout', 'node', function (e) {
-});
+/*cyInstance.on('mouseout', 'node', function (e) {
+});*/
 
 
 //=============================================================================================================
@@ -665,6 +681,11 @@ cyInstance.on('click', 'node', function(evt){
   //Highlighting
   for (var i = 0; i < highlighted_items.length; i++) {
     highlighted_items[i].removeClass('highlight');
+    if(!hasMathML){
+      divName = '_graph_internal_' + highlighted_items[i].id();
+      if(!divsToTypeset.includes(divName))
+        divsToTypeset.push(divName);
+    }
   }
 
   if(node == selectedNode){
@@ -686,6 +707,11 @@ cyInstance.on('click', 'node', function(evt){
 
   for (var i = 0; i < highlighted_items.length; i++) {
     highlighted_items[i].addClass('highlight');
+    if(!hasMathML){
+      divName = '_graph_internal_' + highlighted_items[i].id();
+      if(!divsToTypeset.includes(divName))
+        divsToTypeset.push(divName);
+    }
   }
 
 
@@ -700,6 +726,10 @@ cyInstance.on('click', 'node', function(evt){
       ancestorsText += String.raw`<hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(9, 84, 132);border:none;border-top: solid 2px;" />` + elem.data().text;
   }
   document.getElementById("AncestorsNodes").innerHTML = ancestorsText;
+
+  if(!hasMathML){
+    divsToTypeset.push("LatexPage");
+  }
 
 });
 
@@ -735,6 +765,9 @@ cyInstance.on('zoom', function(evt){
       for (var i = 0; i < nodes.length; i++) {
         nodes[i].addClass('.highlight');
         nodes[i].removeClass('.highlight');
+      }
+      if(!hasMathML){
+        divsToTypeset = ['cy'];
       }
       //setStyle();
     }
