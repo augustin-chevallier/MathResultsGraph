@@ -161,89 +161,139 @@ console.log(graph);
 var elements = graph;
 
 
-//get the heights of the nodes for each zoom level
-for (var i = 0; i < graph.length; i++) {
-  var node = graph[i];
-  if(node.group == 'nodes'){
+function computeNodeSizes(useMathJax){
+  //get the heights of the nodes for each zoom level
+  //for (var i = 0; i < graph.length; i++) {
+  console.log("computeNodeSizes",useMathJax,display_main_text,graph.m);
 
-    switch(node.data.name){
-    case "sectionTitle":
-      var div = document.createElement("div");
-      div.style.width = nodeWidth.toString() + "px";
-      div.style.fontSize = fontSizeSection["section"].toString() + "px";
-      console.log("fontsize",fontSizeSection["section"].toString(),node.data.id);
-      div.innerHTML = node.data.text;
-      //var text = document.createTextNode(node.data.text);
-      //div.appendChild(text);
-      document.getElementById("testdiv").appendChild(div);
-      console.log("height",div.offsetHeight,div.getBoundingClientRect().height);
-      node.data["height"] = div.scrollHeight + 100;
-      node.data["width"] = div.scrollWidth + 350;
-      console.log(node.data["height"])
-      div.remove();
-      break;
-    
-    case "subsectionTitle":
-      var div = document.createElement("div");
-      div.style.width = nodeWidth.toString() + "px";
-      div.style.fontSize = fontSizeSection["subsection"].toString() + "px";
-      div.innerHTML = node.data.text;
-      //var text = document.createTextNode(node.data.text);
-      //div.appendChild(text);
-      document.getElementById("testdiv").appendChild(div);
-      console.log("height",div.offsetHeight);
-      node.data["height"] = div.scrollHeight + 100;
-      node.data["width"] = div.scrollWidth + 80;
-      div.remove();
-      break;
-    default:
+  var nodeList = [];
+  var divList = [];
+
+  for(var i = 0; i < graph.length; i++){
+    var node = graph[i];
+    console.log(node);
+    if(node.group == 'nodes'){
       node.data["height"] = 0;
       node.data["width"] = 0;
-      console.log(node.data.id,node.data.hasSummary,node.data.hasTitle,((!node.data.hasSummary) && (!node.data.hasTitle)))
-      if((display_main_text) || ((!node.data.hasSummary) || (!node.data.hasTitle))){
+      switch(node.data.name){
+      case "sectionTitle":
         var div = document.createElement("div");
         div.style.width = nodeWidth.toString() + "px";
-        div.style.fontSize = fontsSize[0].toString() + "px";
+        div.style.fontSize = fontSizeSection["section"].toString() + "px";
+        console.log("fontsize",fontSizeSection["section"].toString(),node.data.id);
         div.innerHTML = node.data.text;
         //var text = document.createTextNode(node.data.text);
         //div.appendChild(text);
         document.getElementById("testdiv").appendChild(div);
-        //console.log("height",div.offsetHeight);
-        node.data["height"] = div.scrollHeight + 100;
-        node.data["width"] = div.scrollWidth + 80;
-        div.remove();
-      }
+        nodeList.push(node);
+        divList.push(div);
+        console.log("height",div.offsetHeight,div.getBoundingClientRect().height);
+        //node.data["height"] = div.scrollHeight + 100;
+        //node.data["width"] = div.scrollWidth + 350;
+        console.log(node.data["height"])
+        //div.remove();
+        break;
+      
+      case "subsectionTitle":
+        var div = document.createElement("div");
+        div.style.width = nodeWidth.toString() + "px";
+        div.style.fontSize = fontSizeSection["subsection"].toString() + "px";
+        div.innerHTML = node.data.text;
+        //var text = document.createTextNode(node.data.text);
+        //div.appendChild(text);
+        document.getElementById("testdiv").appendChild(div);
+        nodeList.push(node);
+        divList.push(div);
+        console.log("height",div.offsetHeight);
+        //node.data["height"] = div.scrollHeight + 100;
+        //node.data["width"] = div.scrollWidth + 80;
+        //div.remove();
+        break;
+      default:
+        node.data["height"] = 0;
+        node.data["width"] = 0;
+        console.log(node.data.id,node.data.hasSummary,node.data.hasTitle,((!node.data.hasSummary) && (!node.data.hasTitle)))
+        if((display_main_text) || ((!node.data.hasSummary) && (!node.data.hasTitle))){
+          var div = document.createElement("div");
+          div.style.width = nodeWidth.toString() + "px";
+          div.style.fontSize = fontsSize[0].toString() + "px";
+          div.innerHTML = node.data.text;
+          //var text = document.createTextNode(node.data.text);
+          //div.appendChild(text);
+          document.getElementById("testdiv").appendChild(div);
+          nodeList.push(node);
+          divList.push(div);
+          console.log("BUGGG",display_main_text,node.data.hasSummary,node.data.hasTitle,node.data.id);
+          //console.log("height",div.offsetHeight);
+          //node.data["height"] = div.scrollHeight + 100;
+          //node.data["width"] = div.scrollWidth + 80;
+          //div.remove();
+        }
 
-      if(node.data.hasSummary){
-        var divs = document.createElement("div");
-        divs.style.width = nodeWidth.toString() + "px";
-        divs.style.fontSize = fontsSize[1].toString() + "px";
-        divs.style.border = "2px solid black";
-        divs.innerHTML = node.data.summary;
-        //var text = document.createTextNode(node.data.text);
-        //div.appendChild(text);
-        document.getElementById("testdiv").appendChild(divs);
-        //console.log("marginleft",divs.currentStyle.marginLeft);
-        node.data["height"] = Math.max(node.data["height"],divs.scrollHeight + 100);
-        node.data["width"] = Math.max(node.data["width"],divs.scrollWidth+80);
-        divs.remove();
-      }
-      if(node.data.hasTitle){
-        var divt = document.createElement("div");
-        divt.style.width = nodeWidth.toString() + "px";
-        divt.style.fontSize = fontsSize[2].toString() + "px";
-        divt.innerHTML = node.data.title;
-        //var text = document.createTextNode(node.data.text);
-        //div.appendChild(text);
-        document.getElementById("testdiv").appendChild(divt);
-        //console.log("width",divt.offsetWidth);
-        node.data["height"] = Math.max(node.data["height"],divt.scrollHeight + 100);
-        node.data["width"] = Math.max(node.data["width"],divt.scrollWidth + 80);
-        divt.remove();
+        if(node.data.hasSummary){
+          var divs = document.createElement("div");
+          divs.style.width = nodeWidth.toString() + "px";
+          divs.style.fontSize = fontsSize[1].toString() + "px";
+          divs.style.border = "2px solid black";
+          divs.innerHTML = node.data.summary;
+          //var text = document.createTextNode(node.data.text);
+          //div.appendChild(text);
+          document.getElementById("testdiv").appendChild(divs);
+          nodeList.push(node);
+          divList.push(divs);
+          //console.log("marginleft",divs.currentStyle.marginLeft);
+          //node.data["height"] = Math.max(node.data["height"],divs.scrollHeight + 100);
+          //node.data["width"] = Math.max(node.data["width"],divs.scrollWidth+80);
+          //divs.remove();
+        }
+        if(node.data.hasTitle){
+          var divt = document.createElement("div");
+          divt.style.width = nodeWidth.toString() + "px";
+          divt.style.fontSize = fontsSize[2].toString() + "px";
+          divt.innerHTML = node.data.title;
+          //var text = document.createTextNode(node.data.text);
+          //div.appendChild(text);
+          document.getElementById("testdiv").appendChild(divt);
+          nodeList.push(node);
+          divList.push(divt);
+          //console.log("width",divt.offsetWidth);
+          //node.data["height"] = Math.max(node.data["height"],divt.scrollHeight + 100);
+          //node.data["width"] = Math.max(node.data["width"],divt.scrollWidth + 80);
+          //divt.remove();
+        }
       }
     }
   }
+
+  if(useMathJax){
+    console.log("using MATHKAX!")
+    MathJax.typeset(divList);
+  }
+
+  for(var i = 0; i < nodeList.length; i++){
+    var node = nodeList[i];
+    var div = divList[i];
+    switch(node.data.name){
+      case "sectionTitle":
+        node.data["height"] = div.scrollHeight + 100;
+        node.data["width"] = div.scrollWidth + 350;
+        console.log(node.data["height"])
+        break;
+      
+      case "subsectionTitle":
+        console.log("height",div.offsetHeight);
+        node.data["height"] = div.scrollHeight + 100;
+        node.data["width"] = div.scrollWidth + 80;
+        break;
+      default:
+        node.data["height"] = Math.max(node.data["height"],div.scrollHeight + 100);
+        node.data["width"] = Math.max(node.data["width"],div.scrollWidth+80);
+      }
+      div.remove();
+  }
 }
+
+if(hasMathML) computeNodeSizes(false);
 
 
 // create Cy instance
@@ -266,7 +316,6 @@ var cyInstance = cytoscape({
  * @returns {String}
  */
 function getLabelFromText(text, index,fontSize = 20,bold=false) {
-  console.log("div name",'_graph_internal_' + index)
   if(bold){
     return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width:`+ nodeWidth.toString() + String.raw`px;"><b>` + text + String.raw`</b></div>`;
   }
@@ -394,6 +443,13 @@ cyInstance.nodeHtmlLabel([{
 
 var styleAlreadySet = false;
 
+async function asyncSetStyle() {
+  while(typeof cyInstance == "undefined") {
+      await sleep(100);
+  }
+  setStyle();
+}
+
 function setStyle(){
 
     console.log("cuurentZoom",currentZoomLevel);
@@ -505,8 +561,6 @@ function setStyle(){
         //if(graph[i].data.html_name != ""){
         //console.log(graph[i].data.id);
         var elemid = '_graph_internal_' + graph[i].data.id;
-        var width1 = document.getElementById(elemid).offsetWidth + 80;//getBoundingClientRect().width;
-        var height1 = document.getElementById(elemid).offsetHeight + 100;//getBoundingClientRect().height;
         //console.log("width1",width1);
         //console.log("height1",height1,graph[i].data.height,graph[i].data.id);
         //console.log(graph[i].data.id,document.getElementById(elemid).style);
@@ -618,13 +672,21 @@ cyInstance.filter('node').panify();
 
 var divsToTypeset = []; //only used if mathjax is used
 
+function getDivsToTypeset(node){
+  divName = '_graph_internal_' + node.id();
+  var divList = [divName];
+  var childrens = node.children();
+  for(var i = 0; i < childrens.length; i++){
+    divList = divList.concat(getDivsToTypeset(childrens[i]));
+  }
+  return divList;
+}
+
 //disable node movement if needed
 cyInstance.on('mouseover', 'node', function (e) {
   //if (!move_nodes) e.target.panify();
   if(!hasMathML){
-    divName = '_graph_internal_' + e.target.id();
-    if(!divsToTypeset.includes(divName))
-      divsToTypeset.push(divName);
+    divsToTypeset = divsToTypeset.concat(getDivsToTypeset(e.target))
   }
 });
 /*cyInstance.on('mouseout', 'node', function (e) {
@@ -708,9 +770,7 @@ cyInstance.on('click', 'node', function(evt){
   for (var i = 0; i < highlighted_items.length; i++) {
     highlighted_items[i].addClass('highlight');
     if(!hasMathML){
-      divName = '_graph_internal_' + highlighted_items[i].id();
-      if(!divsToTypeset.includes(divName))
-        divsToTypeset.push(divName);
+      divsToTypeset = divsToTypeset.concat(getDivsToTypeset(highlighted_items[i]));
     }
   }
 
