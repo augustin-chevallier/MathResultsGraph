@@ -17,12 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'MathResultsGraph'
+project = 'Math Graph Results'
 copyright = '2022, Augustin Chevallier'
 author = 'Augustin Chevallier'
-
-# The full version, including alpha/beta/rc tags
-release = '0.2'
 
 
 # -- General configuration ---------------------------------------------------
