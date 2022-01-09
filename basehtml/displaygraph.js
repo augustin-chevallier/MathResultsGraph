@@ -732,7 +732,14 @@ cyInstance.on('mouseover', 'node', function (e) {
 //=============================================================================================================
 //=============================================================================================================
 
+cyInstance.filter('node').addClass('highlight');
+
+cyNodes = cyInstance.filter('node'); //this is not an array...
+
 var highlighted_items = [];
+for(var i =0; i < cyNodes.length;i++){
+  highlighted_items.push(cyNodes[i]);
+}
 var selectedNode = null;
 
 cyInstance.on('click', 'node', function(evt){
@@ -753,6 +760,9 @@ cyInstance.on('click', 'node', function(evt){
   if(node == selectedNode){
     selectedNode = null;
     highlighted_items = [];
+    for(var i =0; i < cyNodes.length;i++){
+      highlighted_items.push(cyNodes[i]);
+    }
   }
   else{
     var val = getAncestors(sel, [],[]);
