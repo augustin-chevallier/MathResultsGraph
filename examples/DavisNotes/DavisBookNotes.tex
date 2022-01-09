@@ -27,6 +27,7 @@
 
 \newcommand{\rank}[1]{}
 \newcommand{\depends}[1]{}
+\newcommand{\weakdepends}[1]{}
 \newcommand{\summary}[1]{}
 \newcommand{\mainText}[1]{#1}
 
@@ -88,7 +89,8 @@ For those sets, the process 'spends no time' in $A$ for any starting point in $E
 \end{definition}
 
 \begin{proposition}\label{prop:eq-class-ext-gen}
-\depends{def:ext-gen-domain,def:potential-zero-set}
+\depends{def:ext-gen-domain}
+\weakdepends{def:potential-zero-set}
 Let $f \in \mathcal{D}(\extgen)$.
 \begin{enumerate}
 	\item Let $h_1,h_2$ measurable functions from $E$ to $\mathbb{R}$ such that $C_t^{f,h_1}$ and $C_t^{f,h_2}$ are local martingales. Then the set 
