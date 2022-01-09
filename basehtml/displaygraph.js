@@ -668,7 +668,7 @@ if(document.getElementById("saveButton")){
 
 
 
-cyInstance.filter('node').panify();
+if (!move_nodes) cyInstance.filter('node').panify();
 
 var divsToTypeset = []; //only used if mathjax is used
 
