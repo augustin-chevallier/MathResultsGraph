@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\newcommand{\rank}[1]{}
+\newcommand{\depends}[1]{}
+\newcommand{\weakdepends}[1]{}
+\newcommand{\summary}[1]{}
+\newcommand{\mainText}[1]{#1}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+
+\begin{document}
+
+
+\section{Introduction}
+\label{sec:intro}
+
+\begin{definition}[definition 1]
+    \label{def:def1}
+    \summary{def1 summary}
+    \mainText{def1 mainText}
+\end{definition}
+
+\begin{theorem}[theorem 1]
+    \label{th:th1}
+    \depends{def:def1}
+    \summary{th1 summary}
+    \mainText{th1 main text}
+\end{theorem}
+
+\end{document}
