@@ -55,8 +55,9 @@ Documentation is available here: https://mathresultsgraph.readthedocs.io/en/late
 \end{document}
 ``` 
 
-resulting graph:
-![Example text](examples/graphEx.png)
+## resulting graph: 
+Interactive version: http://augustin-chevallier.fr/testgraph/graph_split.html
+Screenshot: ![Example text](examples/graphEx.png)
 
 # Installation
 Download the source code from github (click on code, download as .zip).
