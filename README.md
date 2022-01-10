@@ -7,7 +7,7 @@ This is very much a Work in Progress and feel free to contact me for any questio
 
 ## Example:
 ### Interactive version
-http://www.emmanuelchevallier.eu/graphSite/graph.html
+http://www.emmanuelchevallier.eu/graphSite/graph_split.html
 
 ### Screenshot
 ![Example text](examples/graphEx.png)
