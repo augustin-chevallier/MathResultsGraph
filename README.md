@@ -14,6 +14,50 @@ http://www.emmanuelchevallier.eu/graphSite/graph.html
 
 
 
+# Documentation
+
+Documentation is available here: https://mathresultsgraph.readthedocs.io/en/latest/#
+
+# Example annotated tex file:
+
+``` 
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\newcommand{\rank}[1]{}
+\newcommand{\depends}[1]{}
+\newcommand{\weakdepends}[1]{}
+\newcommand{\summary}[1]{}
+\newcommand{\mainText}[1]{#1}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+
+\begin{document}
+
+
+\section{Introduction}
+\label{sec:intro}
+
+\begin{definition}[definition 1]
+    \label{def:def1}
+    \summary{def1 summary}
+    \mainText{def1 mainText}
+\end{definition}
+
+\begin{theorem}[theorem 1]
+    \label{th:th1}
+    \depends{def:def1}
+    \summary{th1 summary}
+    \mainText{th1 main text}
+\end{theorem}
+
+\end{document}
+``` 
+
+resulting graph:
+![Example text](examples/graphEx.png)
+
 # Installation
 Download the source code from github (click on code, download as .zip).
 
@@ -76,6 +120,10 @@ To specify a dependency relation between two results, add
 in the child node (inside \begin{theorem/definition/...}\end{theorem/definition/...})
 
 
-# TODO for 0.2:
-*   Correct node size for Chrome* browsers
-*   By default, use selected style on nodes.
+# TODO:
+*   If pandoc is not installed, display an error message instead of crashing.
+*   Def/Prop colors are too close
+*   Make section/subsections title nodes background transparent
+*   Loading bar when building graph
+*   Display error messages when building graph
+*   Better error messages
