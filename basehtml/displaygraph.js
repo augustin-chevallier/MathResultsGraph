@@ -497,11 +497,11 @@ function setStyle(){
         selector: 'edge[type="strong"].highlight',
         style: {
           'display' : 'element',
-          'width': 6,
+          'width': 15,
           'target-arrow-shape': 'triangle',
           'line-color': 'black',//'#2972E8',
           'target-arrow-color': 'black',//'#2972E8',
-          'arrow-scale': 3,
+          'arrow-scale': 2,
           //"curve-style": 'straight'//"unbundled-bezier",
           "curve-style": "unbundled-bezier",
           "control-point-distances": [40, -40],
@@ -537,7 +537,7 @@ function setStyle(){
         selector: 'edge[type="weak"].highlight',
         style: {
           'display': 'element',
-          'width': 2,
+          'width': 8,
           'target-arrow-shape': 'triangle',
           'line-color': 'red',//'#2972E8',
           'target-arrow-color': 'black',//'#2972E8',
