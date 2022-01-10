@@ -151,7 +151,7 @@ Launch TexToResultGraph. The following screen should appear.
 Move nodes
 ----------
 
-You can now move nodes to your liking. When nodes are in a suitable position, hit the "save positions" button on the top right corner.
+You can now move nodes to your liking by dragging them. When nodes are in a suitable position, hit the "save positions" button on the top right corner.
 
 On the first start, all your nodes will be in the same place, making it hard to move them. To help you start, you can select the 
 "dagre" layout instead of the "preset" layout in the layout option. This will place nodes according to a tree structure. Note however that this 
@@ -166,4 +166,7 @@ Saved node positions will be kept.
 
 
 
+Display the graph
+#################
 
+To display the graph, simply open the graph_split.html file that was created in your build folder. Note that it works best with Firefox.
