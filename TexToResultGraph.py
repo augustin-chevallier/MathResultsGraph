@@ -227,6 +227,7 @@ class MainWindow(QMainWindow):
     def _downloadRequested(self,item): # QWebEngineDownloadItem
         print('downloading to', self.buildFolder)
         print(type(item))
+        os.remove(self.buildFolder + "/graph_with_pos.txt") 
         item.setDownloadDirectory(self.buildFolder)
         item.setDownloadFileName("graph_with_pos.txt")
         item.accept()
