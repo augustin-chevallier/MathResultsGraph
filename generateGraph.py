@@ -10,6 +10,8 @@ import random
 import string
 from packaging import version
 
+import pathlib
+
 
 
 ######################################################################################################
@@ -452,6 +454,61 @@ def toCytoscapeGraph(fullNodeList):
     return cy
 
 
+
+def find_all(a_str, sub):
+    start = 0
+    L = []
+    while True:
+        start = a_str.find(sub, start)
+        if start == -1: return L
+        L.append(start)
+        start += len(sub) # use start += 1 to find overlapping matches
+
+def loadLatexFile(texFile):
+
+    print(texFile)
+    print("folder",pathlib.Path(texFile).parent)
+    folder = pathlib.Path(texFile).parent
+
+    with open(texFile, "r",encoding='utf-8') as text_file:
+        full_text = text_file.read()
+    
+    includes_begin = find_all(full_text,"\\include{") 
+    includes_end = []
+    included_files = []
+    
+    for index in includes_begin:
+        end = full_text.find("}",index)
+        includes_end.append(end)
+        filename = full_text[index+len("\\include{"):end] + ".tex"
+        filepath = folder / filename
+        filepath = filepath.resolve()
+        included_files.append(filepath)
+
+    ###
+
+    input_begin = find_all(full_text,"\\input{") 
+    print(type(input_begin))
+    input_end = []
+    input_files = []
+    
+    for index in input_begin:
+        end = full_text.find("}",index)
+        input_end.append(end)
+        filename = full_text[index+len("\\input{"):end] + ".tex"
+        filepath = folder / filename
+        filepath = filepath.resolve()
+        input_files.append(filepath)
+
+    for i in reversed(range(len(input_files))):
+        #copy and past in reverse order
+        with open(input_files[i], "r",encoding='utf-8') as text_file:
+            text_to_include = text_file.read()
+        full_text = full_text[0:input_begin[i]] + text_to_include + full_text[input_end[i]+1:len(full_text)]
+        print(full_text)
+        
+    return full_text
+
 def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
     """
     Parse a tex file and save the associated cytoscape graph in a JSON file
@@ -466,9 +523,13 @@ def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
     --> Output :
     ------------
         None"""
-    with open(texFile, "r",encoding='utf-8') as text_file:
-        full_text = text_file.read()
+
+
+    #loadLatexFile(texFile)
+    #with open(texFile, "r",encoding='utf-8') as text_file:
+    #    full_text = text_file.read()
     
+    full_text = loadLatexFile(texFile)
     d = full_text.find("\\begin{document}") 
     text = full_text[d+16:]
     
