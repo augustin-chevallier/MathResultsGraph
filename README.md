@@ -64,8 +64,7 @@ Screenshot:
 
 # TODO:
 *   If pandoc is not installed, display an error message instead of crashing.
-*   Def/Prop colors are too close
-*   Make section/subsections title nodes background transparent
+*   Ignor includes if commented
 *   Loading bar when building graph
 *   Display error messages when building graph
 *   Better error messages

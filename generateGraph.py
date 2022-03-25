@@ -39,9 +39,12 @@ nodeTypeListDefault = ["theorem","proposition","definition","lemma","remark","co
 
 useTypeConversion = False
 if useTypeConversion:
-    nodeTypeList = ["theo","prop","defi","lemme","remarque","corollaire"]
-    nodeTypeListConversion = {"theo":"theorem","lemme":"lemma",
-                          "corollaire":"proposition","remarque":"remark","defi":"definition","prop":"proposition"}
+    nodeTypeList = ["thm","prop","defn","lem","rem","cor"]
+    nodeTypeListConversion = {"thm":"theorem","lem":"lemma",
+                          "cor":"proposition","rem":"remark","defn":"definition","prop":"proposition"}
+    #nodeTypeList = ["theo","prop","defi","lemme","remarque","corollaire"]
+    #nodeTypeListConversion = {"theo":"theorem","lemme":"lemma",
+    #                      "corollaire":"proposition","remarque":"remark","defi":"definition","prop":"proposition"}
 else:
     nodeTypeList = nodeTypeListDefault
 
@@ -260,6 +263,7 @@ def findNodesAllTypes(text,parentLabel):
     nodeList = []
     for name in nodeTypeList:
         nodeList = nodeList + findNodes(text,name,parentLabel)
+    print(nodeList)
     return nodeList
 
 
