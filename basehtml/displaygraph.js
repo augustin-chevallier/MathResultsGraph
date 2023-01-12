@@ -9,6 +9,19 @@ var border_width = 16;
 
 // styles of the nodes (color,alpha, type of border, etc). See cytoscape doc
 var nodeStyles = {
+  'exercise': {
+    nodeType: 'exercise',
+    nodeStyle: {
+      'background-color': '#0097ff',
+      'background-opacity': 0.3,
+      'width': 200,
+      'height': 20,
+      'border-color': '#0097ff',
+      'border-style': 'solid',
+      'border-width': border_width,
+      shape: 'roundrectangle'
+    }
+  },
   'theorem': {
     nodeType: 'theorem',
     nodeStyle: {

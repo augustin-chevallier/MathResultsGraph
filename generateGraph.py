@@ -35,7 +35,7 @@ os.listdir()
 ######################################################################################################
 # Define what kind of nodes we are looking for, i.e. \begin{nodeType} ... \end{nodeType}
 
-nodeTypeListDefault = ["theorem","proposition","definition","lemma","remark","corollary","assumption"]
+nodeTypeListDefault = ["theorem","proposition","definition","lemma","remark","corollary","assumption","exercise"]
 
 useTypeConversion = False
 if useTypeConversion:
