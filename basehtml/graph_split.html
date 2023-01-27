@@ -100,7 +100,34 @@
   <!--<div id = "button" class="topnav">
     <input type="button" value="save positions" id="saveButton" >
   </div> -->
+  <div id = "zoomIn" class="fixedButton">
+    <input type="button" value="zoom in" id="zoomInButton" >
+    <input type="button" value="zoom out" id="zoomOutButton" >
+  </div>
+
+  <script> 
+  if(document.getElementById("zoomInButton")){
+    function zoomIn() {
+      txt = document.getElementById('LatexPage');
+      style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
+      currentSize = parseFloat(style);
+      txt.style.fontSize = (currentSize + 2) + 'px';
+    }
+    document.getElementById("zoomInButton").onclick = zoomIn;
+  }
+  if(document.getElementById("zoomOutButton")){
+    function zoomOut() {
+      txt = document.getElementById('LatexPage');
+      style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
+      currentSize = parseFloat(style);
+      txt.style.fontSize = (currentSize - 2) + 'px';
+    }
+    document.getElementById("zoomOutButton").onclick = zoomOut;
+  }
+  </script>
+
   <div id = 'testdiv'></div>
+
   <div><div id='cy'></div></div>
 
     
@@ -124,6 +151,7 @@
         </div>
       </div>
     </div>
+    
 
   <script type="text/javascript" src="graph_with_pos.txt"></script>
   <script type="text/javascript" src="config.js"></script>
