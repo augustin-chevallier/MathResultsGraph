@@ -1,7 +1,14 @@
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtWebEngineWidgets import *
+# This must be the first statement before other statements.
+# You may only put a quoted or triple quoted string, 
+# Python comments, other future statements, or blank lines before the __future__ line.
+from __future__ import print_function
+
+
+from PyQt6.QtCore import *
+from PyQt6.QtWidgets import *
+from PyQt6.QtGui import *
+from PyQt6.QtWebEngineWidgets import *
+from PyQt6.QtWebEngineCore import *
 import os
 import shutil
 
@@ -9,6 +16,29 @@ import sys
 
 import generateGraph as gg
 import js2py
+import json
+
+#console ouput to variable
+import builtins
+messageStr = ""
+
+def print(*args, **kwargs):
+    """My custom print() function."""
+    # Adding new arguments to the print function signature 
+    # is probably a bad idea.
+    # Instead consider testing if custom argument keywords
+    # are present in kwargs
+    #builtins.print('My overridden print() function!')
+    global messageStr
+    for a in args:
+        messageStr += str(a) + " "
+    for ka in kwargs:
+        messageStr += str(ka) + " "
+    messageStr += "\n"
+
+    return builtins.print(*args, **kwargs)
+
+
 
 def copytree(src, dst, symlinks=False, ignore=None):
     for item in os.listdir(src):
@@ -24,6 +54,21 @@ class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow,self).__init__(*args, **kwargs)
 
+
+        # check for init file. If it doesn't exist, create one with empty defaults.
+        if not os.path.isfile("init.json"):
+            print("CER")
+            dic = {"texFile":"","buildFolder":""}
+            json_string = json.dumps(dic)
+            print(json_string,dic)
+            with open('init.json', 'w') as outfile:
+                json.dump(json_string, outfile)
+        with open('init.json') as json_file:
+            init_data = json.loads(json.load(json_file))
+        #print(type(init_data))
+        self.tex = init_data["texFile"]
+        self.buildFolder = init_data["buildFolder"]
+
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)#self.browser)
 
@@ -31,19 +76,23 @@ class MainWindow(QMainWindow):
         #self.hbox.setContentsMargins(0, 0, 0, 0)
 
         self.browser = QWebEngineView()
+        self.browser.settings().setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True)
+        #settings = QtWebEngineWidgets.QWebEngineSettings.defaultSettings()
+        #settings.setAttribute(QtWebEngineWidgets.QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
+        self.browser.setUrl(QUrl.fromLocalFile(self.buildFolder+"/graph_save.html"))
         self.hbox.addWidget(self.browser,5)
 
 
         #right menu
         self.rightMenu = QVBoxLayout()
-        self.rightMenu.setAlignment(Qt.AlignTop)
+        self.rightMenu.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.hbox.addLayout(self.rightMenu,1)
 
         self.loadButton = QPushButton("Open .tex file")
         self.rightMenu.addWidget(self.loadButton)
         self.loadButton.clicked.connect(self.getfile)
 
-        self.tex = ""
+        #self.tex = ""
         self.texLabel = QLabel("tex file:\n" + self.tex)
         self.rightMenu.addWidget(self.texLabel)
 
@@ -51,7 +100,7 @@ class MainWindow(QMainWindow):
         self.rightMenu.addWidget(self.loadFolderButton)
         self.loadFolderButton.clicked.connect(self.getFolder)
 
-        self.buildFolder = ""
+        #self.buildFolder = ""
         self.buildFolderLabel = QLabel("build folder:\n" + self.buildFolder)
         self.rightMenu.addWidget(self.buildFolderLabel)
 
@@ -79,6 +128,7 @@ class MainWindow(QMainWindow):
         self.layoutComboBox.addItem("layout: positions (preset)")
         self.layoutComboBox.addItem("layout: tree (dagre)")
         self.rightMenu.addWidget(self.layoutComboBox)
+
 
         #font sizes, node width, zoom levels
         self.textSize = 20
@@ -120,10 +170,24 @@ class MainWindow(QMainWindow):
 
         self.updateDisplayedOptions()
 
+
+        self.consoleLog = QTextEdit(readOnly=True)
+        self.rightMenu.addWidget(self.consoleLog)
+        #self.process = QProcess(self)
+        #self.process.setProgram("dirb")
+        #self.process.setProcessChannelMode(QProcess.ProcessChannelMode.MergedChannels)
+        #self.process.readyReadStandardOutput.connect(self.on_readyReadStandardOutput)
+        #self.process.setArguments([])
+        #self.process.readyRead.connect(self.stdoutReady)
+        #self.process.started.connect(lambda: print('Started!'))
+        #self.process.finished.connect(lambda: print('Finished!'))
+        #self.process.start('python', ['TexToResultGraph.py'])
+
         #browser
         self.browser.page().profile().downloadRequested.connect(self._downloadRequested)
 
         self.show()
+
 
     def updateVisualisation(self):
         if self.buildFolder == "":
@@ -134,7 +198,7 @@ class MainWindow(QMainWindow):
         print(strJS)
         with open(self.buildFolder+"/config.js", 'w') as f:
             f.write(strJS)
-        self.browser.setUrl(QUrl(self.buildFolder+"/graph_save.html"))
+        self.browser.setUrl(QUrl.fromLocalFile(self.buildFolder+"/graph_save.html"))
 
 
     def getfile(self):
@@ -233,6 +297,13 @@ class MainWindow(QMainWindow):
         item.accept()
 
     def buildGraph(self):
+        dic = {"texFile":self.tex,"buildFolder":self.buildFolder}
+        json_string = json.dumps(dic)
+        print(json_string,dic)
+        with open('init.json', 'w') as outfile:
+            json.dump(json_string, outfile)
+        
+        #self.browser.setUrl(QUrl("https://www.lemonde.fr"))
         if self.tex == "":
             print("no tex file selected")
             return
@@ -246,16 +317,23 @@ class MainWindow(QMainWindow):
             print("found existing graph, importing positions")
             oldGraph = self.buildFolder + "/graph_with_pos.txt"
 
+        print("A")
         gg.getCyGraph(self.tex,oldGraph,self.buildFolder + "/" + "graph_with_pos.txt")
+        print("B")
         destination = copytree("basehtml/", self.buildFolder) 
+        print("C")
         self.getDisplayOptions()
         strJS = self.generateJSConfig()
         with open(self.buildFolder+"/config.js", 'w') as f:
             f.write(strJS)
-        self.browser.setUrl(QUrl(self.buildFolder+"/graph_save.html"))
+        print("D")
+        self.browser.setUrl(QUrl.fromLocalFile(self.buildFolder+"/graph_save.html"))
+        print("E=",self.buildFolder+"/graph_save.html")
+
+        self.consoleLog.setText(messageStr)
         
 
 app = QApplication(sys.argv)
 window = MainWindow()
 window.showMaximized()
-app.exec_()
+app.exec()

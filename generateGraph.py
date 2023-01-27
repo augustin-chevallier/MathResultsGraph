@@ -13,7 +13,6 @@ from packaging import version
 import pathlib
 
 
-
 ######################################################################################################
 # we check the pando version since old version don't really work
 pandoc_version = pypandoc.get_pandoc_version()
