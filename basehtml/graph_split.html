@@ -106,21 +106,43 @@
   </div>
 
   <script> 
+  texZoomLevel = 1;
+  function setZoom(zoom,el) {
+      
+      transformOrigin = [0,0];
+	    el = el || instance.getContainer();
+	    var p = ["webkit", "moz", "ms", "o"],
+            s = "scale(" + zoom + ")",
+            oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+
+	    for (var i = 0; i < p.length; i++) {
+	        el.style[p[i] + "Transform"] = s;
+	        el.style[p[i] + "TransformOrigin"] = oString;
+	    }
+
+	    el.style["transform"] = s;
+	    el.style["transformOrigin"] = oString;
+      
+  }
   if(document.getElementById("zoomInButton")){
     function zoomIn() {
       txt = document.getElementById('LatexPage');
-      style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
-      currentSize = parseFloat(style);
-      txt.style.fontSize = (currentSize + 2) + 'px';
+      texZoomLevel *= 1.2;
+      setZoom(texZoomLevel,txt);
+      //style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
+      //currentSize = parseFloat(style);
+      //txt.style.fontSize = (currentSize + 2) + 'px';
     }
     document.getElementById("zoomInButton").onclick = zoomIn;
   }
   if(document.getElementById("zoomOutButton")){
     function zoomOut() {
       txt = document.getElementById('LatexPage');
-      style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
-      currentSize = parseFloat(style);
-      txt.style.fontSize = (currentSize - 2) + 'px';
+      texZoomLevel /= 1.2;
+      setZoom(texZoomLevel,txt);
+      //style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
+      //currentSize = parseFloat(style);
+      //txt.style.fontSize = (currentSize - 2) + 'px';
     }
     document.getElementById("zoomOutButton").onclick = zoomOut;
   }
