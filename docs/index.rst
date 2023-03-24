@@ -33,7 +33,7 @@ You will need a valid python install. First, install all the required dependenci
 
 .. code-block:: bash
 
-   pip install pypandoc js2py PyQt5 packaging bs4 PyQtWebEngine
+   pip install pypandoc js2py PyQt6 packaging bs4 PyQt6-WebEngine
 
 Select the latest release on https://github.com/augustin-chevallier/MathResultsGraph/releases and download the source code.
 To launch the software, decompress the file and go inside the folder, and launch the python script:
