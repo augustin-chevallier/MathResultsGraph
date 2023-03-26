@@ -122,11 +122,15 @@
 
 	    el.style["transform"] = s;
 	    el.style["transformOrigin"] = oString;
+
+      width = document.getElementById('LatexPage').offsetWidth / zoom;  //el.offsetWidth;
+      console.log(width)
+      el.style.width = width+"px"; 
       
   }
   if(document.getElementById("zoomInButton")){
     function zoomIn() {
-      txt = document.getElementById('LatexPage');
+      txt = document.getElementById('insideLatex');
       texZoomLevel *= 1.2;
       setZoom(texZoomLevel,txt);
       //style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
@@ -137,7 +141,7 @@
   }
   if(document.getElementById("zoomOutButton")){
     function zoomOut() {
-      txt = document.getElementById('LatexPage');
+      txt = document.getElementById('insideLatex');
       texZoomLevel /= 1.2;
       setZoom(texZoomLevel,txt);
       //style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
@@ -156,7 +160,7 @@
     <div class = 'container__right' id='RightPage' >
       <div class="resizer" id="dragMe"></div>
       <div class="latex_page" id='LatexPage'>
-        <div style = "padding-left:10px">
+        <div style = "padding-left:10px" id='insideLatex'>
           <b>Selected node </b><br>
           <div id='MainNode' , style="margin-left: 10px;margin-right: 10px;font-size: 12px;"></div>
 
@@ -211,6 +215,9 @@
             const newLatexWidth = ((latexWidth + dx));
             console.log(newLatexWidth);
             latexPage.style.width = `${newLatexWidth}px`;
+
+            width = document.getElementById('LatexPage').offsetWidth / texZoomLevel;  //el.offsetWidth;
+            document.getElementById('insideLatex').style.width = width+"px"; 
 
             resizer.style.cursor = 'col-resize';
             document.body.style.cursor = 'col-resize';
