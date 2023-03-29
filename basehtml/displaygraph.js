@@ -475,10 +475,10 @@ function setStyle(){
           'line-color': 'yellow',//'#2972E8',
           'target-arrow-color': 'black',//'#2972E8',
           'arrow-scale': 3,
-          //"curve-style": 'straight'//"unbundled-bezier",
-          "curve-style": "unbundled-bezier",
+          "curve-style": 'straight',//"unbundled-bezier",
+          /*"curve-style": "unbundled-bezier",
           "control-point-distances": [40, -40],
-          "control-point-weights": [0.250, 0.75],
+          "control-point-weights": [0.250, 0.75],*/
           //"font-size" : 100
           "line-fill": "linear-gradient",
           "line-gradient-stop-colors": "black blue",
@@ -618,7 +618,26 @@ function setStyle(){
         resizedStyle.push(nodeStyleH);
       }
     }
+    				// demo your ext
+            /*cyInstance.edgeEditing({
+              undoable: true,
+              bendRemovalSensitivity: 16,
+              enableMultipleAnchorRemovalOption: true,
+              initAnchorsAutomatically: false,
+              useTrailingDividersAfterContextMenuOptions: false,
+              enableCreateAnchorOnDrag: true
+            });*/
+            
     cyInstance.style().fromJson(resizedStyle).update();
+    cyInstance.edgeEditing({
+      undoable: true,
+      bendRemovalSensitivity: 16,
+      enableMultipleAnchorRemovalOption: true,
+      initAnchorsAutomatically: false,
+      useTrailingDividersAfterContextMenuOptions: false,
+      enableCreateAnchorOnDrag: false
+    });
+    cyInstance.style().update();
     cyInstance.layout(
       {
         name: layout_name
@@ -668,6 +687,9 @@ if(document.getElementById("saveButton")){
         graph[i].position = node.position();
         //console.log(graph[i]);
       }
+      else{
+        graph[i]["classes"]='edgecontrolediting-hascontrolpoints';
+      }
     }
     fileName = "graph_with_pos.txt";
     var a = document.createElement("a");
@@ -702,8 +724,7 @@ cyInstance.on('mouseover', 'node', function (e) {
     divsToTypeset = divsToTypeset.concat(getDivsToTypeset(e.target))
   }
 });
-/*cyInstance.on('mouseout', 'node', function (e) {
-});*/
+
 
 
 //=============================================================================================================

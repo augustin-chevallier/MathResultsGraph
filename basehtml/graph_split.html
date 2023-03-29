@@ -11,6 +11,19 @@
     var nodeHtmlLabel = require('cytoscape-node-html-label');
     nodeHtmlLabel(cytoscape); // register extension
   </script>
+
+  <link href="https://unpkg.com/cytoscape-context-menus/cytoscape-context-menus.css" rel="stylesheet" type="text/css" />
+      
+  <script src="https://code.jquery.com/jquery-3.0.0.js"></script>
+  <script src="https://unpkg.com/konva@7.0.3/konva.min.js"></script>
+
+  <!-- for testing with local version of cytoscape.js -->
+  <!--<script src="../cytoscape.js/build/cytoscape.js"></script>-->
+              
+  <script src="https://unpkg.com/cytoscape-context-menus/cytoscape-context-menus.js"></script>
+  <script src="https://unpkg.com/cytoscape-undo-redo/cytoscape-undo-redo.js"></script>
+  <script src=" https://cdn.jsdelivr.net/npm/cytoscape-edge-editing@4.0.0/cytoscape-edge-editing.min.js "></script>
+
   <script>
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
