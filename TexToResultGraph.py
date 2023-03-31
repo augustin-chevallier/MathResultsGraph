@@ -303,7 +303,6 @@ class MainWindow(QMainWindow):
         with open('init.json', 'w') as outfile:
             json.dump(json_string, outfile)
         
-        #self.browser.setUrl(QUrl("https://www.lemonde.fr"))
         if self.tex == "":
             print("no tex file selected")
             return

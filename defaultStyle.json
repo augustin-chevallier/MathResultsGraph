@@ -1,0 +1,153 @@
+ 
+{
+  "exercise": {
+    "nodeType": "exercise",
+    "nodeStyle": {
+      "background-color": "#0097ff",
+      "background-opacity": 0.3,
+      "width": 200,
+      "height": 20,
+      "border-color": "#0097ff",
+      "border-style": "solid",
+      "border-width": 16,
+      "shape": "roundrectangle"
+    }
+  },
+  "theorem": {
+    "nodeType": "theorem",
+    "nodeStyle": {
+      "background-color": "#0097ff",
+      "background-opacity": 0.3,
+      "width": 200,
+      "height": 20,
+      "border-color": "#0097ff",
+      "border-style": "solid",
+      "border-width": 16,
+      "shape": "roundrectangle"
+    }
+  },
+  "definition": {
+    "nodeType": "definition",
+    "nodeStyle": {
+      "background-color": "#018a7a",
+      "background-opacity": 0.2,
+      "width": 200,
+      "height": 20,
+      "border-color": "#018a7a",
+      "border-style": "solid",
+      "border-width": 16,
+      "shape": "roundrectangle"
+    }
+  },
+  "assumption": {
+    "nodeType": "assumption",
+    "nodeStyle": {
+      "background-color": "#9900ff",
+      "background-opacity": 0.2,
+      "width": 200,
+      "height": 20,
+      "border-color": "#9900ff",
+      "border-style": "solid",
+      "border-width": 16,
+      "shape": "roundrectangle"
+    }
+  },
+  "proposition": {
+    "nodeType": "proposition",
+    "nodeStyle": {
+      "background-color": "#0093ab",
+      "background-opacity": 0.2,
+      "width": 200,
+      "height": 20,
+      "border-color": "#0093ab",
+      "border-style": "solid",
+      "border-width": 16,
+      "shape": "roundrectangle"
+    }
+  },
+  "lemma": {
+    "nodeType": "lemma",
+    "nodeStyle": {
+      "background-color": "#00b9ff",
+      "background-opacity": 0.2,
+      "width": 200,
+      "height": 20,
+      "border-color": "#00b9ff",
+      "border-style": "solid",
+      "border-width": 16,
+      "shape": "roundrectangle"
+    }
+  },
+  "remark": {
+    "nodeType": "lemma",
+    "nodeStyle": {
+      "background-color": "#ffe400",
+      "background-opacity": 0.2,
+      "width": 200,
+      "height": 20,
+      "border-color": "#ffe400",
+      "border-style": "solid",
+      "border-width": 16,
+      "shape": "roundrectangle"
+    }
+  },
+  "corollary": {
+    "nodeType": "lemma",
+    "nodeStyle": {
+      "background-color": "#0093ab",
+      "background-opacity": 0.2,
+      "width": 200,
+      "height": 20,
+      "border-color": "black",
+      "border-style": "solid",
+      "border-width": 16,
+      "shape": "roundrectangle"
+    }
+  },
+  "section": {
+    "nodeType": "section",
+    "nodeStyle": {
+      "background-color": "#d8d8d8",
+      "background-opacity": 0.2,
+      "width": 200,
+      "height": 20,
+      "border-color": "black",
+      "border-style": "solid",
+      "border-width": 16,
+      "shape": "roundrectangle"
+    }
+  },
+  "sectionTitle": {
+    "nodeType": "sectionTitle",
+    "nodeStyle": {
+      "background-color": "#383838",
+      "background-opacity": 0.1,
+      "width": 200,
+      "height": 20,
+      "shape": "roundrectangle"
+    }
+  },
+  "subsection": {
+    "nodeType": "subsection",
+    "nodeStyle": {
+      "background-color": "#858585",
+      "background-opacity": 0.2,
+      "width": 200,
+      "height": 20,
+      "border-color": "black",
+      "border-style": "dashed",
+      "border-width": 16,
+      "shape": "roundrectangle"
+    }
+  },
+  "subsectionTitle": {
+    "nodeType": "subsectionTitle",
+    "nodeStyle": {
+      "background-color": "#383838",
+      "background-opacity": 0.1,
+      "width": 200,
+      "height": 20,
+      "shape": "roundrectangle"
+    }
+  }
+}

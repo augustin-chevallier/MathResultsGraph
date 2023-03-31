@@ -36,6 +36,11 @@ os.listdir()
 
 nodeTypeListDefault = ["theorem","proposition","definition","lemma","remark","corollary","assumption","exercise"]
 
+with open('defaultStyle.json') as json_file:
+    style = json.load(json_file)
+print(style)
+
+
 useTypeConversion = False
 if useTypeConversion:
     nodeTypeList = ["thm","prop","defn","lem","rem","cor"]
@@ -569,6 +574,7 @@ def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
                                 elem2.update({'position' : elem["position"]})
 
     json_object = json.dumps(cyGraph) 
+    json_style = json.dumps(style)
     f = open(outFileWithPos, "wt",encoding="utf-8")
-    n = f.write("var graph = " + str(json_object) + ";")
+    n = f.write("var graph = " + str(json_object) + ";\n" + "var nodeStyles = " + str(json_style)+";")
     f.close()
