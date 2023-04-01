@@ -313,11 +313,7 @@ function setStyle(){
           'line-color': 'yellow',//'#2972E8',
           'target-arrow-color': 'black',//'#2972E8',
           'arrow-scale': 3,
-          "curve-style": 'straight',//"unbundled-bezier",
-          /*"curve-style": "unbundled-bezier",
-          "control-point-distances": [40, -40],
-          "control-point-weights": [0.250, 0.75],*/
-          //"font-size" : 100
+          "curve-style": 'straight',
           "line-fill": "linear-gradient",
           "line-gradient-stop-colors": "black blue",
           'line-style': 'dashed',
@@ -334,11 +330,7 @@ function setStyle(){
           'line-color': 'yellow',//'#2972E8',
           'target-arrow-color': 'black',//'#2972E8',
           'arrow-scale': 3,
-          //"curve-style": 'straight'//"unbundled-bezier",
-          "curve-style": "unbundled-bezier",
-          "control-point-distances": [40, -40],
-          "control-point-weights": [0.250, 0.75],
-          //"font-size" : 100
+          "curve-style": 'straight',
           "line-fill": "linear-gradient",
           "line-gradient-stop-colors": "black blue",
           "line-gradient-stop-positions": "0 100"
@@ -353,11 +345,7 @@ function setStyle(){
           'line-color': 'black',//'#2972E8',
           'target-arrow-color': 'black',//'#2972E8',
           'arrow-scale': 2,
-          //"curve-style": 'straight'//"unbundled-bezier",
-          "curve-style": "unbundled-bezier",
-          "control-point-distances": [40, -40],
-          "control-point-weights": [0.250, 0.75],
-          //"font-size" : 100
+          "curve-style": 'straight',
           "line-fill": "linear-gradient",
           "line-gradient-stop-colors": "red red",
           'line-style': 'solid',          
@@ -373,11 +361,7 @@ function setStyle(){
           'line-color': 'red',//'#2972E8',
           'target-arrow-color': 'black',//'#2972E8',
           'arrow-scale': 3,
-          //"curve-style": 'straight'//"unbundled-bezier",
-          "curve-style": "unbundled-bezier",
-          "control-point-distances": [40, -40],
-          "control-point-weights": [0.250, 0.75],
-          //"font-size" : 100
+          "curve-style": 'straight',
           "line-fill": "linear-gradient",
           "line-gradient-stop-colors": "black blue",
           'line-style': 'dashed',
@@ -393,11 +377,7 @@ function setStyle(){
           'line-color': 'red',//'#2972E8',
           'target-arrow-color': 'black',//'#2972E8',
           'arrow-scale': 3,
-          //"curve-style": 'straight'//"unbundled-bezier",
-          "curve-style": "unbundled-bezier",
-          "control-point-distances": [40, -40],
-          "control-point-weights": [0.250, 0.75],
-          //"font-size" : 100
+          "curve-style": 'straight',
           "line-fill": "linear-gradient",
           "line-gradient-stop-colors": "red red",
           'line-style': 'dashed',
@@ -526,12 +506,18 @@ if(document.getElementById("saveButton")){
         //console.log(graph[i]);
       }
       else{
-        graph[i]["classes"]='edgecontrolediting-hascontrolpoints';
+        if("cyedgebendeditingWeights" in graph[i].data){
+          graph[i]["classes"]=  'edgebendediting-hasbendpoints'; 
+        }
+        if("cyedgecontroleditingWeights" in graph[i].data){
+          graph[i]["classes"]=  'edgecontrolediting-hascontrolpoints'; 
+        }
       }
     }
     fileName = "graph_with_pos.txt";
     var a = document.createElement("a");
-    var file = new Blob(['var graph = ' + JSON.stringify(graph) + ';'], { type: 'application/json' });
+    var file = new Blob(['var graph = ' + JSON.stringify(graph) + ';\n' + 
+                        'var nodeStyles = ' + JSON.stringify(nodeStyles) + ';'], { type: 'application/json' });
     a.href = URL.createObjectURL(file);
     a.download = fileName;
     a.click();
@@ -657,22 +643,23 @@ cyInstance.on('click', 'node', function(evt){
   }
 
 
-  //displaying text on the right
-  document.getElementById("MainNode").innerHTML =  String.raw`<hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(9, 84, 132);border:none;border-top: solid 2px;" />` + node.data().text
+  //displaying text on the right, if left panel exists
+  if(document.getElementById("MainNode")){
+    document.getElementById("MainNode").innerHTML =  String.raw`<hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(9, 84, 132);border:none;border-top: solid 2px;" />` + node.data().text
 
-  var ancestors = node.incomers();
-  var ancestorsText = "";
-  for (var i = 0; i < ancestors.size(); i++) {
-    var elem = ancestors[i];
-    if(elem.data().hasOwnProperty("text"))
-      ancestorsText += String.raw`<hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(9, 84, 132);border:none;border-top: solid 2px;" />` + elem.data().text;
+    var ancestors = node.incomers();
+    var ancestorsText = "";
+    for (var i = 0; i < ancestors.size(); i++) {
+      var elem = ancestors[i];
+      if(elem.data().hasOwnProperty("text"))
+        ancestorsText += String.raw`<hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(9, 84, 132);border:none;border-top: solid 2px;" />` + elem.data().text;
+    }
+    document.getElementById("AncestorsNodes").innerHTML = ancestorsText;
+
+    if(!hasMathML){
+      divsToTypeset.push("LatexPage");
+    }
   }
-  document.getElementById("AncestorsNodes").innerHTML = ancestorsText;
-
-  if(!hasMathML){
-    divsToTypeset.push("LatexPage");
-  }
-
 });
 
 cyInstance.on('zoom', function(evt){
