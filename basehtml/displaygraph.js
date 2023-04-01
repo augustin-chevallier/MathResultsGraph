@@ -4,6 +4,8 @@ var zoomLevels = ['test','summary','title'];
 
 var currentZoomLevel = 0;
 
+graph = graphWithStyle.graph;
+nodeStyles = graphWithStyle.style;
 
 //the graph has been loaded in another script
 console.log(graph);
@@ -516,8 +518,8 @@ if(document.getElementById("saveButton")){
     }
     fileName = "graph_with_pos.txt";
     var a = document.createElement("a");
-    var file = new Blob(['var graph = ' + JSON.stringify(graph) + ';\n' + 
-                        'var nodeStyles = ' + JSON.stringify(nodeStyles) + ';'], { type: 'application/json' });
+    graphWithStyle = {"graph":graph,"style":nodeStyles};
+    var file = new Blob(['var graphWithStyle = ' + JSON.stringify(graphWithStyle) + ';'], { type: 'application/json' });
     a.href = URL.createObjectURL(file);
     a.download = fileName;
     a.click();

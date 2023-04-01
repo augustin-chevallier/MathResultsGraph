@@ -563,18 +563,35 @@ def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
     if oldGraph != "":
         with open(oldGraph,"r",encoding="utf-8") as json_file:
             data = json_file.read()
-            data = data[12:-1]
+            data = data[21:-1]
             data = json.loads(data)
-            for elem in data:
+            for elem in data["graph"]:
                 if "position" in elem:
                     label = elem["data"]["id"]
                     for elem2 in cyGraph:
                         if "data" in elem2:
                             if elem2["data"]["id"] == label:
                                 elem2.update({'position' : elem["position"]})
+                if "classes" in elem:
+                    if elem["classes"] == "edgebendediting-hasbendpoints":
+                        label = elem["data"]["id"]
+                        for elem2 in cyGraph:
+                            if "data" in elem2:
+                                if elem2["data"]["id"] == label:
+                                    elem2.update({"classes" : elem["classes"]})
+                                    elem2["data"].update({"cyedgebendeditingWeights":elem["data"]["cyedgebendeditingWeights"]})
+                                    elem2["data"].update({"cyedgebendeditingDistances":elem["data"]["cyedgebendeditingDistances"]})
+                    if elem["classes"] == "edgecontrolediting-hascontrolpoints":
+                        label = elem["data"]["id"]
+                        for elem2 in cyGraph:
+                            if "data" in elem2:
+                                if elem2["data"]["id"] == label:
+                                    elem2.update({"classes" : elem["classes"]})
+                                    elem2["data"].update({"cyedgecontroleditingWeights":elem["data"]["cyedgecontroleditingWeights"]})
+                                    elem2["data"].update({"cyedgecontroleditingDistances":elem["data"]["cyedgecontroleditingDistances"]})
 
-    json_object = json.dumps(cyGraph) 
-    json_style = json.dumps(style)
+    graphWithStyle = {"graph":cyGraph,"style":style}
+    json_object = json.dumps(graphWithStyle) 
     f = open(outFileWithPos, "wt",encoding="utf-8")
-    n = f.write("var graph = " + str(json_object) + ";\n" + "var nodeStyles = " + str(json_style)+";")
+    n = f.write("var graphWithStyle = " + str(json_object) + ";")
     f.close()
