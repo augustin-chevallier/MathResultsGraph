@@ -6,9 +6,32 @@
 \newcommand{\weakdepends}[1]{}
 \newcommand{\summary}[1]{}
 \newcommand{\mainText}[1]{#1}
+\newcommand{\defineNode}[2]{}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{definition}{Definition}
+
+\defineNode{theorem}{
+    "background-color": "#0097ff",
+    "background-opacity": 0.3,
+    "width": 200,
+    "height": 20,
+    "border-color": "#0097ff",
+    "border-style": "solid",
+    "border-width": 16,
+    "shape": "roundrectangle"
+}
+
+\defineNode{definition}{
+    "background-color": "#0097ff",
+    "background-opacity": 0.5,
+    "width": 200,
+    "height": 20,
+    "border-color": "#0097ff",
+    "border-style": "solid",
+    "border-width": 16,
+    "shape": "roundrectangle"
+}
 
 \begin{document}
 
@@ -18,8 +41,8 @@
 
 \begin{definition}[definition 1]
     \label{def:def1}
-    \summary{def1 summary}
-    \mainText{def1 mainText}
+    \summary{def1 summary qsd}
+    \mainText{def1 mainText sdfsdf $\frac{1}{2}$}
 \end{definition}
 
 \begin{theorem}[theorem 1]

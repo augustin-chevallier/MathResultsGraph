@@ -34,24 +34,6 @@ os.listdir()
 ######################################################################################################
 # Define what kind of nodes we are looking for, i.e. \begin{nodeType} ... \end{nodeType}
 
-nodeTypeListDefault = ["theorem","proposition","definition","lemma","remark","corollary","assumption","exercise"]
-
-with open('defaultStyle.json') as json_file:
-    style = json.load(json_file)
-print(style)
-
-
-useTypeConversion = False
-if useTypeConversion:
-    nodeTypeList = ["thm","prop","defn","lem","rem","cor"]
-    nodeTypeListConversion = {"thm":"theorem","lem":"lemma",
-                          "cor":"proposition","rem":"remark","defn":"definition","prop":"proposition"}
-    #nodeTypeList = ["theo","prop","defi","lemme","remarque","corollaire"]
-    #nodeTypeListConversion = {"theo":"theorem","lemme":"lemma",
-    #                      "corollaire":"proposition","remarque":"remark","defi":"definition","prop":"proposition"}
-else:
-    nodeTypeList = nodeTypeListDefault
-
 ######################################################################################################
 # We are creating nodes for section and subsections
 partitionNames = ['\section','\subsection']
@@ -121,7 +103,7 @@ def findNodeInfo(text,index,nextNode):
         rank = "0"
     return {"label": label,"depends": depends,"weakdepends": weakdepends, "rank": rank, "summary": summary, "mainText": mainText, "hasSummary": hasSummary}
 
-def findPartitions(text,partitionName,parentLabel):
+def findPartitions(text,partitionName,parentLabel,node_type_set):
     """
     Find all partition in a given text
     --> Parameters :
@@ -147,7 +129,7 @@ def findPartitions(text,partitionName,parentLabel):
             nextNode_ = text.find(partName,n1)
             if nextNode_ != -1 and nextNode < nextNode:
                 nextNode = nextNode_
-        for nodeName in nodeTypeList:
+        for nodeName in node_type_set:
             nextNode_ = text.find("\\begin{"+nodeName+"}",n1)
             if nextNode_ != -1:
                 if nextNode_ < nextNode or nextNode == -1:
@@ -167,7 +149,7 @@ def findPartitions(text,partitionName,parentLabel):
     return nodes
 
 
-def findAllPartitions(text):
+def findAllPartitions(text,node_type_set):
     """
     Find a hierachical partition of the tex file in section/subsection/etc
     --> Parameters :
@@ -183,12 +165,12 @@ def findAllPartitions(text):
         name = partitionNames[i]
         partitions.append([])
         if i == 0:
-            listSections = findPartitions(text,name,"")
+            listSections = findPartitions(text,name,"",node_type_set)
             partitions[i] += listSections
         else:
             for elem in partitions[i-1]:
                 elemLabel = elem["label"]
-                L = findPartitions(elem["content"],name,elemLabel)
+                L = findPartitions(elem["content"],name,elemLabel,node_type_set)
                 partitions[i] = partitions[i] + L
                 if L != []:
                     n = elem["content"].find(name)
@@ -224,8 +206,6 @@ def findNode(text,typeName,index,parentLabel):
         content = text[posStart+typeLen:posEnd]
         info = findNodeInfo(text,posStart,posEnd)
         node = {"type": typeName,"content": content, "parentLabel": parentLabel, "hasTitle": hasTitle}
-        if useTypeConversion:
-            node["type"] = nodeTypeListConversion[typeName]
         node.update(info)
         return (node,posEnd)
 
@@ -252,7 +232,7 @@ def findNodes(text,typeName,parentLabel):
         node, index = findNode(text,typeName,index,parentLabel)
     return nodeList
 
-def findNodesAllTypes(text,parentLabel):
+def findNodesAllTypes(text,parentLabel,node_types_set):
     """
     Find all nodes in a given section/subsection/etc. The parentLabel is the label of the section/subsection/...
     --> Parameters :
@@ -265,13 +245,13 @@ def findNodesAllTypes(text,parentLabel):
     ------------
         A list of nodes"""
     nodeList = []
-    for name in nodeTypeList:
+    for name in node_types_set:
         nodeList = nodeList + findNodes(text,name,parentLabel)
     print(nodeList)
     return nodeList
 
 
-def findAllNodes(partition):
+def findAllNodes(partition,node_types_set):
     """Returns a list of all node in the partition. The partition is a decomposition of the .tex document in section/subsetction/etc. 
     It attach the node to the relevant section/subsection/whatever)
     --> Parameters :
@@ -283,7 +263,7 @@ def findAllNodes(partition):
     nodes = []
     for i in range(len(partition)):
         for j in range(len(partition[i])):
-            nodes += findNodesAllTypes(partition[i][j]["content"],partition[i][j]["label"])
+            nodes += findNodesAllTypes(partition[i][j]["content"],partition[i][j]["label"],node_types_set)
     return nodes
 
 
@@ -517,6 +497,32 @@ def loadLatexFile(texFile):
         
     return full_text
 
+def getNodeTypes(str):
+
+    node_types_set = {"theorem","proposition","definition","lemma","remark","corollary","assumption","exercise"}
+
+    with open('defaultStyle.json') as json_file:
+        style_dict = json.load(json_file)
+    #style_dict={}
+
+    nodes_def = find_all(str,"\\defineNode{")
+
+    for index in nodes_def:
+        end = str.find("}",index)
+        node_name = str[index+len("\\defineNode{"):end]
+        node_types_set.add(node_name)
+        style_begin = str.find("{",end)
+        style_end = str.find("}",style_begin)
+        node_style_str = "{" + str[style_begin+1:style_end] +"}"
+        node_style = json.loads(node_style_str)
+        #print("style",node_style)
+        style_dict[node_name] = {"nodeType":node_name,"nodeStyle":node_style}
+
+    print(node_types_set)
+    print(style_dict)    
+
+    return style_dict,node_types_set
+
 def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
     """
     Parse a tex file and save the associated cytoscape graph in a JSON file
@@ -539,12 +545,14 @@ def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
     
     full_text = loadLatexFile(texFile)
     d = full_text.find("\\begin{document}") 
+    header = full_text[0:d]
+    style_dict, node_types_set = getNodeTypes(header)
     text = full_text[d+16:]
     
     
-    partition = findAllPartitions(text)
+    partition = findAllPartitions(text,node_types_set)
     
-    nodeL = findAllNodes(partition)
+    nodeL = findAllNodes(partition,node_types_set)
     
     htmlText = texToHtml(full_text,partition,nodeL)
     f = open("tex.html", "wt",encoding="utf-8")
@@ -590,7 +598,7 @@ def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
                                     elem2["data"].update({"cyedgecontroleditingWeights":elem["data"]["cyedgecontroleditingWeights"]})
                                     elem2["data"].update({"cyedgecontroleditingDistances":elem["data"]["cyedgecontroleditingDistances"]})
 
-    graphWithStyle = {"graph":cyGraph,"style":style}
+    graphWithStyle = {"graph":cyGraph,"style":style_dict}
     json_object = json.dumps(graphWithStyle) 
     f = open(outFileWithPos, "wt",encoding="utf-8")
     n = f.write("var graphWithStyle = " + str(json_object) + ";")
