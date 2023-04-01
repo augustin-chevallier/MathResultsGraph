@@ -424,17 +424,17 @@ def toCytoscapeGraph(fullNodeList):
         if "\\" + node["type"] not in partitionNames:
             data = {"id": node["label"], "name": node["type"], "text": node["html"], 
                 "parent": node["parentLabel"], "rank": node["rank"], "html_name": node["label"], "summary": node["htmlSummary"], "hasSummary": node["hasSummary"],
-                "hasTitle": node["hasTitle"], "title": node["htmlTitle"]}
+                "hasTitle": node["hasTitle"], "title": node["htmlTitle"],"display_order":node["display_order"]}
             cyNode = {"group": "nodes", "data": data, "classes": "l0"}
             cyNodes.append(cyNode)
         else:
             data = {"id": node["label"], "name": node["type"], "text": "", 
-                "parent": node["parentLabel"], "rank": node["rank"], "html_name": node["label"],"hasSummary": False, "hasTitle": False}
+                "parent": node["parentLabel"], "rank": node["rank"], "html_name": node["label"],"hasSummary": False, "hasTitle": False,"display_order":node["display_order"]}
             cyNode = {"group": "nodes", "data": data, "classes": "l0"}
             cyNodes.append(cyNode)
             
             dataTitle = {"id": "title" + node["label"], "name": node["type"]+"Title", "text": node["html"], 
-                "parent": node["label"], "rank": node["rank"], "html_name": node["label"], "hasSummary": False, "hasTitle": False}
+                "parent": node["label"], "rank": node["rank"], "html_name": node["label"], "hasSummary": False, "hasTitle": False,"display_order":node["display_order"]}
             cyNodeTitle = {"group": "nodes", "data": dataTitle, "classes": "l0"}
             cyNodes.append(cyNodeTitle)
     cy = cyNodes + cyEdges
@@ -559,6 +559,24 @@ def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
     n = f.write(htmlText)
     f.close()
     
+    #set up node ordering
+    node_number = 0
+    for node in nodeL:
+        node["display_order"] = node_number
+        parentLabel = node["parentLabel"]
+        for i in range(len(partition)):
+            for p in partition[i]:
+                print("p",p)
+                if p["label"] == parentLabel:
+                    if not ("display_order" in p):
+                        p["display_order"] = node_number
+        node_number += 1
+    for i in range(len(partition)):
+        for p in partition[i]:
+            if not ("display_order" in p):
+                p["display_order"] = node_number 
+
+
     fullNodeList = []
     fullNodeList += nodeL
     for i in range(len(partition)):
