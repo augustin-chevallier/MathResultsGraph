@@ -7,6 +7,8 @@ var currentZoomLevel = 0;
 graph = graphWithStyle.graph;
 nodeStyles = graphWithStyle.style;
 
+
+
 //the graph has been loaded in another script
 console.log(graph);
 
@@ -706,3 +708,34 @@ cyInstance.on('zoom', function(evt){
   //setStyle();
   //console.log(nodes);
 });
+
+
+//===========================================================================================================
+//===========================================================================================================
+
+//determine the max "display_order" of the nodes
+max_display_order = 0
+for(var i = 0; i < graph.length; i++){
+  var node = graph[i];
+  console.log(node);
+  if(node.group == 'nodes'){
+    max_display_order = Math.max(max_display_order,node.data["display_order"])
+  }
+}
+current_display_order = max_display_order
+
+function set_display_order(display_order){
+  nodes = cyInstance.nodes();
+
+  for (var i = 0; i < nodes.length; i++) {
+    if (nodes[i].data()["display_order"] <= display_order) {
+      nodes[i].addClass('l0');
+      nodes[i].style("display", "element");
+    }
+    else{
+      nodes[i].removeClass('l0');
+      nodes[i].style("display", "none");
+    }
+  }
+}
+
