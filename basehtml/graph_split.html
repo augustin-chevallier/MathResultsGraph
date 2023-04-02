@@ -123,24 +123,23 @@
     <div class = 'container__right' id='RightPage' >
       <div class="resizer" id="dragMe"></div>
       <div class="latex_page" id='LatexPage'>
-        <div style = "padding-left:10px" id='insideLatex'>
-          <b>Selected node </b><br>
+        <div style = "padding-left:0px" id='insideLatex'>
+          <div style="font-size: 20px;text-align: center;"><b>Selected node </b></div><br>
           <div id='MainNode' , style="margin-left: 10px;margin-right: 10px;font-size: 12px;"></div>
 
           <!--
           <br><hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(10, 10, 10);border:none;border-top: solid 2px;"><br>
           <b>Proof (if any) </b><br><br>
           <div id='Proof' , style="margin-left: 10px;margin-right: 10px;"></div>-->
-
-          <hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(10, 10, 10);border:none;border-top: solid 2px;">
-          <b>Ancestor nodes </b><br>
+          <br>
+          <div style="font-size: 20px;text-align: center;"><b>Ancestor nodes </b></div><br>
           <div id='AncestorsNodes', style="margin-left: 10px;margin-right: 10px;font-size: 12px;" ></div>
           <br>
           <!-- <object type="text/html" data="tex.html" class="split right"></object> -->
         </div>
         <div id = "zoomIn" class="fixedButtonLatex">
-          <button class="btn" id="zoomInButton"><i class="fa fa-search-plus fa-2x" aria-hidden="true"></i></button>
           <button class="btn" id="zoomOutButton"><i class="fa fa-search-minus fa-2x" aria-hidden="true"></i></button>
+          <button class="btn" id="zoomInButton"><i class="fa fa-search-plus fa-2x" aria-hidden="true"></i></button>
         </div>
       </div>
     </div>

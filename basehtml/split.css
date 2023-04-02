@@ -48,7 +48,7 @@ body {
 
 .resizer {
   z-index: 2011;
-  background-color: #cbd5e0;
+  background-color: #0a7274;
   cursor: ew-resize;
   height: 100%;
   width: 5px;
