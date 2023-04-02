@@ -78,9 +78,10 @@
   </script>
 
   <script src="https://unpkg.com/dagre@0.7.4/dist/dagre.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.3.1/cytoscape-dagre.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.3.1/cytoscape-dagre.min.js"></script> </script>
 
-  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 
 
@@ -113,57 +114,6 @@
   <!--<div id = "button" class="topnav">
     <input type="button" value="save positions" id="saveButton" >
   </div> -->
-  <div id = "zoomIn" class="fixedButton">
-    <input type="button" value="zoom in" id="zoomInButton" >
-    <input type="button" value="zoom out" id="zoomOutButton" >
-  </div>
-
-  <script> 
-  texZoomLevel = 1;
-  function setZoom(zoom,el) {
-      
-      transformOrigin = [0,0];
-	    el = el || instance.getContainer();
-	    var p = ["webkit", "moz", "ms", "o"],
-            s = "scale(" + zoom + ")",
-            oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
-
-	    for (var i = 0; i < p.length; i++) {
-	        el.style[p[i] + "Transform"] = s;
-	        el.style[p[i] + "TransformOrigin"] = oString;
-	    }
-
-	    el.style["transform"] = s;
-	    el.style["transformOrigin"] = oString;
-
-      width = document.getElementById('LatexPage').offsetWidth / zoom;  //el.offsetWidth;
-      console.log(width)
-      el.style.width = width+"px"; 
-      
-  }
-  if(document.getElementById("zoomInButton")){
-    function zoomIn() {
-      txt = document.getElementById('insideLatex');
-      texZoomLevel *= 1.2;
-      setZoom(texZoomLevel,txt);
-      //style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
-      //currentSize = parseFloat(style);
-      //txt.style.fontSize = (currentSize + 2) + 'px';
-    }
-    document.getElementById("zoomInButton").onclick = zoomIn;
-  }
-  if(document.getElementById("zoomOutButton")){
-    function zoomOut() {
-      txt = document.getElementById('insideLatex');
-      texZoomLevel /= 1.2;
-      setZoom(texZoomLevel,txt);
-      //style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
-      //currentSize = parseFloat(style);
-      //txt.style.fontSize = (currentSize - 2) + 'px';
-    }
-    document.getElementById("zoomOutButton").onclick = zoomOut;
-  }
-  </script>
 
   <div id = 'testdiv'></div>
 
@@ -188,8 +138,66 @@
           <br>
           <!-- <object type="text/html" data="tex.html" class="split right"></object> -->
         </div>
+        <div id = "zoomIn" class="fixedButtonLatex">
+          <button class="btn" id="zoomInButton"><i class="fa fa-search-plus fa-2x" aria-hidden="true"></i></button>
+          <button class="btn" id="zoomOutButton"><i class="fa fa-search-minus fa-2x" aria-hidden="true"></i></button>
+        </div>
       </div>
     </div>
+
+    <div id = "zoomIn" class="fixedButtonGraph">
+      <button class="btn" id="fastBackwardButton"><i class="fa fa-fast-backward" aria-hidden="true"></i></button>
+      <button class="btn" id="backwardButton"><i class="fa fa-step-backward" aria-hidden="true"></i></button>
+      <button class="btn" id="forwardButton"><i class="fa fa-step-forward" aria-hidden="true"></i></button>
+      <button class="btn" id="fastForwardButton"><i class="fa fa-fast-forward" aria-hidden="true"></i></button>
+    </div>
+    
+    <script> 
+      texZoomLevel = 1;
+      function setZoom(zoom,el) {
+          
+          transformOrigin = [0,0];
+          el = el || instance.getContainer();
+          var p = ["webkit", "moz", "ms", "o"],
+                s = "scale(" + zoom + ")",
+                oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+    
+          for (var i = 0; i < p.length; i++) {
+              el.style[p[i] + "Transform"] = s;
+              el.style[p[i] + "TransformOrigin"] = oString;
+          }
+    
+          el.style["transform"] = s;
+          el.style["transformOrigin"] = oString;
+    
+          width = document.getElementById('LatexPage').offsetWidth / zoom;  //el.offsetWidth;
+          console.log(width)
+          el.style.width = width+"px"; 
+          
+      }
+      if(document.getElementById("zoomInButton")){
+        function zoomIn() {
+          txt = document.getElementById('insideLatex');
+          texZoomLevel *= 1.2;
+          setZoom(texZoomLevel,txt);
+          //style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
+          //currentSize = parseFloat(style);
+          //txt.style.fontSize = (currentSize + 2) + 'px';
+        }
+        document.getElementById("zoomInButton").onclick = zoomIn;
+      }
+      if(document.getElementById("zoomOutButton")){
+        function zoomOut() {
+          txt = document.getElementById('insideLatex');
+          texZoomLevel /= 1.2;
+          setZoom(texZoomLevel,txt);
+          //style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
+          //currentSize = parseFloat(style);
+          //txt.style.fontSize = (currentSize - 2) + 'px';
+        }
+        document.getElementById("zoomOutButton").onclick = zoomOut;
+      }
+      </script>
     
 
   <script type="text/javascript" src="graph_with_pos.txt"></script>
@@ -255,6 +263,31 @@
         resizer.addEventListener('mousedown', mouseDownHandler);
     });
 </script>
+
+<script>
+  if(document.getElementById("backwardButton")){
+    function forward() {
+      current_display_order = Math.min(current_display_order+1,max_display_order)
+      set_display_order(current_display_order);
+    }
+    function backward() {
+      current_display_order = Math.max(current_display_order-1,0)
+      set_display_order(current_display_order);
+    }
+    function fastForward() {
+      current_display_order = max_display_order;
+      set_display_order(current_display_order);
+    }
+    function fastBackward() {
+      current_display_order = 0;
+      set_display_order(current_display_order);
+    }
+    document.getElementById("forwardButton").onclick = forward;
+    document.getElementById("backwardButton").onclick = backward;
+    document.getElementById("fastForwardButton").onclick = fastForward;
+    document.getElementById("fastBackwardButton").onclick = fastBackward;
+  }
+  </script>
 
 </body>
 
