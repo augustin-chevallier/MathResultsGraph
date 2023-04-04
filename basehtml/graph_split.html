@@ -122,7 +122,13 @@
     
     <div class = 'container__right' id='RightPage' >
       <div class="resizer" id="dragMe"></div>
+      
       <div class="latex_page" id='LatexPage'>
+        <!-- Tab links -->
+<div class="tab">
+  <button class="tablinks" onclick="selectTab(event, 'nodes')">Nodes view</button>
+  <button class="tablinks" onclick="selectTab(event, 'full')">Full view</button>
+</div>
         <div style = "padding-left:0px" id='insideLatex'>
           <div style="font-size: 20px;text-align: center;"><b>Selected node </b></div><br>
           <div id='MainNode' , style="margin-left: 10px;margin-right: 10px;font-size: 12px;"></div>
@@ -261,7 +267,29 @@
         // Attach the handler
         resizer.addEventListener('mousedown', mouseDownHandler);
     });
-</script>
+  </script>
+
+  <script>function selectTab(evt, tabName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    /*tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }*/
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    //document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+  } 
+  </script>
 
 <script>
   if(document.getElementById("backwardButton")){
