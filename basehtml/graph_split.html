@@ -77,6 +77,7 @@
     };
   </script>
 
+
   <script src="https://unpkg.com/dagre@0.7.4/dist/dagre.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.3.1/cytoscape-dagre.min.js"></script> </script>
 
@@ -125,10 +126,10 @@
       
       <div class="latex_page" id='LatexPage'>
         <!-- Tab links -->
-<div class="tab">
-  <button class="tablinks" onclick="selectTab(event, 'nodes')">Nodes view</button>
-  <button class="tablinks" onclick="selectTab(event, 'full')">Full view</button>
-</div>
+        <div class="tab">
+          <button class="tablinks" onclick="selectTab(event, 'nodes')">Nodes view</button>
+          <button class="tablinks" onclick="selectTab(event, 'full')">Full view</button>
+        </div>
         <div style = "padding-left:0px" id='insideLatex'>
           <div style="font-size: 20px;text-align: center;"><b>Selected node </b></div><br>
           <div id='MainNode' , style="margin-left: 10px;margin-right: 10px;font-size: 12px;"></div>
@@ -143,6 +144,7 @@
           <br>
           <!-- <object type="text/html" data="tex.html" class="split right"></object> -->
         </div>
+        <div id='insideLatexFullText' style="margin:20px;"></div>
         <div id = "zoomIn" class="fixedButtonLatex">
           <button class="btn" id="zoomOutButton"><i class="fa fa-search-minus fa-2x" aria-hidden="true" style="color: blue;"></i></button>
           <button class="btn" id="zoomInButton"><i class="fa fa-search-plus fa-2x" aria-hidden="true" style="color: blue;"></i></button>
@@ -278,6 +280,17 @@
     for (i = 0; i < tabcontent.length; i++) {
       tabcontent[i].style.display = "none";
     }*/
+
+    if(tabName == 'nodes'){
+      document.getElementById('insideLatex').style.display = "block";
+      document.getElementById('insideLatexFullText').style.display = "none";
+    }
+    else{
+      document.getElementById('insideLatex').style.display = "none";
+      document.getElementById('insideLatexFullText').style.display = "block";     
+      document.getElementById('insideLatexFullText').innerHTML = graphWithStyle["full_text"];
+      console.log(graphWithStyle)
+    }
 
     // Get all elements with class="tablinks" and remove the class "active"
     tablinks = document.getElementsByClassName("tablinks");

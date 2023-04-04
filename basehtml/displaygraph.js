@@ -520,7 +520,7 @@ if(document.getElementById("saveButton")){
     }
     fileName = "graph_with_pos.txt";
     var a = document.createElement("a");
-    graphWithStyle = {"graph":graph,"style":nodeStyles};
+    graphWithStyle = {"graph":graph,"style":nodeStyles,"full_text":graphWithStyle["full_text"]};
     var file = new Blob(['var graphWithStyle = ' + JSON.stringify(graphWithStyle) + ';'], { type: 'application/json' });
     a.href = URL.createObjectURL(file);
     a.download = fileName;
