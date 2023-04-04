@@ -649,14 +649,14 @@ cyInstance.on('click', 'node', function(evt){
 
   //displaying text on the right, if left panel exists
   if(document.getElementById("MainNode")){
-    document.getElementById("MainNode").innerHTML =  String.raw`<div style="border: 3px solid green;padding:5px">` + node.data().text + `</div>`;
+    document.getElementById("MainNode").innerHTML =  String.raw`<div style="border: 4px solid black;padding:5px">` + node.data().text + `</div>`;
 
     var ancestors = node.incomers();
     var ancestorsText = "";
     for (var i = 0; i < ancestors.size(); i++) {
       var elem = ancestors[i];
       if(elem.data().hasOwnProperty("text"))
-        ancestorsText += String.raw`<div style="border: 3px solid blue;padding:5px">` 
+        ancestorsText += String.raw`<div style="border: 2px solid grey;padding:5px">` 
         + elem.data().text + `</div><br>`;
     }
     document.getElementById("AncestorsNodes").innerHTML = ancestorsText;
