@@ -284,7 +284,7 @@ class MainWindow(QMainWindow):
         JSstr += "var zoomLevelsChanges = [" + str(self.zoomChanges1) + "," + str(self.zoomChanges2) + "];\n"
         JSstr += "var fontsSize = [" + str(self.textSize) + "," +str(self.summarySize) + "," + str(self.titleSize) + "];\n"
         JSstr += "var nodeWidth = " + str(self.nodeWidth) + ";\n"
-        JSstr += "var fontSizeSection = {section:" + str(self.sectionSize) + ",subsection:" + str(self.summarySize) + "};\n"
+        JSstr += "var fontSizeSection = {section:" + str(self.sectionSize) + ",subsection:" + str(self.subsectionSize) + "};\n"
         JSstr += "var layout_name = '" + self.layoutName + "';\n"
         return JSstr
 
