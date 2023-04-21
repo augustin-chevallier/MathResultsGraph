@@ -269,29 +269,29 @@
       if(k >2){
         return "";
       }
-      var tableContentStr = "";
+      let tableContentStr = "";
       if(k == 0){
-        var keys = sortDict(tableOfContentPerLevel[0]);
+        let keys = sortDict(tableOfContentPerLevel[0]);
         console.log("sorted")
         console.log(keys)
-        for(var i = 0; i < keys.length; i++) {
+        for(let i = 0; i < keys.length; i++) {
           console.log("key",keys[i])
           tableContentStr = tableContentStr + "<li>" + tableOfContentPerLevel[0][keys[i]].title + "</li>" + buildTableOfContent(tableOfContentPerLevel.length -1,keys[i]) + buildTableOfContent(k+1,keys[i]);
         }
       }
       else{
-        dict = {}
-        for(var key in tableOfContentPerLevel[k]){
+        let dict = {}
+        for(let key in tableOfContentPerLevel[k]){
           if(tableOfContentPerLevel[k][key].parent == parentID){
             dict[key] = tableOfContentPerLevel[k][key]
           }
         }
         console.log("dict",dict)
-        var keys = sortDict(dict);
+        let keys = sortDict(dict);
         console.log("sorted")
         console.log(keys)
-        for(var i = 0; i < keys.length; i++) {
-          console.log("AAAAAAA")
+        for(let i = 0; i < keys.length; i++) {
+          console.log("AAAAAAA",i)
           console.log("key",keys[i])
           console.log(dict[keys[i]])
           console.log(dict[keys[i]].title)
