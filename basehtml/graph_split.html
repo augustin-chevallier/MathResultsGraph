@@ -158,6 +158,11 @@
       <button class="btn" id="forwardButton"><i class="fa fa-step-forward" aria-hidden="true" style="color: green;"></i></button>
       <button class="btn" id="fastForwardButton"><i class="fa fa-fast-forward" aria-hidden="true" style="color: green;"></i></button>
     </div>
+
+    <div id = "leftPanel", class="leftPanel">
+      <div style="font-size: 20px;text-align: center;"><b>Table of content </b></div><br>
+      <div id = "leftPanelContent"></div>
+    </div>
     
     <script> 
       texZoomLevel = 1;
@@ -210,6 +215,107 @@
   <script type="text/javascript" src="graph_with_pos.txt"></script>
   <script type="text/javascript" src="config.js"></script>
   <script src = displaygraph.js></script>
+
+  <script>
+    //left panel 
+    graph = graphWithStyle.graph;
+    tableOfContent = {}
+    var subdivisions = ["section","subsection"]
+    var tableOfContentPerLevel = [{},{},{}]
+    for (var i = 0; i < graph.length; i++) {
+      if (graph[i].group == "nodes") {
+        node = graph[i]
+        var isNode = true;
+        for(var k = 0; k < subdivisions.length;k++){
+          if(node.data.name == subdivisions[k]){
+            console.log("section")
+            tableOfContentPerLevel[k][node.data.id] = {title:"",order:node.data.order,parent:node.data.parent}
+            isNode=false;
+          }
+          if(node.data.name == subdivisions[k]+'Title'){
+            console.log("sectionTitle")
+            tableOfContentPerLevel[k][node.data.parent]["title"] = node.data.text;
+            isNode=false;
+          }
+        }
+        if(isNode==true){
+          tableOfContentPerLevel[subdivisions.length][node.data.id] = {title:node.data.title,order:node.data.order,parent:node.data.parent}
+        }
+      }
+    }
+
+
+    function sortDict(dict){
+      // Step - 1
+      // Create the array of key-value pairs
+      var items = Object.keys(dict).map(
+        (key) => { return [key, dict[key]] });
+
+      // Step - 2
+      // Sort the array based on the second element (i.e. the value)
+      items.sort(
+        (first, second) => { return first[1].order - second[1].order }
+      );
+
+      // Step - 3
+      // Obtain the list of keys in sorted order of the values.
+      var keys = items.map(
+        (e) => { return e[0] });
+      return keys;
+    }
+
+    function buildTableOfContent(k,parentID){
+
+      if(k >2){
+        return "";
+      }
+      var tableContentStr = "";
+      if(k == 0){
+        var keys = sortDict(tableOfContentPerLevel[0]);
+        console.log("sorted")
+        console.log(keys)
+        for(var i = 0; i < keys.length; i++) {
+          console.log("key",keys[i])
+          tableContentStr = tableContentStr + "<li>" + tableOfContentPerLevel[0][keys[i]].title + "</li>" + buildTableOfContent(tableOfContentPerLevel.length -1,keys[i]) + buildTableOfContent(k+1,keys[i]);
+        }
+      }
+      else{
+        dict = {}
+        for(var key in tableOfContentPerLevel[k]){
+          if(tableOfContentPerLevel[k][key].parent == parentID){
+            dict[key] = tableOfContentPerLevel[k][key]
+          }
+        }
+        console.log("dict",dict)
+        var keys = sortDict(dict);
+        console.log("sorted")
+        console.log(keys)
+        for(var i = 0; i < keys.length; i++) {
+          console.log("AAAAAAA")
+          console.log("key",keys[i])
+          console.log(dict[keys[i]])
+          console.log(dict[keys[i]].title)
+          console.log(k)
+          str = "<li>" + dict[keys[i]].title + "</li>"
+          if(k+1 < tableOfContentPerLevel.length - 1){
+            str = str +  buildTableOfContent(tableOfContentPerLevel.length -1,keys[i]) + buildTableOfContent(k+1,keys[i]);
+          }
+          else{
+            str = str +  buildTableOfContent(tableOfContentPerLevel.length -1,keys[i]);
+          }
+          tableContentStr = tableContentStr + str
+        }
+      }
+
+      console.log(tableContentStr)
+      return "<ul>" + tableContentStr +"</ul>";
+      
+      //console.log(tableContentStr)
+    }
+    document.getElementById('leftPanelContent').innerHTML = buildTableOfContent(0,"");
+    console.log("tablecontent")
+    console.log(tableOfContentPerLevel)
+  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {

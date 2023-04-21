@@ -155,3 +155,20 @@ cursor: pointer;
   border: 1px solid #ccc;
   border-top: none;
 } 
+
+.leftPanel {
+  /* Take the remaining width */
+  z-index: 2000;
+  width: 15%;
+  height: 100%;
+
+  /* Misc */
+  position:fixed;
+  bottom: 0;
+  left:0;
+  align-items: left;
+  /*display: flex;*/
+  justify-content: left;
+  background-color: rgba(255, 255 , 255, 0.95);
+  border: 1px solid #ccc;
+}
