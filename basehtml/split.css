@@ -171,4 +171,5 @@ cursor: pointer;
   justify-content: left;
   background-color: rgba(255, 255 , 255, 0.95);
   border: 1px solid #ccc;
+  overflow-y: scroll;
 }
