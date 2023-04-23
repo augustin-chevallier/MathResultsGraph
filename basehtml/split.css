@@ -159,7 +159,7 @@ cursor: pointer;
 .leftPanel {
   /* Take the remaining width */
   z-index: 2000;
-  width: 15%;
+  width: 20%;
   height: 100%;
 
   /* Misc */
