@@ -153,6 +153,7 @@
     </div>
 
     <div id = "zoomIn" class="fixedButtonGraph">
+      <button class="btn" id="showHideLeftPanel">Show/Hide ToC</button>
       <button class="btn" id="fastBackwardButton"><i class="fa fa-fast-backward" aria-hidden="true" style="color: green;"></i></button>
       <button class="btn" id="backwardButton"><i class="fa fa-step-backward" aria-hidden="true" style="color: green;"></i></button>
       <button class="btn" id="forwardButton"><i class="fa fa-step-forward" aria-hidden="true" style="color: green;"></i></button>
@@ -163,7 +164,6 @@
       <div style="font-size: 20px;text-align: center;"><b>Table of content </b></div><br>
       <div id = "leftPanelContent"></div>
     </div>
-    
     <script> 
       texZoomLevel = 1;
       function setZoom(zoom,el) {
@@ -315,6 +315,22 @@
     document.getElementById('leftPanelContent').innerHTML = buildTableOfContent(0,"");
     console.log("tablecontent")
     console.log(tableOfContentPerLevel)
+
+
+    var showLeftPanel = true;
+    function showHideLeftPanel() {
+      console.log("show!",showLeftPanel);
+      leftPanel = document.getElementById('leftPanel');
+      if(showLeftPanel){leftPanel.style.visibility = 'hidden';}
+      else {leftPanel.style.visibility = 'visible';}
+      showLeftPanel = !showLeftPanel;
+    }
+    document.addEventListener('DOMContentLoaded', load);
+    function load() {
+      document.getElementById("showHideLeftPanel").onclick = showHideLeftPanel;
+
+    } 
+
   </script>
 
   <script>
@@ -417,6 +433,7 @@
       set_display_order(current_display_order);
     }
     function backward() {
+      console.log("b")
       current_display_order = Math.max(current_display_order-1,0)
       set_display_order(current_display_order);
     }
