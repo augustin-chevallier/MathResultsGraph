@@ -30,6 +30,10 @@ function computeNodeSizes(useMathJax){
     if(node.group == 'nodes'){
       node.data["height"] = 0;
       node.data["width"] = 0;
+      console.log("SIZE:",nodeStyles[node.data.name].nodeStyle["node-width"])
+      nodeWidth = nodeStyles[node.data.name].nodeStyle["node-width"]
+      if(!nodeWidth) nodeWidth = 500;
+      //nodeWidth=700
       switch(node.data.name){
       case "sectionTitle":
         var div = document.createElement("div");
@@ -170,7 +174,7 @@ var cyInstance = cytoscape({
  * @param {*} index given to the div so that we can find it later if needed
  * @returns {String}
  */
-function getLabelFromText(text, index,fontSize = 20,bold=false) {
+function getLabelFromText(text, index,nodeWidth,fontSize = 20,bold=false) {
   if(bold){
     return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width:`+ nodeWidth.toString() + String.raw`px;margin:30px;"><b>` + text + String.raw`</b></div>`;
   }
@@ -188,23 +192,24 @@ cyInstance.nodeHtmlLabel([{
   halignBox: "right",
   tpl: function (data) {
 
-
+    nodeWidth = nodeStyles[data.name].nodeStyle["node-width"]
+    if(!nodeWidth) nodeWidth = 500
     if(data.name == "sectionTitle"){
-      return getLabelFromText(data.text, data.id,fontSizeSection["section"]);
+      return getLabelFromText(data.text, data.id,nodeWidth,fontSizeSection["section"]);
     }
     if(data.name == "subsectionTitle"){
-      return getLabelFromText(data.text, data.id,fontSizeSection["subsection"]);
+      return getLabelFromText(data.text, data.id,nodeWidth,fontSizeSection["subsection"]);
     }
     //console.log(cyInstance.zoom());
 
     if(currentZoomLevel == 1){
       if(data["hasSummary"]){
-        return getLabelFromText(data.summary, data.id,fontsSize[1]);
+        return getLabelFromText(data.summary, data.id,nodeWidth,fontsSize[1]);
       }
     }
     if(currentZoomLevel >= 1){
       if(data["hasTitle"]){
-        return getLabelFromText(data.title, data.id,fontsSize[2],true);
+        return getLabelFromText(data.title, data.id,nodeWidth,fontsSize[2],true);
       }
     }  
       //console.log(getLabelFromText(data.text, data.id,20));
@@ -212,14 +217,14 @@ cyInstance.nodeHtmlLabel([{
     
     if(!display_main_text && data.hasSummary){
       //if(data.hasSummary)
-        return getLabelFromText(data.summary, data.id,fontsSize[1]);
+        return getLabelFromText(data.summary, data.id,nodeWidth,fontsSize[1]);
     }
     
     if(!display_main_text && data.hasTitle){
-      return getLabelFromText(data.title, data.id,fontsSize[2],true);
+      return getLabelFromText(data.title, data.id,nodeWidth,fontsSize[2],true);
     }
 
-    return getLabelFromText(data.text, data.id,fontsSize[0]);
+    return getLabelFromText(data.text, data.id,nodeWidth,fontsSize[0]);
     
   }
 },
@@ -231,10 +236,10 @@ cyInstance.nodeHtmlLabel([{
   halignBox: "left",
   tpl: function (data) {
     if(display_summary && data.hasOwnProperty("summary")){
-      return getLabelFromText(data.summary, data.id);
+      return getLabelFromText(data.summary, data.id,nodeStyles[data.name].nodeStyle["node-width"]);
     }
     else{
-      return getLabelFromText(data.text, data.id);
+      return getLabelFromText(data.text, data.id,nodeStyles[data.name].nodeStyle["node-width"]);
     }
   }
 },

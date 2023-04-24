@@ -10,7 +10,8 @@
       "border-color": "#0097ff",
       "border-style": "solid",
       "border-width": 16,
-      "shape": "roundrectangle"
+      "shape": "roundrectangle",
+      "node-width" : 700
     }
   },
   "theorem": {
@@ -23,7 +24,8 @@
       "border-color": "#0097ff",
       "border-style": "solid",
       "border-width": 16,
-      "shape": "roundrectangle"
+      "shape": "roundrectangle",
+      "node-width" : 700
     }
   },
   "definition": {
@@ -36,7 +38,8 @@
       "border-color": "#018a7a",
       "border-style": "solid",
       "border-width": 16,
-      "shape": "roundrectangle"
+      "shape": "roundrectangle",
+      "node-width" : 700
     }
   },
   "assumption": {
@@ -49,7 +52,8 @@
       "border-color": "#9900ff",
       "border-style": "solid",
       "border-width": 16,
-      "shape": "roundrectangle"
+      "shape": "roundrectangle",
+      "node-width" : 700
     }
   },
   "proposition": {
@@ -62,7 +66,8 @@
       "border-color": "#0093ab",
       "border-style": "solid",
       "border-width": 16,
-      "shape": "roundrectangle"
+      "shape": "roundrectangle",
+      "node-width" : 700
     }
   },
   "lemma": {
@@ -75,7 +80,8 @@
       "border-color": "#00b9ff",
       "border-style": "solid",
       "border-width": 16,
-      "shape": "roundrectangle"
+      "shape": "roundrectangle",
+      "node-width" : 700
     }
   },
   "remark": {
@@ -88,7 +94,8 @@
       "border-color": "#ffe400",
       "border-style": "solid",
       "border-width": 16,
-      "shape": "roundrectangle"
+      "shape": "roundrectangle",
+      "node-width" : 700
     }
   },
   "corollary": {
@@ -101,7 +108,8 @@
       "border-color": "black",
       "border-style": "solid",
       "border-width": 16,
-      "shape": "roundrectangle"
+      "shape": "roundrectangle",
+      "node-width" : 700
     }
   },
   "section": {
@@ -124,7 +132,8 @@
       "background-opacity": 0.1,
       "width": 200,
       "height": 20,
-      "shape": "roundrectangle"
+      "shape": "roundrectangle",
+      "node-width" : 1200
     }
   },
   "subsection": {
@@ -147,7 +156,8 @@
       "background-opacity": 0.1,
       "width": 200,
       "height": 20,
-      "shape": "roundrectangle"
+      "shape": "roundrectangle",
+      "node-width" : 1200
     }
   }
 }
