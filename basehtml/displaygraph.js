@@ -145,7 +145,7 @@ function computeNodeSizes(useMathJax){
         node.data["width"] = div.scrollWidth + 80;
         break;
       default:
-        node.data["height"] = Math.max(node.data["height"],div.scrollHeight + 100);
+        node.data["height"] = Math.max(node.data["height"],div.scrollHeight + 50);
         node.data["width"] = Math.max(node.data["width"],div.scrollWidth+80);
       }
       div.remove();
