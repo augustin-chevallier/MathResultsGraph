@@ -616,7 +616,7 @@ def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
                                     elem2["data"].update({"cyedgecontroleditingWeights":elem["data"]["cyedgecontroleditingWeights"]})
                                     elem2["data"].update({"cyedgecontroleditingDistances":elem["data"]["cyedgecontroleditingDistances"]})
 
-    graphWithStyle = {"graph":cyGraph,"style":style_dict}
+    graphWithStyle = {"graph":cyGraph,"style":style_dict,"full_text":htmlText}
     json_object = json.dumps(graphWithStyle) 
     f = open(outFileWithPos, "wt",encoding="utf-8")
     n = f.write("var graphWithStyle = " + str(json_object) + ";")
