@@ -560,16 +560,23 @@ def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
     f.close()
     
     #set up node ordering
+    def get_partition(name):  #help function
+        for i in range(len(partition)):
+            for p in partition[i]:
+                if p["label"] == parentLabel:
+                    print("p",p)
+                    return p
+
     node_number = 0
     for node in nodeL:
         node["display_order"] = node_number
         parentLabel = node["parentLabel"]
-        for i in range(len(partition)):
-            for p in partition[i]:
-                print("p",p)
-                if p["label"] == parentLabel:
-                    if not ("display_order" in p):
-                        p["display_order"] = node_number
+        parent = get_partition(parentLabel)
+        while(parent):
+            if not ("display_order" in parent):
+                parent["display_order"] = node_number
+            parentLabel = parent["parentLabel"]
+            parent = get_partition(parentLabel)
         node_number += 1
     for i in range(len(partition)):
         for p in partition[i]:
