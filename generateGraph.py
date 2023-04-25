@@ -103,7 +103,7 @@ def findNodeInfo(text,index,nextNode):
         rank = "0"
     return {"label": label,"depends": depends,"weakdepends": weakdepends, "rank": rank, "summary": summary, "mainText": mainText, "hasSummary": hasSummary}
 
-def findPartitions(text,partitionName,parentLabel,node_type_set):
+def findPartitions(text,partitionName,parentLabel,node_type_set,parentIndex):
     """
     Find all partition in a given text
     --> Parameters :
@@ -143,7 +143,7 @@ def findPartitions(text,partitionName,parentLabel,node_type_set):
             nn=len(text)
         content = text[n1+2:nn]
         if info["label"] != "":
-            node = {"type": partitionName[1:],"content": content,"parentLabel": parentLabel}
+            node = {"type": partitionName[1:],"content": content,"parentLabel": parentLabel,"strIndex": n1}
             node.update(info)
             nodes.append(node)
     return nodes
@@ -165,12 +165,12 @@ def findAllPartitions(text,node_type_set):
         name = partitionNames[i]
         partitions.append([])
         if i == 0:
-            listSections = findPartitions(text,name,"",node_type_set)
+            listSections = findPartitions(text,name,"",node_type_set,0)
             partitions[i] += listSections
         else:
             for elem in partitions[i-1]:
                 elemLabel = elem["label"]
-                L = findPartitions(elem["content"],name,elemLabel,node_type_set)
+                L = findPartitions(elem["content"],name,elemLabel,node_type_set,elem["strIndex"])
                 partitions[i] = partitions[i] + L
                 if L != []:
                     n = elem["content"].find(name)
@@ -179,7 +179,7 @@ def findAllPartitions(text,node_type_set):
     return partitions
                 
 
-def findNode(text,typeName,index,parentLabel):
+def findNode(text,typeName,index,parentLabel,partitionIndex):
     """
     Find the first node of a given type starting at an index in the text in a given section/subsection/etc. The parentLabel is the label of the section/subsection/...
     --> Parameters :
@@ -205,11 +205,11 @@ def findNode(text,typeName,index,parentLabel):
         #print("hasTitle", hasTitle,text[posStart+typeLen])
         content = text[posStart+typeLen:posEnd]
         info = findNodeInfo(text,posStart,posEnd)
-        node = {"type": typeName,"content": content, "parentLabel": parentLabel, "hasTitle": hasTitle}
+        node = {"type": typeName,"content": content, "parentLabel": parentLabel, "hasTitle": hasTitle, "strIndex": partitionIndex+posStart}
         node.update(info)
         return (node,posEnd)
 
-def findNodes(text,typeName,parentLabel):
+def findNodes(text,typeName,parentLabel,partitionIndex):
     """
     Find nodes of a given type in a given section/subsection/etc. The parentLabel is the label of the section/subsection/...
     --> Parameters :
@@ -225,14 +225,14 @@ def findNodes(text,typeName,parentLabel):
         A list of nodes"""
     nodeList = []
     index = 0
-    node, index = findNode(text,typeName,0,parentLabel)
+    node, index = findNode(text,typeName,0,parentLabel,partitionIndex)
     while index != -1:
         if node["label"] != "":
             nodeList.append(node)
-        node, index = findNode(text,typeName,index,parentLabel)
+        node, index = findNode(text,typeName,index,parentLabel,partitionIndex)
     return nodeList
 
-def findNodesAllTypes(text,parentLabel,node_types_set):
+def findNodesAllTypes(text,parentLabel,node_types_set,partitionIndex):
     """
     Find all nodes in a given section/subsection/etc. The parentLabel is the label of the section/subsection/...
     --> Parameters :
@@ -246,7 +246,7 @@ def findNodesAllTypes(text,parentLabel,node_types_set):
         A list of nodes"""
     nodeList = []
     for name in node_types_set:
-        nodeList = nodeList + findNodes(text,name,parentLabel)
+        nodeList = nodeList + findNodes(text,name,parentLabel,partitionIndex)
     print(nodeList)
     return nodeList
 
@@ -263,7 +263,7 @@ def findAllNodes(partition,node_types_set):
     nodes = []
     for i in range(len(partition)):
         for j in range(len(partition[i])):
-            nodes += findNodesAllTypes(partition[i][j]["content"],partition[i][j]["label"],node_types_set)
+            nodes += findNodesAllTypes(partition[i][j]["content"],partition[i][j]["label"],node_types_set,partition[i][j]["strIndex"])
     return nodes
 
 
@@ -564,11 +564,15 @@ def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
         for i in range(len(partition)):
             for p in partition[i]:
                 if p["label"] == parentLabel:
-                    print("p",p)
+                    #print("p",p)
                     return p
 
+    print("===============================================")
     node_number = 0
+    #first, sort nodes
+    nodeL.sort(key=lambda n: n["strIndex"])
     for node in nodeL:
+        print("node name",node["label"],node_number,node["strIndex"])
         node["display_order"] = node_number
         parentLabel = node["parentLabel"]
         parent = get_partition(parentLabel)
