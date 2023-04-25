@@ -516,10 +516,12 @@ if(document.getElementById("saveButton")){
       }
       else{
         if("cyedgebendeditingWeights" in graph[i].data){
-          graph[i]["classes"]=  'edgebendediting-hasbendpoints'; 
+          if(graph[i].data["cyedgebendeditingWeights"].length > 0 )
+            graph[i]["classes"]=  'edgebendediting-hasbendpoints'; 
         }
         if("cyedgecontroleditingWeights" in graph[i].data){
-          graph[i]["classes"]=  'edgecontrolediting-hascontrolpoints'; 
+          if(graph[i].data["cyedgecontroleditingWeights"].length > 0 )
+            graph[i]["classes"]=  'edgecontrolediting-hascontrolpoints'; 
         }
       }
     }
