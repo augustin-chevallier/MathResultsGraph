@@ -611,10 +611,9 @@ for(var i =0; i < cyNodes.length;i++){
 }
 var selectedNode = null;
 
-cyInstance.on('click', 'node', function(evt){
-
-  node = getCyNode(evt.target.id());
-  var sel = evt.target;
+function selectNode(target){
+  node = getCyNode(target.id());
+  var sel = target;
   parent = node.parent();
   //Highlighting
   for (var i = 0; i < highlighted_items.length; i++) {
@@ -672,6 +671,11 @@ cyInstance.on('click', 'node', function(evt){
       divsToTypeset.push("LatexPage");
     }
   }
+  
+}
+
+cyInstance.on('click', 'node', function(evt){
+  selectNode(evt.target)
 });
 
 cyInstance.on('zoom', function(evt){
@@ -732,9 +736,13 @@ for(var i = 0; i < graph.length; i++){
 }
 current_display_order = max_display_order
 
+
+//a list of node names that are title related and that should not be selected when pressing the forward/backward buttons
+titleNamesList = ["section","sectionTitle","subsection","subsectionTitle"]
+
 function set_display_order(display_order){
   nodes = cyInstance.nodes();
-
+  console.log(display_order)
   for (var i = 0; i < nodes.length; i++) {
     if (nodes[i].data()["display_order"] <= display_order) {
       nodes[i].addClass('l0');
@@ -743,6 +751,11 @@ function set_display_order(display_order){
     else{
       nodes[i].removeClass('l0');
       nodes[i].style("display", "none");
+    }
+    if (nodes[i].data()["display_order"] == display_order) {
+      console.log("selecting node",nodes[i].data().name,titleNamesList.includes(nodes[i].data().name))
+      if(!titleNamesList.includes(nodes[i].data().name))
+      selectNode(nodes[i])
     }
   }
 }
