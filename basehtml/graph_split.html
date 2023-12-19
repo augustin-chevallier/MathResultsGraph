@@ -296,7 +296,7 @@
           console.log(dict[keys[i]])
           console.log(dict[keys[i]].title)
           console.log(k)
-          str = "<li>" + dict[keys[i]].title + "</li>"
+          str = "<li>" + String.raw`<a href="javascript:selectNode(getCyNode('` + keys[i] + String.raw`'))">` + dict[keys[i]].title + "</a>" + "</li>"
           if(k+1 < tableOfContentPerLevel.length - 1){
             str = str +  buildTableOfContent(tableOfContentPerLevel.length -1,keys[i]) + buildTableOfContent(k+1,keys[i]);
           }
