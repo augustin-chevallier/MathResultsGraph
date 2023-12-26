@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" href="split.css">
+  <title>Hello World!</title>
+  <script src='https://cdn.jsdelivr.net/npm/cytoscape@3.17.0/dist/cytoscape.min.js'></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-node-html-label@1.2.1/dist/cytoscape-node-html-label.min.js">
+    var cytoscape = require('cytoscape');
+    var nodeHtmlLabel = require('cytoscape-node-html-label');
+    nodeHtmlLabel(cytoscape); // register extension
+  </script>
+
+  <link href="https://unpkg.com/cytoscape-context-menus/cytoscape-context-menus.css" rel="stylesheet" type="text/css" />
+      
+  <script src="https://code.jquery.com/jquery-3.0.0.js"></script>
+  <script src="https://unpkg.com/konva@7.0.3/konva.min.js"></script>
+
+  <!-- for testing with local version of cytoscape.js -->
+  <!--<script src="../cytoscape.js/build/cytoscape.js"></script>-->
+              
+  <script src="https://unpkg.com/cytoscape-context-menus/cytoscape-context-menus.js"></script>
+  <script src="https://unpkg.com/cytoscape-undo-redo/cytoscape-undo-redo.js"></script>
+  <script src=" https://cdn.jsdelivr.net/npm/cytoscape-edge-editing@4.0.0/cytoscape-edge-editing.min.js "></script>
+
+  <script>
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function asyncComputeNodeSizes() {
+        while(typeof computeNodeSizes !== "function") {
+            await sleep(1000);
+        }
+        computeNodeSizes(true);
+    }
+
+
+    MathJax = {
+      startup: {
+        pageReady: () => {
+          //computeNodeSizes(true,1);
+          console.log('MathJax is loaded, but not yet initialized');
+          MathJax.typeset();
+          //MathJax.startup.defaultReady();
+          asyncComputeNodeSizes().then(setStyle);
+          setStyle();
+          mathJaxLoaded = true;
+          console.log('MathJax is initialized, and the initial typeset is queued');
+          var istypesetting = false;
+          window.setInterval(function () {
+            if (istypesetting == false) {
+              istypesetting == true;
+              //MathJax.typesetClear();
+              divsToTypeset = [...new Set(divsToTypeset)];
+              //console.log(divsToTypeset);
+              var divs = [];
+              for (var i = 0; i < divsToTypeset.length; i++) {
+                if(document.getElementById(divsToTypeset[i]) != null)
+                  divs.push(document.getElementById(divsToTypeset[i]));
+              }
+              //console.log(divs);
+              MathJax.typeset(divs);
+              divsToTypeset = [];
+              istypesetting == false;
+            }
+            else {
+              console.log("no typesetting")
+            }
+          }, 2000);
+        }
+      },
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    };
+  </script>
+
+
+  <script src="https://unpkg.com/dagre@0.7.4/dist/dagre.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.3.1/cytoscape-dagre.min.js"></script> </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="chatstyle.css">
+
+</head>
+
+
+<body>
+  <script>
+
+    function hasMathMLSupport() {
+        var div = document.createElement("div"), box;
+        div.innerHTML = "<math><mspace height='23px' width='77px'/></math>";
+        document.body.appendChild(div);
+        box = div.firstChild.firstChild.getBoundingClientRect();
+        document.body.removeChild(div);
+        return Math.abs(box.height - 23) <= 1 && Math.abs(box.width - 77) <= 1;
+    }
+
+    var hasMathML = hasMathMLSupport();
+    var mathJaxLoaded = false;
+    console.log("MathML",hasMathML);
+    if(!hasMathML){
+
+      console.log("no MATH ML");
+      var scriptTag = document.createElement('script');//MML_HTMLorMML
+      scriptTag.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
+
+      document.getElementsByTagName("head")[0].appendChild(scriptTag);
+      //mathJaxLoaded = true;
+    }
+  </script>
+
+  <!--<div id = "button" class="topnav">
+    <input type="button" value="save positions" id="saveButton" >
+  </div> -->
+
+  <div id = 'testdiv'></div>
+
+  <div><div id='cy'></div></div>
+
+    
+    <div class = 'container__right' id='RightPage' >
+      <div class="resizer" id="dragMe"></div>
+      
+      <div class="latex_page" id='LatexPage'>
+        <!-- Tab links -->
+        <div class="tab">
+          <button class="tablinks" onclick="selectTab(event, 'nodes')" id="tabbuttonnodes">Nodes view</button>
+          <button class="tablinks" onclick="selectTab(event, 'full')" id="tabbuttonfull">Full view</button>
+          <button class="tablinks" onclick="selectTab(event, 'chatbot')" id="tabbuttonchatbot">Chatbot (chatgpt)</button>
+        </div>
+        <div style = "padding-left:0px" id='insideLatex'>
+          <div style="font-size: 20px;text-align: center;"><b>Selected node </b></div><br>
+          <div id='MainNode' , style="margin-left: 10px;margin-right: 10px;font-size: 12px;"></div>
+
+          <!--
+          <br><hr style="height: 15px;box-shadow: inset 0 12px 12px -12px rgba(10, 10, 10);border:none;border-top: solid 2px;"><br>
+          <b>Proof (if any) </b><br><br>
+          <div id='Proof' , style="margin-left: 10px;margin-right: 10px;"></div>-->
+          <br>
+          <div style="font-size: 20px;text-align: center;"><b>Ancestor nodes </b></div><br>
+          <div id='AncestorsNodes', style="margin-left: 10px;margin-right: 10px;font-size: 12px;" ></div>
+          <br>
+          <!-- <object type="text/html" data="tex.html" class="split right"></object> -->
+        </div>
+        <div id='insideLatexFullText' style="margin:20px;font-size: 12px"></div>
+        <div id='insideChatbot' style="margin:20px;font-size: 12px">
+          <div id="chat-container">
+            <div id="chat-messages"></div>
+            <div id="user-input">
+              <textarea type="text" id="user-message" placeholder="Type your message..." rows="6" cols="40"></textarea>
+              <button onclick="sendMessage()">Send</button>
+            </div>
+          </div>
+        </div>
+        <div id = "zoomIn" class="fixedButtonLatex">
+          <button class="btn" id="zoomOutButton"><i class="fa fa-search-minus fa-2x" aria-hidden="true" style="color: blue;"></i></button>
+          <button class="btn" id="zoomInButton"><i class="fa fa-search-plus fa-2x" aria-hidden="true" style="color: blue;"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div id = "zoomIn" class="fixedButtonGraph">
+      <button class="btn" id="showHideLeftPanel">Show/Hide ToC</button>
+      <button class="btn" id="fastBackwardButton"><i class="fa fa-fast-backward" aria-hidden="true" style="color: green;"></i></button>
+      <button class="btn" id="backwardButton"><i class="fa fa-step-backward" aria-hidden="true" style="color: green;"></i></button>
+      <button class="btn" id="forwardButton"><i class="fa fa-step-forward" aria-hidden="true" style="color: green;"></i></button>
+      <button class="btn" id="fastForwardButton"><i class="fa fa-fast-forward" aria-hidden="true" style="color: green;"></i></button>
+    </div>
+
+    <div id = "leftPanel", class="leftPanel">
+      <div style="font-size: 30px;text-align: center;"><b>Table of content </b></div><br>
+      <div id = "leftPanelContent" style="font-size: 16px"></div>
+    </div>
+    <script> 
+      texZoomLevel = 1;
+      function setZoom(zoom,el) {
+          
+          transformOrigin = [0,0];
+          el = el || instance.getContainer();
+          var p = ["webkit", "moz", "ms", "o"],
+                s = "scale(" + zoom + ")",
+                oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+    
+          for (var i = 0; i < p.length; i++) {
+              el.style[p[i] + "Transform"] = s;
+              el.style[p[i] + "TransformOrigin"] = oString;
+          }
+    
+          el.style["transform"] = s;
+          el.style["transformOrigin"] = oString;
+    
+          width = document.getElementById('LatexPage').offsetWidth / zoom;  //el.offsetWidth;
+          console.log(width)
+          el.style.width = width+"px"; 
+          
+      }
+      if(document.getElementById("zoomInButton")){
+        function zoomIn() {
+          txt = document.getElementById('insideLatex');
+          texZoomLevel *= 1.2;
+          setZoom(texZoomLevel,txt);
+          //style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
+          //currentSize = parseFloat(style);
+          //txt.style.fontSize = (currentSize + 2) + 'px';
+        }
+        document.getElementById("zoomInButton").onclick = zoomIn;
+      }
+      if(document.getElementById("zoomOutButton")){
+        function zoomOut() {
+          txt = document.getElementById('insideLatex');
+          texZoomLevel /= 1.2;
+          setZoom(texZoomLevel,txt);
+          //style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
+          //currentSize = parseFloat(style);
+          //txt.style.fontSize = (currentSize - 2) + 'px';
+        }
+        document.getElementById("zoomOutButton").onclick = zoomOut;
+      }
+      </script>
+    
+
+  <script type="text/javascript" src="graph_with_pos.txt"></script>
+  <script type="text/javascript" src="config.js"></script>
+  <script src = displaygraph.js></script>
+
+  <script>
+    //left panel 
+    graph = graphWithStyle.graph;
+    tableOfContent = {}
+    var subdivisions = ["section","subsection"]
+    var tableOfContentPerLevel = [{},{},{}]
+    for (var i = 0; i < graph.length; i++) {
+      if (graph[i].group == "nodes") {
+        node = graph[i]
+        var isNode = true;
+        for(var k = 0; k < subdivisions.length;k++){
+          if(node.data.name == subdivisions[k]){
+            console.log("section")
+            tableOfContentPerLevel[k][node.data.id] = {title:"",order:node.data.order,parent:node.data.parent}
+            isNode=false;
+          }
+          if(node.data.name == subdivisions[k]+'Title'){
+            console.log("sectionTitle")
+            tableOfContentPerLevel[k][node.data.parent]["title"] = node.data.text;
+            isNode=false;
+          }
+        }
+        if(isNode==true){
+          tableOfContentPerLevel[subdivisions.length][node.data.id] = {title:node.data.title,order:node.data.order,parent:node.data.parent}
+        }
+      }
+    }
+
+
+    function sortDict(dict){
+      // Step - 1
+      // Create the array of key-value pairs
+      var items = Object.keys(dict).map(
+        (key) => { return [key, dict[key]] });
+
+      // Step - 2
+      // Sort the array based on the second element (i.e. the value)
+      items.sort(
+        (first, second) => { return first[1].order - second[1].order }
+      );
+
+      // Step - 3
+      // Obtain the list of keys in sorted order of the values.
+      var keys = items.map(
+        (e) => { return e[0] });
+      return keys;
+    }
+
+    function buildTableOfContent(k,parentID){
+
+      if(k >2){
+        return "";
+      }
+      let tableContentStr = "";
+      if(k == 0){
+        let keys = sortDict(tableOfContentPerLevel[0]);
+        console.log("sorted")
+        console.log(keys)
+        for(let i = 0; i < keys.length; i++) {
+          console.log("key",keys[i])
+          tableContentStr = tableContentStr + "<li>" + tableOfContentPerLevel[0][keys[i]].title + "</li>" + buildTableOfContent(tableOfContentPerLevel.length -1,keys[i]) + buildTableOfContent(k+1,keys[i]);
+        }
+      }
+      else{
+        let dict = {}
+        for(let key in tableOfContentPerLevel[k]){
+          if(tableOfContentPerLevel[k][key].parent == parentID){
+            dict[key] = tableOfContentPerLevel[k][key]
+          }
+        }
+        console.log("dict",dict)
+        let keys = sortDict(dict);
+        console.log("sorted")
+        console.log(keys)
+        for(let i = 0; i < keys.length; i++) {
+          console.log("AAAAAAA",i)
+          console.log("key",keys[i])
+          console.log(dict[keys[i]])
+          console.log(dict[keys[i]].title)
+          console.log(k)
+          str = "<li>" + String.raw`<a href="javascript:selectNode(getCyNode('` + keys[i] + String.raw`'))" id="tablecontent` + keys[i] + `" style="text-decoration:none; color:inherit;">` + dict[keys[i]].title + "</a>" + "</li>"
+          if(k+1 < tableOfContentPerLevel.length - 1){
+            str = str +  buildTableOfContent(tableOfContentPerLevel.length -1,keys[i]) + buildTableOfContent(k+1,keys[i]);
+          }
+          else{
+            str = str +  buildTableOfContent(tableOfContentPerLevel.length -1,keys[i]);
+          }
+          tableContentStr = tableContentStr + str
+        }
+      }
+
+      console.log(tableContentStr)
+      return "<ul>" + tableContentStr +"</ul>";
+      
+      //console.log(tableContentStr)
+    }
+    document.getElementById('leftPanelContent').innerHTML = buildTableOfContent(0,"");
+    console.log("tablecontent")
+    console.log(tableOfContentPerLevel)
+
+
+    var showLeftPanel = true;
+    function showHideLeftPanel() {
+      console.log("show!",showLeftPanel);
+      leftPanel = document.getElementById('leftPanel');
+      if(showLeftPanel){leftPanel.style.visibility = 'hidden';}
+      else {leftPanel.style.visibility = 'visible';}
+      showLeftPanel = !showLeftPanel;
+    }
+    document.addEventListener('DOMContentLoaded', load);
+    function load() {
+      document.getElementById("showHideLeftPanel").onclick = showHideLeftPanel;
+
+    } 
+
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Query the element
+        const resizer = document.getElementById('dragMe');
+        const latexPage = document.getElementById('RightPage');
+
+        // The current position of mouse
+        let x = 0;
+        let y = 0;
+        let latexWidth = 0;
+
+        // Handle the mousedown event
+        // that's triggered when user drags the resizer
+        const mouseDownHandler = function (e) {
+            // Get the current mouse position
+            x = e.clientX;
+            y = e.clientY;
+            latexWidth = latexPage.getBoundingClientRect().width;
+
+            // Attach the listeners to `document`
+            document.addEventListener('mousemove', mouseMoveHandler);
+            document.addEventListener('mouseup', mouseUpHandler);
+        };
+
+        const mouseMoveHandler = function (e) {
+            // How far the mouse has been moved
+            const dx = -e.clientX + x;
+            const dy = -e.clientY + y;
+
+            const newLatexWidth = ((latexWidth + dx));
+            console.log(newLatexWidth);
+            latexPage.style.width = `${newLatexWidth}px`;
+
+            width = document.getElementById('LatexPage').offsetWidth / texZoomLevel;  //el.offsetWidth;
+            document.getElementById('insideLatex').style.width = width+"px"; 
+
+            resizer.style.cursor = 'col-resize';
+            document.body.style.cursor = 'col-resize';
+
+            latexPage.style.userSelect = 'none';
+            latexPage.style.pointerEvents = 'none';
+        };
+
+        const mouseUpHandler = function () {
+            resizer.style.removeProperty('cursor');
+            document.body.style.removeProperty('cursor');
+
+            latexPage.style.removeProperty('user-select');
+            latexPage.style.removeProperty('pointer-events');
+
+            // Remove the handlers of `mousemove` and `mouseup`
+            document.removeEventListener('mousemove', mouseMoveHandler);
+            document.removeEventListener('mouseup', mouseUpHandler);
+        };
+
+        // Attach the handler
+        resizer.addEventListener('mousedown', mouseDownHandler);
+    });
+  </script>
+
+  <script>function selectTab(evt, tabName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    /*tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }*/
+
+    if(tabName == 'nodes'){
+      document.getElementById('insideLatex').style.display = "block";
+      document.getElementById('insideLatexFullText').style.display = "none";
+      document.getElementById('insideChatbot').style.display = "none";
+    }
+    if(tabName == 'full'){
+      document.getElementById('insideLatex').style.display = "none";
+      document.getElementById('insideLatexFullText').style.display = "block";     
+      document.getElementById('insideLatexFullText').innerHTML = graphWithStyle["full_text"];
+      document.getElementById('insideChatbot').style.display = "none";
+      console.log(graphWithStyle)
+    }
+    if(tabName == 'chatbot'){
+      document.getElementById('insideChatbot').style.display = "block";
+      document.getElementById('insideLatexFullText').style.display = "none";
+      document.getElementById('insideLatex').style.display = "none";     
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    //document.getElementById(cityName).style.display = "block";
+    //evt.currentTarget.className += " active";
+    document.getElementById('tabbutton' + tabName).className += " active;"
+  } 
+
+  selectTab(null,"nodes");
+  </script>
+
+<script>
+  if(document.getElementById("backwardButton")){
+    function forward() {
+      current_display_order = Math.min(current_display_order+1,max_display_order)
+      set_display_order(current_display_order);
+    }
+    function backward() {
+      console.log("b")
+      current_display_order = Math.max(current_display_order-1,0)
+      set_display_order(current_display_order);
+    }
+    function fastForward() {
+      current_display_order = max_display_order;
+      set_display_order(current_display_order);
+    }
+    function fastBackward() {
+      current_display_order = 0;
+      set_display_order(current_display_order);
+    }
+    document.getElementById("forwardButton").onclick = forward;
+    document.getElementById("backwardButton").onclick = backward;
+    document.getElementById("fastForwardButton").onclick = fastForward;
+    document.getElementById("fastBackwardButton").onclick = fastBackward;
+  }
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js"></script>
+  <script src="chatscript.js"></script>
+
+</body>
+
+</html>

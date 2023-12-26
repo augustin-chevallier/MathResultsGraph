@@ -1,0 +1,76 @@
+
+#chat-container {
+    width: 100%;
+    height: 75vh;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  #chat-messages {
+    height: calc(75vh - 200px);
+    overflow-y: auto;
+    padding: 10px;
+  }
+  
+  .message {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+  
+  .user-message {
+    background-color: #fff; /* White background for user messages */
+    color: #333; /* Dark gray text color for user messages */
+    align-self: flex-end;
+    border-radius: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
+    padding: 8px;
+  }
+  
+  .bot-message {
+    background-color: #fff; /* White background for bot messages */
+    color: #000; /* Black text color for bot messages */
+    align-self: flex-start;
+    border-radius: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
+    padding: 8px;
+  }
+  
+  #user-input {
+    display: flex;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ccc;
+  }
+  
+  #user-input input {
+    flex: 1;
+    padding: 8px;
+    margin-right: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+  }
+  
+  #user-input button {
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #user-input textarea {
+    flex: 1;
+    padding: 8px;
+    margin-right: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    resize: none; /* Disable textarea resizing */
+  }

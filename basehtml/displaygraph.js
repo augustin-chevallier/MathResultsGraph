@@ -611,7 +611,7 @@ for(var i =0; i < cyNodes.length;i++){
 }
 var selectedNode = null;
 
-function selectNode(target){
+function selectNode(target,center = false){
   node = getCyNode(target.id());
   var sel = target;
   parent = node.parent();
@@ -623,6 +623,16 @@ function selectNode(target){
       if(!divsToTypeset.includes(divName))
         divsToTypeset.push(divName);
     }
+
+    if(center == true){
+      cyInstance.center(node)
+    }
+  }
+
+  
+  document.getElementById('tablecontent' + target.id()).style.color = "red";
+  if(selectedNode != null){
+    document.getElementById('tablecontent' + selectedNode.data().id).style.color = "inherit";
   }
 
   if(node == selectedNode){
@@ -671,7 +681,6 @@ function selectNode(target){
       divsToTypeset.push("LatexPage");
     }
   }
-  
 }
 
 cyInstance.on('click', 'node', function(evt){
