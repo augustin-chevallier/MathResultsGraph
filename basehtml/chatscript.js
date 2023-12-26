@@ -1,3 +1,5 @@
+console.log(MathJax)
+
 var socket = io.connect('http://localhost:5001');
 var user_id = localStorage.getItem('user_id');
 if (!user_id) {
@@ -39,9 +41,10 @@ function generateUserId() {
 function displayUserMessage(message){
   var chatContainer = document.getElementById('chat-messages');
   messageElement = document.createElement('div');
-  messageElement.className = 'message User-message';
-  messageElement.innerHTML = "<b>User:</b> <br> " + message;
+  messageElement.className = 'message user-message';
+  messageElement.innerHTML = "<b>User:</b> <br> " + message + "<br><br>";
   chatContainer.appendChild(messageElement);
+  MathJax.typeset([chatContainer]);
 }
 
 // Function to display a message in the chat
@@ -59,7 +62,7 @@ function displayStream(message) {
     if(end > 0){
       label = str.substring(result,end)
       console.log("LABREL",label,result,end)
-      replacement = String.raw`<a href="javascript:selectNode(getCyNode('` + label + String.raw`'),true)" >` + label + "</a>"
+      replacement = String.raw`<a href="javascript:selectNode(getCyNode('` + label + String.raw`'),true)" style="display:inline">` + label + "</a>"
       str = str.replace("\\ref{"+label+"}",replacement)
       messageElement.innerHTML = str 
     }
@@ -72,13 +75,16 @@ function displayStream(message) {
 function startMessage(){
   var chatContainer = document.getElementById('chat-messages');
   messageElement = document.createElement('div');
-  messageElement.className = 'message Chatbot-message';
+  messageElement.className = 'message bot-message';
   messageElement.innerHTML = "<b>GPT</b> <br> \n";
   chatContainer.appendChild(messageElement);
 }
 
 function endMessage(){
-
+  var chatContainer = document.getElementById('chat-messages');
+  var messageElement = chatContainer.lastChild;
+  messageElement.innerHTML += "<br><br>";
+  MathJax.typeset([chatContainer]);
 }
 
 // Listen for responses from the server and update the chat
@@ -105,65 +111,7 @@ socket.on('gpt_response', function(data) {
 });
 
 
+function copyNode(){
+  document.getElementById('user-message').value += selectedNode.data().latexMainText;
 
-
-
-
-/*
-function sendMessage() {
-    const userMessage = document.getElementById('user-message').value;
-    if (userMessage.trim() === '') return;
-  
-    // Display user message
-    displayMessage('user', userMessage);
-  
-    // Simulate response from the chatbot (replace with your actual chatbot logic)
-    const botResponse = simulateBotResponse(userMessage);
-  
-    // Display bot response
-    displayMessage('bot', botResponse);
-  
-    // Clear the input field
-    document.getElementById('user-message').value = '';
-  
-    // Scroll to the bottom of the chat container
-    const chatMessages = document.getElementById('chat-messages');
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-  
-  function simulateBotResponse(userMessage) {
-    // Replace this with your actual chatbot logic or API call
-    // For demonstration purposes, it echoes the user's message
-    return `You said: "${userMessage}"`;
-  }
-  
-  function displayMessage(sender, message) {
-    const chatMessages = document.getElementById('chat-messages');
-    const messageElement = document.createElement('div');
-    
-    // Create a label indicating whether the message is from the user or chatbot
-    const label = document.createElement('span');
-    label.style.fontWeight = 'bold';
-    label.textContent = sender === 'user' ? 'User:' : 'Chatbot:';
-  
-    // Add a line break after the label
-    label.innerHTML += '<br>';
-  
-    // Set the message text
-    const messageText = document.createElement('span');
-    messageText.textContent = message;
-  
-    // Append label and message text to the message element
-    messageElement.appendChild(label);
-    messageElement.appendChild(messageText);
-  
-    // Dynamically set the class based on the sender
-    messageElement.className = `message ${sender}-message`;
-  
-    // Append the message element to the chat container
-    chatMessages.appendChild(messageElement);
-  
-    // Scroll to the bottom of the chat container
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-  */
+}

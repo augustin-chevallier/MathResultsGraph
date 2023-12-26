@@ -37,7 +37,7 @@
     }
 
 
-    MathJax = {
+    MathJax2 = {
       startup: {
         pageReady: () => {
           //computeNodeSizes(true,1);
@@ -84,6 +84,29 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <link rel="stylesheet" href="chatstyle.css">
+  <style>
+    /* Apply inline display to MathJax output elements */
+    .mjx-math, .mjx-math * {
+      display: inline !important;
+    }
+  </style>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: false,
+        packages: ['base', 'ams', 'noundefined']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script>
+  <script type="text/javascript"
+          src="https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-chtml.js">
+  </script>
 
 </head>
 
@@ -154,6 +177,7 @@
             <div id="user-input">
               <textarea type="text" id="user-message" placeholder="Type your message..." rows="6" cols="40"></textarea>
               <button onclick="sendMessage()">Send</button>
+              <button onclick="copyNode()">Copy node</button>
             </div>
           </div>
         </div>

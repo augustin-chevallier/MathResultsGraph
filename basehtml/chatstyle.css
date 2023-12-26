@@ -24,20 +24,16 @@
     background-color: #fff; /* White background for user messages */
     color: #333; /* Dark gray text color for user messages */
     align-self: flex-end;
-    border-radius: 10px;
-    max-width: 70%;
     word-wrap: break-word;
-    padding: 8px;
+    display: inline;
   }
   
   .bot-message {
     background-color: #fff; /* White background for bot messages */
     color: #000; /* Black text color for bot messages */
     align-self: flex-start;
-    border-radius: 10px;
-    max-width: 70%;
     word-wrap: break-word;
-    padding: 8px;
+    display: inline;
   }
   
   #user-input {

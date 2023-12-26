@@ -60,8 +60,23 @@ def findProp(text,index,nextNode,propName):
     propPosStart = text.find(propName,index)
     if propPosStart == -1 or propPosStart >= nextNode:
         return ""
-    propPosEnd = text.find("}",propPosStart)
+    
+    next = propPosStart + propLen
+    acc = 1
+    while acc > 0:
+        next = min(text.find("}",next),text.find("{",next))
+        if text[next] == "{":
+            acc += 1
+        else:
+            acc -= 1
+        next += 1
+        print(text[next],text[next+1],text[next-1])
+    
+
+
+    propPosEnd = next-1#text.find("}",propPosStart)
     prop = text[propPosStart+propLen:propPosEnd]
+    print(prop)
     return prop
 
 def findNodeInfo(text,index,nextNode):
@@ -424,7 +439,7 @@ def toCytoscapeGraph(fullNodeList):
         if "\\" + node["type"] not in partitionNames:
             data = {"id": node["label"], "name": node["type"], "text": node["html"], 
                 "parent": node["parentLabel"], "rank": node["rank"], "html_name": node["label"], "summary": node["htmlSummary"], "hasSummary": node["hasSummary"],
-                "hasTitle": node["hasTitle"], "title": node["htmlTitle"],"display_order":node["display_order"]}
+                "hasTitle": node["hasTitle"], "title": node["htmlTitle"],"display_order":node["display_order"],"latexMainText":node["mainText"]}
             cyNode = {"group": "nodes", "data": data, "classes": "l0"}
             cyNodes.append(cyNode)
         else:
