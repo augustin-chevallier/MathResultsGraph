@@ -24,6 +24,7 @@
   <script src="https://unpkg.com/cytoscape-undo-redo/cytoscape-undo-redo.js"></script>
   <script src=" https://cdn.jsdelivr.net/npm/cytoscape-edge-editing@4.0.0/cytoscape-edge-editing.min.js "></script>
 
+  <!--
   <script>
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -76,6 +77,7 @@
       }
     };
   </script>
+  -->
 
 
   <script src="https://unpkg.com/dagre@0.7.4/dist/dagre.js"></script>
@@ -214,7 +216,12 @@
 
   <script type="text/javascript" src="graph_with_pos.txt"></script>
   <script type="text/javascript" src="config.js"></script>
-  <script src = displaygraph.js></script>
+  <script type="text/javascript" src="config.js"></script>
+  <script src="classdisplaygraph.js"></script>
+  <script>
+    const displayGraph = new DisplayGraph(graphWithStyle, layout_name, move_nodes, hasMathML, zoomLevelsChanges, fontSizeSection, fontsSize, display_main_text, "");
+    displayGraph.asyncSetStyle();
+  </script>
 
   <script>
     //left panel 
@@ -296,7 +303,7 @@
           console.log(dict[keys[i]])
           console.log(dict[keys[i]].title)
           console.log(k)
-          str = "<li>" + String.raw`<a href="javascript:selectNode(getCyNode('` + keys[i] + String.raw`'))" id="tablecontent` + keys[i] + `" style="text-decoration:none; color:inherit;">` + dict[keys[i]].title + "</a>" + "</li>"
+          str = "<li>" + String.raw`<a href="javascript:displayGraph.selectNode(displayGraph.getCyNode('` + keys[i] + String.raw`'),true)" id="tablecontent` + keys[i] + `" style="text-decoration:none; color:inherit;">` + dict[keys[i]].title + "</a>" + "</li>"
           if(k+1 < tableOfContentPerLevel.length - 1){
             str = str +  buildTableOfContent(tableOfContentPerLevel.length -1,keys[i]) + buildTableOfContent(k+1,keys[i]);
           }
@@ -429,21 +436,21 @@
 <script>
   if(document.getElementById("backwardButton")){
     function forward() {
-      current_display_order = Math.min(current_display_order+1,max_display_order)
-      set_display_order(current_display_order);
+      displayGraph.current_display_order = Math.min(displayGraph.current_display_order+1,displayGraph.max_display_order)
+      displayGraph.set_display_order(displayGraph.current_display_order);
     }
     function backward() {
       console.log("b")
-      current_display_order = Math.max(current_display_order-1,0)
-      set_display_order(current_display_order);
+      displayGraph.current_display_order = Math.max(displayGraph.current_display_order-1,0)
+      displayGraph.set_display_order(displayGraph.current_display_order);
     }
     function fastForward() {
-      current_display_order = max_display_order;
-      set_display_order(current_display_order);
+      displayGraph.current_display_order = displayGraph.max_display_order;
+      displayGraph.set_display_order(displayGraph.current_display_order);
     }
     function fastBackward() {
-      current_display_order = 0;
-      set_display_order(current_display_order);
+      displayGraph.current_display_order = 0;
+      displayGraph.set_display_order(displayGraph.current_display_order);
     }
     document.getElementById("forwardButton").onclick = forward;
     document.getElementById("backwardButton").onclick = backward;
