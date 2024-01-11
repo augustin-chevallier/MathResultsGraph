@@ -1,6 +1,6 @@
 console.log(MathJax)
 
-var socket = io.connect('http://localhost:5001');
+var socket = io.connect('http://mathgraph.duckdns.org/');//'http://localhost:5001');
 var user_id = localStorage.getItem('user_id');
 if (!user_id) {
     // If no user ID exists, generate one and store it in localStorage
@@ -8,7 +8,7 @@ if (!user_id) {
     localStorage.setItem('user_id', user_id);
 }        
 console.log(user_id)
-socket.emit('join_room', {'room': user_id});
+socket.emit('/gpt/join_room', {'room': user_id});
 
 
 
@@ -21,7 +21,7 @@ function sendMessage() {
 
   console.log(userMessage)
   // Send the message to the backend through WebSocket
-  socket.emit('ask_gpt', {'user_id': user_id, 'message': userMessage});
+  socket.emit('/gpt/ask_gpt', {'user_id': user_id, 'message': userMessage});
 
 
   // Clear the input field
@@ -62,7 +62,7 @@ function displayStream(message) {
     if(end > 0){
       label = str.substring(result,end)
       console.log("LABREL",label,result,end)
-      replacement = String.raw`<a href="javascript:selectNode(getCyNode('` + label + String.raw`'),true)" style="display:inline">` + label + "</a>"
+      replacement = String.raw`<a href="javascript:displayGraph.selectNode(displayGraph.getCyNode('` + label + String.raw`'),true)" style="display:inline">` + label + "</a>"
       str = str.replace("\\ref{"+label+"}",replacement)
       messageElement.innerHTML = str 
     }
