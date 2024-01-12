@@ -18,6 +18,7 @@ class DisplayGraph {
         this.hasMathML = hasMathML;
         this.move_nodes = move_nodes;
         this.graph_fileName = graph_fileName;
+        this.selectedNode = null;
 
         //var nodeS = this.nodeStyles
         displayGraphInstance = this;
@@ -180,7 +181,6 @@ class DisplayGraph {
         for (var i = 0; i < displayGraphInstance.cyNodes.length; i++) {
             displayGraphInstance.highlighted_items.push(displayGraphInstance.cyNodes[i]);
         }
-        displayGraphInstance.selectedNode = null;
 
 
         displayGraphInstance.cyInstance.on('click', 'node', function (evt) {
