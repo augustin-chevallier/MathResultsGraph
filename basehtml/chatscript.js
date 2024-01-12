@@ -112,6 +112,6 @@ socket.on('gpt_response', function(data) {
 
 
 function copyNode(){
-  document.getElementById('user-message').value += selectedNode.data().latexMainText;
+  document.getElementById('user-message').value += displayGraph.selectedNode.data().latexMainText;
 
 }
