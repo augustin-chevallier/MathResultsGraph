@@ -14,6 +14,7 @@ Then
 ```python server.py``` 
 Then open a webbrowser at http://localhost/8000
 
+![Example text](examples/EditorBeta.png)
 
 ## Example:
 ### Interactive version
