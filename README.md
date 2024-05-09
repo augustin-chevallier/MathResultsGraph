@@ -5,6 +5,16 @@ Note that Firefox and Safari have better support of mathamatical notations and h
 
 This is very much a Work in Progress and feel free to contact me for any question.
 
+
+# BETA VERSION
+
+A Beta version of the editor is avaliable. It has been rewritten using the quasar framework. I can be downloaded in the release page. To install, you need python, then!
+``` pip install api``` 
+Then
+```python server.py``` 
+Then open a webbrowser at http://localhost/8000
+
+
 ## Example:
 ### Interactive version
 http://www.emmanuelchevallier.eu/graphSite/graph_split.html
