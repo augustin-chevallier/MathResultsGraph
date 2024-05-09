@@ -150,7 +150,7 @@ var editor = null;
 
 var files = ref([{ label: "sdf/sdf", filename: "sdf", path: "sdf", children: [] }]);
 
-const tab = ref('filesTab')
+const tab = ref('FilesTab')
 const selectedFile = ref('')
 
 const selectedFileContent = ref('')
@@ -437,7 +437,6 @@ self.MonacoEnvironment = {
 };
 
 onMounted(() => {
-  fetchFiles();
   monaco.languages.register({ id: "latex" });
   monaco.languages.setMonarchTokensProvider('latex', {
     "displayName": "Latex",
@@ -524,6 +523,16 @@ onMounted(() => {
       saveFile();
     }
   }));
+
+  fetchFiles().then(() => {
+    for (let i = 0; i < files.value.length; i++) {
+      console.log("AAA", files.value[i].filename)
+      if (files.value[i].filename == "example.tex") {
+        fileSelected(files.value[i])
+      }
+    }
+  })
+
 })
 
 </script>

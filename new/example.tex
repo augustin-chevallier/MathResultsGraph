@@ -1,0 +1,161 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,bm}
+
+
+%AMS theorems definitions
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{exercise}{Exercise}
+\newtheorem{proposition}{Proposition}
+
+%To generate a graph, these commands must be added before \begin{document}
+\newcommand{\rank}[1]{}
+\newcommand{\depends}[1]{}
+\newcommand{\weakdepends}[1]{}
+\newcommand{\summary}[1]{}
+\newcommand{\mainText}[1]{#1}
+\newcommand{\defineNode}[2]{}
+
+
+%%%%%%%%%%%%%%%%%% OPTIONAL: nodes definitions§styles %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\defineNode{theorem}{
+    "background-color": "#0097ff",
+    "background-opacity": 0.2,
+    "width": 200,
+    "height": 20,
+    "border-color": "#0097ff",
+    "border-style": "solid",
+    "border-width": 16,
+    "shape": "roundrectangle",
+    "node-width": 1000
+}
+
+\defineNode{definition}{
+    "background-color": "#018a7a",
+    "background-opacity": 0.2,
+    "width": 200,
+    "height": 20,
+    "border-color": "#018a7a",
+    "border-style": "solid",
+    "border-width": 16,
+    "shape": "roundrectangle",
+    "node-width": 1000
+}
+
+\defineNode{remark}{
+    "background-color": "#ffe400",
+    "background-opacity": 0.2,
+    "width": 200,
+    "height": 20,
+    "border-color": "#ffe400",
+    "border-style": "solid",
+    "border-width": 16,
+    "shape": "roundrectangle",
+    "node-width": 1000
+}
+
+\defineNode{exercise}{
+    "background-color": "#AC97C5",
+    "background-opacity": 0.2,
+    "width": 200,
+    "height": 20,
+    "border-color": "#AC97C5",
+    "border-style": "solid",
+    "border-width": 16,
+    "shape": "roundrectangle",
+    "node-width": 1000
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+
+
+
+\section{How to create a graph}
+\label{sec:Prob}%a label is required for a section to be included in the graph
+
+\subsection{Tex file}
+\label{subsec:tex}
+
+\begin{definition}[Predefined nodes]%title here will be used as the title of the node
+    \label{def:predefined-nodes} %a label is required to be included in the graph
+    \summary{
+        Predefined nodes: sections, subsections, theorem, definition, corrolary, remark, exercise, proposition, assumption
+        %Requires a label to be displayed.
+    }
+    \mainText{
+        Predefined nodes: sections, subsections, theorem, definition, corrolary, remark, exercise, proposition, assumption
+        Some extra text.
+    }
+\end{definition}
+
+\begin{proposition}[How to create a node]
+    \label{prop:create-node}
+    \depends{def:predefined-nodes}%to add a dependency, add a list of lables. There can be multiple labels, separated by a comma.
+    \summary{
+        Use \textbackslash begin\{YourNodeType\}[Title], then add a label. \\
+        Use \textbackslash summary\{Your summary\} to create a short summary of your node and \textbackslash mainText\{Detailed node\} to create the detailed description of your node. \\
+        The .tex file can still be compiled as usual to a .pdf, and in this case the full text will be used.
+    }
+    \mainText{
+        Use \textbackslash begin\{YourNodeType\}[Title], then add a label. \\
+        Use \textbackslash summary\{Your summary\} to create a short summary of your node and \textbackslash mainText\{Detailed node\} to create the detailed description of your node. \\
+        The .tex file can still be compiled as usual to a .pdf, and in this case the full text will be used. 
+        Some extra text.
+    }
+\end{proposition}
+
+\begin{proposition}[Adding a dependency]
+    \label{prop:add-dependency}
+    \depends{prop:create-node}
+    \summary{
+        Use \textbackslash depends\{list of labels of your dependencies, separated by a comma\} after \textbackslash label in your node.
+    }
+    \mainText{
+        Use \textbackslash depends\{list of labels of your dependencies, separated by a comma\} after \textbackslash label in your node.
+    }
+\end{proposition}
+
+\begin{proposition}[Multiple dependencies example]
+    \label{prop:multi-dep}
+    \depends{prop:create-node,prop:add-dependency}
+    \summary{
+        Example of 2 dependencies.
+    }
+    \mainText{
+        Example of 2 dependencies.
+    }
+\end{proposition}
+
+\subsection{Editor}
+\label{subsec:editor}
+
+\begin{proposition}[Build a graph]
+    \label{prop:build-a-graph}
+    \summary{
+        Select a .tex file in the editor and press the "generate graph" button. The graph is saved in a different file: graph_with_pos_TEX_FILENAME.txt. It containes the position of the nodes.
+    }
+    \mainText{
+        Select a .tex file in the editor and press the "generate graph" button.
+    }
+\end{proposition}
+
+\begin{proposition}[Change positions]
+    \label{prop:change-pos}
+    \depends{prop:build-a-graph}
+    \summary{
+        Move the nodes around in the graph by draging them. You can add bend point on edges by right clicking on them.\\
+        Don't forget to save the graph layout! 
+    }
+    \mainText{
+        Move the nodes around in the graph by draging them. You can add bend point on edges by right clicking on them.\\
+        Don't forget to save the graph layout! 
+    }
+\end{proposition}
+
+\end{document}
