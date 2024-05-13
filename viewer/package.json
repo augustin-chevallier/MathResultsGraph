@@ -1,0 +1,40 @@
+{
+  "name": "viewer",
+  "version": "0.0.1",
+  "description": "Viewer app for graphs",
+  "productName": "Viewer",
+  "author": "augustin chevallier <chevallier.augustin@gmail.com>",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.vue ./",
+    "format": "prettier --write \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
+    "test": "echo \"No test specified\" && exit 0",
+    "dev": "quasar dev",
+    "build": "quasar build"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.16.4",
+    "cytoscape": "^3.29.2",
+    "cytoscape-context-menus": "^4.1.0",
+    "cytoscape-edge-editing": "^4.0.0",
+    "cytoscape-node-html-label": "^1.2.2",
+    "quasar": "^2.8.0",
+    "vue": "^3.4.18",
+    "vue-router": "^4.0.12"
+  },
+  "devDependencies": {
+    "eslint": "^8.11.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "vite-plugin-checker": "^0.6.4",
+    "eslint-config-prettier": "^8.1.0",
+    "prettier": "^2.5.1",
+    "@quasar/app-vite": "^1.8.0",
+    "autoprefixer": "^10.4.2",
+    "postcss": "^8.4.14"
+  },
+  "engines": {
+    "node": "^20 || ^18 || ^16",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  }
+}
