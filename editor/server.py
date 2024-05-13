@@ -5,7 +5,12 @@ import os
 import generateGraph as gg
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
+import mimetypes
 
+mimetypes.init()
+mimetypes.add_type('application/javascript', '.js')
+mimetypes.add_type('text/css', '.css')
+mimetypes.add_type('image/svg+xml', '.svg')
 
 
 app = FastAPI()
