@@ -17,7 +17,7 @@ app = FastAPI()
 
 origins = [
     "http://localhost",
-    "http://localhost:8000",
+    "http://localhost:9052",
     "http://localhost:9001",
     "http://localhost:9000",  # Replace this with the actual URL of your Vue.js frontend
 ]
@@ -146,6 +146,6 @@ async def process_and_get_file(fileName: str):
 app.mount("/", StaticFiles(directory="dist/spa/",html=True), name="static")
 
 if __name__=="__main__":
-    uvicorn.run(app, host='localhost', port=8000)
+    uvicorn.run(app, host='localhost', port=9052)
 
 

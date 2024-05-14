@@ -243,7 +243,7 @@ function getDirectory(label, F = files.value, k = 0) {
 }
 
 async function getFile(filepath) {
-  const response = await fetch('http://localhost:8000/file', {
+  const response = await fetch('http://localhost:9052/file', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -320,7 +320,7 @@ async function fileSelected(node) {
 
 async function saveFile() {
   if (selectedFile.value != '' && unsavedChanges.value == true) {
-    const response = await fetch('http://localhost:8000/save', {
+    const response = await fetch('http://localhost:9052/save', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -338,7 +338,7 @@ async function process_graph() {
   if (selectedFile.value != '') {
     //status_msg.value = 'generating graph... please wait'
     processing.value = true;
-    const response = await fetch('http://localhost:8000/process/' + selectedFile.value);
+    const response = await fetch('http://localhost:9052/process/' + selectedFile.value);
     console.log(response)
     const data = await response.json();
     console.log(typeof data.graph)
@@ -360,7 +360,7 @@ async function process_graph() {
 
 async function saveGraph() {
   let graphjson = JSON.stringify(graphComponent.value.getGraphJSON());
-  const response = await fetch('http://localhost:8000/save', {
+  const response = await fetch('http://localhost:9052/save', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -400,7 +400,7 @@ function addFilesHandler(F) {
 
 async function fetchFiles() {
   try {
-    const response = await fetch('http://localhost:8000/list_files');
+    const response = await fetch('http://localhost:9052/list_files');
     const data = await response.json();
     //console.log("file",data)
 
