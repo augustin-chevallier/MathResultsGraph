@@ -1,0 +1,33 @@
+<!DOCTYPE html><html><head>
+  <script>self["MonacoEnvironment"] = (function (paths) {
+          return {
+            globalAPI: false,
+            getWorkerUrl : function (moduleId, label) {
+              var result =  paths[label];
+              if (/^((http:)|(https:)|(file:)|(\/\/))/.test(result)) {
+                var currentUrl = String(window.location);
+                var currentOrigin = currentUrl.substr(0, currentUrl.length - window.location.hash.length - window.location.search.length - window.location.pathname.length);
+                if (result.substring(0, currentOrigin.length) !== currentOrigin) {
+                  var js = '/*' + label + '*/importScripts("' + result + '");';
+                  var blob = new Blob([js], { type: 'application/javascript' });
+                  return URL.createObjectURL(blob);
+                }
+              }
+              return result;
+            }
+          };
+        })({
+  "editorWorkerService": "/monacoeditorwork/editor.worker.bundle.js",
+  "css": "/monacoeditorwork/css.worker.bundle.js",
+  "html": "/monacoeditorwork/html.worker.bundle.js",
+  "json": "/monacoeditorwork/json.worker.bundle.js",
+  "typescript": "/monacoeditorwork/ts.worker.bundle.js",
+  "javascript": "/monacoeditorwork/ts.worker.bundle.js",
+  "less": "/monacoeditorwork/css.worker.bundle.js",
+  "scss": "/monacoeditorwork/css.worker.bundle.js",
+  "handlebars": "/monacoeditorwork/html.worker.bundle.js",
+  "razor": "/monacoeditorwork/html.worker.bundle.js"
+});</script>
+<title>Quasar App</title><meta charset=utf-8><meta name=description content="A Quasar Project"><meta name=format-detection content="telephone=no"><meta name=msapplication-tap-highlight content=no><meta name=viewport content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width"><link rel=icon type=image/png sizes=128x128 href="/assets/favicon-128x128.ce61a0d2.png"><link rel=icon type=image/png sizes=96x96 href="/assets/favicon-96x96.d0f6cfe5.png"><link rel=icon type=image/png sizes=32x32 href="data:image/png;base64,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"><link rel=icon type=image/png sizes=16x16 href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAAAInpUWHRTb2Z0d2FyZQAACJlzTMlPSlXwzE1MTw1KTUypBAAvnAXUekLysgAAAt9JREFUOMttU1tLVFEUXufijGkXb1lNmFKGRQ95yy5eQCptknFm8EGzN61AQhDSMhywILOHspBBiDAvUSTSg2SYF0rTeihrNIJ+gc2oSQ9BL+fM/trr6ISBC85hs/f6vr32Wt9HxPHiD1EAirUeRQJ9Rh1NYpCG8cn6eM17fMbBuYyJgGOB1fV71NDLcEhpewPN0wTtaAW0Ix7o7kbwHp9ZOTIsDJMo82s3T6ON+oNQs8oQRWRoh0sNpX0qrHYGwpTjNuxyT89xgXOUGZlL67AWa98C9MQ0067FmDoR1IudguYh6EFAxBzzCiKVyzRtSXtN6l1ApBJSx5GgDCNE+wrwrLvbvNvRCfL6hD4mwRU+5GTm4ffPJdH3dEAMj73FY7/fpP1FYAxjyfZNNufaEMpLnAZk9HR1Carxw97Qwzci93gxbt3pwMjIKB8L/nmdZQY1D8HC6jOywyX1qPZ4mUD09T4RFL0dFJ0Ix54MxCWnWUSkxSMju1C8npgUteeqDTp1GRpjeUz2gipOCl9pbhWLyyvQbHFIdqTjRzCE4OIyUhypUPO8oN4gKMslZOfC2olKWCPmny2/0iI4U+oSvxaDOOn0YnNSKkISzCQ7d6eDorZBf74CvapV2Jggv2qNYBqDmlOWU3jeUG5Pii2HikRcbLxVtmNXGnakZEDdlIj4rfJZDfJ5ExBantfQztaDsURfUae0DEHLlo35INXxSnb/xihsF+6DDhZbRP6HPXjk94Nqu4TyBdAznQZjGEs0JkchR6IfKIJ6yW+y4vSrA4L6lwSl5cF33Wd1/2aLT1BtJ7T6blPPKODyQzS+Jm2aWROSFIlUnMmiyS/xiPlAgMcm2u9JUclKoqXIoqTYONfCWDH3v5TtuS4u26gudxvf5wLhj++mwu7TpQbv2XPKLClbuf+wbIiImWZWzaSycVyNoFwPVGkocjdBjZgpcnPETBvaeVY2Z2qdnXk9u7Gd/wINFOJYPKiuFAAAAABJRU5ErkJggg=="><link rel=icon type=image/ico href="/assets/favicon.d9970969.ico">  <script type="module" crossorigin src="/assets/index.a179918a.js"></script>
+  <link rel="stylesheet" href="/assets/index.edb9b44e.css">
+</head><body><div id=q-app></div></body></html>
