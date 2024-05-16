@@ -5,6 +5,9 @@ import os
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 import mimetypes
+import threading
+import webbrowser
+import time
 
 
 mimetypes.init()
@@ -36,9 +39,14 @@ app.add_middleware(
 #async def root():
 #    return {"message": "Hello World"}
 
+def start_browser():
+    time.sleep(1)
+    webbrowser.open('http://localhost:9053')
 
 app.mount("/", StaticFiles(directory="dist/spa/",html=True), name="static")
 
 if __name__=="__main__":
+    thread = threading.Thread(target=start_browser,args=(),daemon=True)
+    thread.start()
     uvicorn.run(app, host='localhost', port=9053)
 

@@ -6,6 +6,9 @@ import generateGraph as gg
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 import mimetypes
+import threading
+import webbrowser
+import time
 
 mimetypes.init()
 mimetypes.add_type('application/javascript', '.js')
@@ -143,9 +146,16 @@ async def process_and_get_file(fileName: str):
     return {"graph":res.decode("utf-8"),"graph_fileName":graph_file_name,"error":""}
 
 
+def start_browser():
+    time.sleep(1)
+    webbrowser.open('http://localhost:9052')
+
+
 app.mount("/", StaticFiles(directory="dist/spa/",html=True), name="static")
 
 if __name__=="__main__":
+    thread = threading.Thread(target=start_browser,args=(),daemon=True)
+    thread.start()
     uvicorn.run(app, host='localhost', port=9052)
 
 
