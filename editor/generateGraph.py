@@ -522,8 +522,12 @@ def getNodeTypes(str):
 
     node_types_set = {"theorem","proposition","definition","lemma","remark","corollary","assumption","exercise"}
 
-    with open('defaultStyle.json') as json_file:
-        style_dict = json.load(json_file)
+    try:
+        with open('defaultStyle.json') as json_file:
+            style_dict = json.load(json_file)
+    except IOError:
+        print("Could not find defaultStyle.json")
+        raise IOError("Could not find defaultStyle.json")
     #style_dict={}
 
     nodes_def = find_all(str,"\\defineNode{")
