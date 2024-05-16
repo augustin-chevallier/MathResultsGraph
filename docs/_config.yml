@@ -21,8 +21,8 @@
 title: LatexConceptMap - Creating Concept Maps from Latex files
 #email: your-email@example.com
 #description: >- 
-baseurl: "https://augustin-chevallier.github.io/MathResultsGraph/" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/MathResultsGraph" # the subpath of your site, e.g. /blog
+url: "https://augustin-chevallier.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 #github_username:  jekyll
 
