@@ -42,7 +42,7 @@ os.listdir()
 
 ######################################################################################################
 # We are creating nodes for section and subsections
-partitionNames = ['\section','\subsection']
+partitionNames = [r'\section',r'\subsection']
 
 ######################################################################################################
 
@@ -327,6 +327,39 @@ def getTitle(htmlText):
     return htmlText[(p[0]+1):(p[1])]
     #title = htmlText[parentesis]
 
+def preprocessYoutube(text):
+    """
+    Finds \youtube{url} commands, replaces them with a placeholder, and returns mapping.
+    """
+    import re
+    mapping = {}
+    pattern = r"\\youtube\{([^}]+)\}"
+    
+    def replacer(match):
+        url = match.group(1)
+        # Create a unique placeholder ID
+        key = "YOUTUBE_PLACEHOLDER_" + "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        mapping[key] = url
+        return key
+
+    # Replace all occurrences
+    processed_text = re.sub(pattern, replacer, text)
+    return processed_text, mapping
+
+def postprocessYoutube(html_text, mapping):
+    """
+    Replaces YouTube placeholders with Quasar-compatible HTML iframe code.
+    """
+    for key, url in mapping.items():
+        # Quasar q-video style embed
+        embed_code = (
+            f'<div class="q-video box-shadow" style="padding-bottom: 56.25%; position: relative; height: 0; overflow: hidden;">'
+            f'<iframe src="{url}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allowfullscreen></iframe>'
+            f'</div>'
+        )
+        html_text = html_text.replace(key, embed_code)
+    return html_text
+
 def texToHtml(full_text,partition,nodeL):
     """
     Convert latex to html using pandoc, and save the results in our graph
@@ -341,8 +374,14 @@ def texToHtml(full_text,partition,nodeL):
     --> Output :
     ------------
         None"""
+    full_text, youtube_mapping = preprocessYoutube(full_text)
+    
     htmlText = pypandoc.convert_text(full_text,'html5', format = 'tex', extra_args=['--mathml',])    
     htmlTextSummary = pypandoc.convert_text(summaryTex(full_text,nodeL),'html5', format = 'tex', extra_args=['--mathml',])
+    
+    htmlText = postprocessYoutube(htmlText, youtube_mapping)
+    htmlTextSummary = postprocessYoutube(htmlTextSummary, youtube_mapping)
+    
     #print(htmlText)
     html = BeautifulSoup(htmlText)
     htmlSummary = BeautifulSoup(htmlTextSummary)
@@ -399,6 +438,8 @@ def getNodeSection(node,fullNodeList):
         return getNodeSection(parent,fullNodeList)
 
 def getEdgeVisibility(source,target,fullNodeList):
+    return 1 
+    # bellow code can be used to hide edges between nodes of different sections
     sourceSection = getNodeSection(source,fullNodeList)
     targetSection = getNodeSection(target,fullNodeList)
     print("SS",sourceSection,targetSection)
@@ -652,7 +693,53 @@ def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
                                     elem2["data"].update({"cyedgecontroleditingWeights":elem["data"]["cyedgecontroleditingWeights"]})
                                     elem2["data"].update({"cyedgecontroleditingDistances":elem["data"]["cyedgecontroleditingDistances"]})
 
-    graphWithStyle = {"graph":cyGraph,"style":style_dict,"full_text":htmlText}
+    # Parse options
+    # Parse options
+    options = {}
+    fontSizeCmd = "\\setTitleNodesFontSize{"
+    print("Searching for command:", fontSizeCmd)
+    # Search in full_text instead of header to support commands anywhere in the file
+    fs_index = full_text.find(fontSizeCmd)
+    if fs_index == -1:
+         # Try with raw string just in case
+         fontSizeCmd = r"\setTitleNodesFontSize{"
+         fs_index = full_text.find(fontSizeCmd)
+    
+    print("Index found:", fs_index)
+
+    if fs_index != -1:
+        end_fs = full_text.find("}", fs_index) 
+        if end_fs != -1:
+            content = full_text[fs_index + len(fontSizeCmd):end_fs]
+            print("Command content found:", content)
+            sizes = content.split(",")
+            if len(sizes) >= 2:
+                try:
+                    s_size = int(sizes[0].strip())
+                    ss_size = int(sizes[1].strip())
+                    options["fontSizeSection"] = {"section": s_size, "subsection": ss_size}
+                except ValueError:
+                    print("Error parsing setTitleNodesFontSize values")
+
+    nodeWidthCmd = "\\setDefaultNodeWidth{"
+    # Search in full_text
+    nw_index = full_text.find(nodeWidthCmd)
+    if nw_index == -1:
+         nodeWidthCmd = r"\setDefaultNodeWidth{"
+         nw_index = full_text.find(nodeWidthCmd)
+    
+    if nw_index != -1:
+        end_nw = full_text.find("}", nw_index)
+        if end_nw != -1:
+            content = full_text[nw_index + len(nodeWidthCmd):end_nw]
+            try:
+                nw_val = int(content.strip())
+                options["defaultNodeWidth"] = nw_val
+                print("Found defaultNodeWidth:", nw_val)
+            except ValueError:
+                 print("Error parsing setDefaultNodeWidth value")
+
+    graphWithStyle = {"graph":cyGraph,"style":style_dict,"full_text":htmlText, "options": options}
     json_object = json.dumps(graphWithStyle,indent=4) 
     f = open(outFileWithPos, "wt",encoding="utf-8")
     n = f.write(str(json_object))
@@ -692,7 +779,7 @@ def editNodes(texStr,modifs):
     
 
     for (nodeName,propName,propVal) in modifs:
-        pos = text.find("\label{"+nodeName+"}",0)
+        pos = text.find(r"\label{"+nodeName+"}",0)
         if pos != -1:
             nodeStart = -1
             for nodeType in node_types_set:

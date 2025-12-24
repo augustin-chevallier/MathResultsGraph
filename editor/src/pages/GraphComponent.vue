@@ -131,7 +131,7 @@ var displayGraphInstance = null;
 
 class DisplayGraph {
     constructor(graphWithStyle, layout_name, move_nodes, hasMathML,
-        zoomLevelsChanges, fontSizeSection, fontsSize, display_main_text, graph_fileName) {
+        zoomLevelsChanges, fontSizeSection, fontsSize, display_main_text, graph_fileName, defaultNodeWidth) {
         this.zoomLevels = ['test', 'summary', 'title'];
         this.currentZoomLevel = 0;
         this.graphWithStyle = graphWithStyle;
@@ -149,6 +149,7 @@ class DisplayGraph {
         this.graph_fileName = graph_fileName;
         this.selectedNode = null;
         this.layout_name = layout_name;
+        this.defaultNodeWidth = defaultNodeWidth;
 
         //var nodeS = this.nodeStyles
         displayGraphInstance = this;
@@ -183,7 +184,7 @@ class DisplayGraph {
             tpl: function (data) {
 
                 let nodeWidth = displayGraphInstance.nodeStyles[data.name].nodeStyle["node-width"]
-                if (!nodeWidth) nodeWidth = 500
+                if (!nodeWidth) nodeWidth = displayGraphInstance.defaultNodeWidth
                 if (data.name == "sectionTitle") {
                     return displayGraphInstance.getLabelFromText(data.text, data.id, nodeWidth, displayGraphInstance.fontSizeSection["section"]);
                 }
@@ -396,7 +397,7 @@ class DisplayGraph {
                 node.data["width"] = 0;
                 console.log("SIZE:", displayGraphInstance.nodeStyles[node.data.name].nodeStyle["node-width"])
                 let nodeWidth = displayGraphInstance.nodeStyles[node.data.name].nodeStyle["node-width"]
-                if (!nodeWidth) nodeWidth = 500;
+                if (!nodeWidth) nodeWidth = displayGraphInstance.defaultNodeWidth;
                 //nodeWidth=700
                 switch (node.data.name) {
                     case "sectionTitle":
@@ -1012,10 +1013,21 @@ function updateGraph(content, callback) {
     var move_nodes = true;
     var display_main_text = false;
     var zoomLevelsChanges = [0.4, 0.2];
-    var fontsSize = [20, 40, 60];
+    var fontsSize = [20, 40, 80];
     var nodeWidth = 500;
-    var fontSizeSection = { section: 80, subsection: 60 };
-    const displayGraph = new DisplayGraph(graphContent.value, "preset", move_nodes, hasMathML, zoomLevelsChanges, fontSizeSection, fontsSize, display_main_text, "");
+    var fontSizeSection = { section: 100, subsection: 100 };
+
+    if (content.options && content.options.fontSizeSection) {
+        fontSizeSection = content.options.fontSizeSection;
+        console.log("Using custom font sizes from options", fontSizeSection);
+    }
+
+    if (content.options && content.options.defaultNodeWidth) {
+        nodeWidth = content.options.defaultNodeWidth;
+        console.log("Using custom default node width from options", nodeWidth);
+    }
+
+    const displayGraph = new DisplayGraph(graphContent.value, "preset", move_nodes, hasMathML, zoomLevelsChanges, fontSizeSection, fontsSize, display_main_text, "", nodeWidth);
 };
 
 
