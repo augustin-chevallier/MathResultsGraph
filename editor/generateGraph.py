@@ -164,7 +164,7 @@ def findPartitions(text,partitionName,parentLabel,node_type_set,parentIndex):
             nn=len(text)
         content = text[n1+2:nn]
         if info["label"] != "":
-            node = {"type": partitionName[1:],"content": content,"parentLabel": parentLabel,"strIndex": n1}
+            node = {"type": partitionName[1:],"content": content,"parentLabel": parentLabel,"strIndex": parentIndex + n1}
             node.update(info)
             nodes.append(node)
     return nodes
@@ -328,7 +328,7 @@ def getTitle(htmlText):
     #title = htmlText[parentesis]
 
 def preprocessYoutube(text):
-    """
+    r"""
     Finds \youtube{url} commands, replaces them with a placeholder, and returns mapping.
     """
     import re
@@ -349,12 +349,14 @@ def preprocessYoutube(text):
 def postprocessYoutube(html_text, mapping):
     """
     Replaces YouTube placeholders with Quasar-compatible HTML iframe code.
+    Expects mapping values to be YouTube Video IDs.
     """
-    for key, url in mapping.items():
+    for key, video_id in mapping.items():
         # Quasar q-video style embed
+        embed_url = f"https://www.youtube.com/embed/{video_id}"
         embed_code = (
             f'<div class="q-video box-shadow" style="padding-bottom: 56.25%; position: relative; height: 0; overflow: hidden;">'
-            f'<iframe src="{url}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allowfullscreen></iframe>'
+            f'<iframe src="{embed_url}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allowfullscreen></iframe>'
             f'</div>'
         )
         html_text = html_text.replace(key, embed_code)
@@ -635,6 +637,11 @@ def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
 
     print("===============================================")
     node_number = 0
+    # Deduplicate nodeL based on strIndex (keeping the last one, which corresponds to the deepest partition level)
+    print("Nodes before deduplication:", len(nodeL))
+    nodeL = list({node["strIndex"]: node for node in nodeL}.values())
+    print("Nodes after deduplication:", len(nodeL))
+
     #first, sort nodes
     nodeL.sort(key=lambda n: n["strIndex"])
     for node in nodeL:
@@ -738,6 +745,24 @@ def getCyGraph(texFile,oldGraph = "",outFileWithPos = ""):
                 print("Found defaultNodeWidth:", nw_val)
             except ValueError:
                  print("Error parsing setDefaultNodeWidth value")
+
+    # New command for Node Title Font Size
+    nodeTitleCmd = "\\setRegularNodeTitleFontSize{"
+    nt_index = full_text.find(nodeTitleCmd)
+    if nt_index == -1:
+         nodeTitleCmd = r"\setRegularNodeTitleFontSize{"
+         nt_index = full_text.find(nodeTitleCmd)
+    
+    if nt_index != -1:
+        end_nt = full_text.find("}", nt_index)
+        if end_nt != -1:
+            content = full_text[nt_index + len(nodeTitleCmd):end_nt]
+            try:
+                nt_val = int(content.strip())
+                options["nodeTitleFontSize"] = nt_val
+                print("Found nodeTitleFontSize (regular):", nt_val)
+            except ValueError:
+                 print("Error parsing setRegularNodeTitleFontSize value")
 
     graphWithStyle = {"graph":cyGraph,"style":style_dict,"full_text":htmlText, "options": options}
     json_object = json.dumps(graphWithStyle,indent=4) 

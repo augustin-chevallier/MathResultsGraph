@@ -2,7 +2,15 @@
     "graphs":[
         {
             "graphname":"example",
-            "filename":"graph_with_pos2.txt"
+            "filename":"graph_with_pos_example.txt"
+        },
+        {
+            "graphname":"information",
+            "filename":"graph_with_posEstimation_InformationTheory.tex.txt"
+        },
+        {
+            "graphname":"probaM1",
+            "filename":"graph_with_posprobaM1TSI_2024_2025.tex.txt"
         }
     ]
 } 

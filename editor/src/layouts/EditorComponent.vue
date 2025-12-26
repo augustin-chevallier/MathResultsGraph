@@ -20,10 +20,21 @@
           {{ selectedFile }} {{ status_msg }} <div v-if="unsavedChanges">*</div>
         </q-toolbar-title>
 
-        <q-btn class="q-mx-sm" dense icon="sym_o_fast_rewind" aria-label="fast backward" @click="fastBackward" />
-        <q-btn class="q-mx-sm" dense icon="sym_o_arrow_left" aria-label="backward" @click="backward" />
-        <q-btn class="q-mx-sm" dense icon="sym_o_arrow_right" aria-label="forward" @click="forward" />
-        <q-btn class="q-mx-sm" dense icon="sym_o_fast_forward" aria-label="fast forward" @click="fastForward" />
+        <q-btn class="q-mx-sm" dense icon="sym_o_fast_rewind" aria-label="Course beginning" @click="fastBackward">
+          <q-tooltip>Course beginning</q-tooltip>
+        </q-btn>
+        <q-btn class="q-mx-sm" dense icon="sym_o_arrow_left" aria-label="Previous node" @click="backward">
+          <q-tooltip>Previous node</q-tooltip>
+        </q-btn>
+        <q-btn class="q-mx-sm" dense icon="sym_o_visibility" aria-label="Up to current node" @click="showUpToSelected">
+          <q-tooltip>Up to current node</q-tooltip>
+        </q-btn>
+        <q-btn class="q-mx-sm" dense icon="sym_o_arrow_right" aria-label="Next node" @click="forward">
+          <q-tooltip>Next node</q-tooltip>
+        </q-btn>
+        <q-btn class="q-mx-sm" dense icon="sym_o_fast_forward" aria-label="Full graph" @click="fastForward">
+          <q-tooltip>Full graph</q-tooltip>
+        </q-btn>
 
       </q-toolbar>
     </q-header>
@@ -31,22 +42,15 @@
 
     <q-drawer v-model="drawerLeft" show-if-above :width="drawerWidth" bordered elevated :breakpoint="0"
       class="text-white">
-      <q-splitter style="height: 90vh">
-        <template v-slot:before>
-          <q-tabs v-model="tab" dense vertical class="text-grey" active-color="primary" indicator-color="primary"
-            align="justify">
-            <q-tab name="FilesTab" label="Files" />
-            <q-tab name="EditorTab" label="Editor" />
-            <q-tab name="ToCTab" label="Table of Content" />
-          </q-tabs>
-        </template>
-        <template v-slot:after>
-          <q-tab-panels v-model="tab" animated vertical>
-            <q-tab-panel name="FilesTab" dense class="text-black" active-color="primary" indicator-color="primary">
-              <div class="">
-                <q-btn dense class="q-mb-sm" @click="fetchFiles">Refresh Files</q-btn>
-                <br>Files:
-                <q-separator></q-separator>
+      <div class="column full-height">
+        <q-list bordered class="rounded-borders text-black">
+          <q-expansion-item group="leftdrawer" icon="folder" label="Files" header-class="text-primary">
+            <q-separator />
+            <div class="q-pa-sm row items-center justify-between">
+              <div class="text-caption">Files</div>
+              <q-btn dense size="sm" icon="refresh" flat @click="fetchFiles">Refresh</q-btn>
+            </div>
+             <div class="scroll" style="max-height: 50vh">
                 <q-tree :nodes="files" color="blue" node-key="label" v-model:selected="selectedFile" dense
                   style="font-size:12px;">
                   <template v-slot:default-header="prop">
@@ -55,30 +59,36 @@
                     </div>
                   </template>
                 </q-tree>
-              </div>
-            </q-tab-panel>
-            <q-tab-panel name="EditorTab" class="text-black" active-color="primary" indicator-color="primary">
-              <div class="">Error message:</div>
-              {{ error_msg }}
+             </div>
+          </q-expansion-item>
 
-            </q-tab-panel>
-            <q-tab-panel name="ToCTab" class="text-black" active-color="primary" indicator-color="primary">
-              <div class="">Table of content</div>
-              <div class="">
-                <q-tree :nodes="TableOfContent" color="blue" node-key="label" v-model:selected="selectedNode" dense
-                  default-expand-all style="font-size:12px;">
+          <q-separator />
+
+          <q-expansion-item group="leftdrawer" icon="bug_report" label="Editor / Errors" header-class="text-primary">
+            <q-separator />
+            <div class="q-pa-sm">
+               <div class="">Error message:</div>
+               <div class="text-red" style="font-size: 10px; white-space: pre-wrap;">{{ error_msg }}</div>
+            </div>
+          </q-expansion-item>
+
+          <q-separator />
+
+          <q-expansion-item group="leftdrawer" icon="list" label="Table of Content" default-opened header-class="text-primary">
+            <q-separator />
+            <div class="scroll" style="max-height: 65vh">
+                <q-tree :nodes="TableOfContent" color="blue" node-key="label" v-model:selected="selectedNode"
+                  v-model:expanded="expandedKeys" dense style="font-size:12px;">
                   <template v-slot:default-header="prop">
                     <div class="row items-center">
                       <div v-html="prop.node.label"></div>
                     </div>
                   </template>
                 </q-tree>
-              </div>
-
-            </q-tab-panel>
-          </q-tab-panels>
-        </template>
-      </q-splitter>
+            </div>
+          </q-expansion-item>
+        </q-list>
+      </div>
       <div v-touch-pan.preserveCursor.prevent.mouse.horizontal="resizeDrawer" class="q-drawer__resizer"></div>
     </q-drawer>
 
@@ -123,6 +133,19 @@
   </q-layout>
 </template>
 
+<style>
+.q-tree__node--selected .q-tree__node-header-content {
+  font-weight: bold;
+  background-color: #e3f2fd;
+  color: #1565c0;
+  border-radius: 4px;
+  padding-left: 5px;
+}
+.q-tree__node--selected .q-focus-helper {
+    background: none !important; /* Remove default opacity overlay if conflicts */
+}
+</style>
+
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import IndexPage from '../pages/GraphComponent.vue';
@@ -140,6 +163,7 @@ defineOptions({
 })
 
 const splitterModel = ref(50);
+const drawerSplitterModel = ref(50);
 
 const status_msg = ref('')
 const processing = ref(false)
@@ -168,6 +192,7 @@ const savePosEnabled = ref(false);
 const graphFile = ref('');
 var TableOfContent = [];
 const selectedNode = ref('');
+const expandedKeys = ref([]);
 
 var styleOptions = { editor: { fontSize: 10 } }
 
@@ -185,6 +210,10 @@ function forward() {
   graphComponent.value.forward();
 }
 
+function showUpToSelected() {
+  graphComponent.value.showUpToSelected();
+}
+
 function findNodeInToC(element, id) {
   console.log(element, id)
   if (element.id == id) {
@@ -200,11 +229,36 @@ function findNodeInToC(element, id) {
   return null;
 }
 
+// Helper to find path to node for expansion
+function findPath(nodes, targetId, currentPath) {
+  for (let node of nodes) {
+    if (node.id === targetId) {
+      return currentPath;
+    }
+    if (node.children) {
+      let path = findPath(node.children, targetId, [...currentPath, node.label]);
+      if (path) return path;
+    }
+  }
+  return null;
+}
+
 //called when a node is selected in the graph
 function nodeSelected(id) {
   console.log("id", id)
+  
+  // Expand ToC to show the node
+  let path = findPath(TableOfContent, id, []);
+  if (path) {
+     for (let key of path) {
+        if (!expandedKeys.value.includes(key)) {
+            expandedKeys.value.push(key);
+        }
+     }
+  }
+
   let node = findNodeInToC({ children: TableOfContent }, id)
-  console.log("SSSS", TableOfContent, node)
+  //console.log("SSSS", TableOfContent, node)
   if (node != null) {
     selectedNode.value = node.label;
 
@@ -271,6 +325,15 @@ function updateGraph(graphContent) {
   graphFile.value = selectedFile.value;
 
   TableOfContent = graphComponent.value.ToC;
+  
+  // Set default expansion: first section and first subsection
+  expandedKeys.value = [];
+  if (TableOfContent.length > 0) {
+    expandedKeys.value.push(TableOfContent[0].label); // First section
+    if (TableOfContent[0].children && TableOfContent[0].children.length > 0) {
+      expandedKeys.value.push(TableOfContent[0].children[0].label); // First subsection
+    }
+  }
 }
 
 async function fileSelected(node) {
@@ -525,11 +588,8 @@ onMounted(() => {
   }));
 
   fetchFiles().then(() => {
-    for (let i = 0; i < files.value.length; i++) {
-      console.log("AAA", files.value[i].filename)
-      if (files.value[i].filename == "example.tex") {
-        fileSelected(files.value[i])
-      }
+    if (files.value.length > 0) {
+      fileSelected(files.value[0])
     }
   })
 

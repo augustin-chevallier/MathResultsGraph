@@ -29,13 +29,8 @@
                                 <template v-for="n in displayNodes1" v-bind:key="n.title">
                                     <q-card class="my-card" flat bordered>
 
-                                        <q-card-section>
-                                            <div>
-                                                <q-separator />
-                                                <q-card-section class="text-subtitle2">
-                                                    <div v-html="n.content"></div>
-                                                </q-card-section>
-                                            </div>
+                                        <q-card-section class="q-pa-sm">
+                                            <div v-html="n.content"></div>
                                         </q-card-section>
 
                                     </q-card>
@@ -243,7 +238,6 @@ class DisplayGraph {
             tpl: function (data) {
                 displayGraphInstance.styleAlreadySet = true;
                 return "prout";
-                console.log(cyInstance.zoom());
 
                 if (display_summary && data.hasOwnProperty("summary")) {
                     return getLabelFromText(data.summary, data.id);
@@ -610,55 +604,47 @@ class DisplayGraph {
             }
         ];
 
-        for (var i = 0; i < displayGraphInstance.graph.length; i++) {
-            //console.log(ths[i])
-            if (displayGraphInstance.graph[i].group == "nodes") {
-                //if(graph[i].data.html_name != ""){
-                //console.log(graph[i].data.id);
-                var elemid = '_graph_internal_' + displayGraphInstance.graph[i].data.id;
-                //console.log("width1",width1);
-                //console.log("height1",height1,graph[i].data.height,graph[i].data.id);
-                //console.log(graph[i].data.id,document.getElementById(elemid).style);
-                var nodeStyle = {
-                    selector: 'node[id = "' + displayGraphInstance.graph[i].data.id + '"]',
-                    style: {
-                        //'background-color': '#11479e',
-                        //'background-opacity': 0.5,
-                        'width': displayGraphInstance.graph[i].data["width"],//document.getElementById('t1').getBoundingClientRect().width,//200,
-                        'height': displayGraphInstance.graph[i].data["height"],
-                        //'border-color': 'red',
-                        //'border-width': 3,
-                        //'border-style': 'dashed',
-                        //shape: 'roundrectangle'
-                    }
-                };
-                Object.assign(nodeStyle.style, displayGraphInstance.nodeStyles[displayGraphInstance.graph[i].data.name].nodeStyle);
-                nodeStyle.style.width = displayGraphInstance.graph[i].data["width"];
-                nodeStyle.style.height = displayGraphInstance.graph[i].data["height"];
-                nodeStyle.style['background-opacity'] = nodeStyle.style['background-opacity'] / 4;
-                nodeStyle.style['border-width'] = nodeStyle.style['border-width'] / 4;
-                nodeStyle.style['border-style'] = 'dashed';
-                resizedStyle.push(nodeStyle);
-                var nodeStyleH = {
-                    selector: 'node[id = "' + displayGraphInstance.graph[i].data.id + '"].highlight',
-                    style: {
-                        //'background-color': '#11479e',
-                        //'background-opacity': 0.5,
-                        'width': displayGraphInstance.graph[i].data["width"],//document.getElementById('t1').getBoundingClientRect().width,//200,
-                        'height': displayGraphInstance.graph[i].data["height"],
-                        //'border-color': 'red',
-                        //'border-width': 8,
-                        //'border-style': 'dashed',
-                        //shape: 'roundrectangle'
-                    }
-                };
-                Object.assign(nodeStyleH.style, displayGraphInstance.nodeStyles[displayGraphInstance.graph[i].data.name].nodeStyle);
-                nodeStyleH.style.width = displayGraphInstance.graph[i].data["width"];
-                nodeStyleH.style.height = displayGraphInstance.graph[i].data["height"];
-                //nodeStyleH.style['border-color'] = 'red';
-                //nodeStyleH.style['border-width'] = 10;
-                resizedStyle.push(nodeStyleH);
-            }
+        // Create generic style rules based on node types
+        var uniqueTypes = [...new Set(displayGraphInstance.graph.filter(n => n.group == 'nodes').map(n => n.data.name))];
+        
+        for (let type of uniqueTypes) {
+             let baseNodeStyle = displayGraphInstance.nodeStyles[type].nodeStyle;
+             
+             // Rule for normal nodes of this type
+             let rule = {
+                 selector: 'node[name = "' + type + '"]',
+                 style: {
+                     'width': 'data(width)',
+                     'height': 'data(height)',
+                     'background-opacity': (baseNodeStyle['background-opacity'] || 1) / 4,
+                     'border-width': (baseNodeStyle['border-width'] || 0) / 4,
+                     'border-style': 'dashed'
+                 }
+             };
+             // Merge with other properties from base style, excluding width/height which are dynamic
+             for (let prop in baseNodeStyle) {
+                 if (prop !== 'width' && prop !== 'height' && prop !== 'background-opacity' && prop !== 'border-width') {
+                     rule.style[prop] = baseNodeStyle[prop];
+                 }
+             }
+             resizedStyle.push(rule);
+
+             // Rule for highlighted nodes of this type
+             let ruleH = {
+                 selector: 'node[name = "' + type + '"].highlight',
+                 style: {
+                     'width': 'data(width)',
+                     'height': 'data(height)'
+                 }
+             };
+             // Merge base style (highlight usually restores original opacity/border)
+             // The original code copied baseNodeStyle again for highlight, overriding the /4 modifications
+             for (let prop in baseNodeStyle) {
+                 if (prop !== 'width' && prop !== 'height') {
+                     ruleH.style[prop] = baseNodeStyle[prop];
+                 }
+             }
+             resizedStyle.push(ruleH);
         }
         // demo your ext
         /*cyInstance.edgeEditing({
@@ -697,7 +683,7 @@ class DisplayGraph {
      */
     getLabelFromText(text, index, nodeWidth, fontSize = 20, bold = false) {
         if (bold) {
-            return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width:` + nodeWidth.toString() + String.raw`px;margin:30px;"><b>` + text + String.raw`</b></div>`;
+            return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width:` + nodeWidth.toString() + String.raw`px;margin:30px;text-align:center;"><b>` + text + String.raw`</b></div>`;
         }
         else {
             return String.raw`<div id= '` + '_graph_internal_' + index + String.raw`' style = "font-size:` + fontSize.toString() + String.raw`px;width:` + nodeWidth.toString() + String.raw`px;margin:30px;">` + text + String.raw`</div>`;
@@ -1027,6 +1013,11 @@ function updateGraph(content, callback) {
         console.log("Using custom default node width from options", nodeWidth);
     }
 
+    if (content.options && content.options.nodeTitleFontSize) {
+        fontsSize[2] = content.options.nodeTitleFontSize;
+        console.log("Using custom node title font size from options", fontsSize[2]);
+    }
+
     const displayGraph = new DisplayGraph(graphContent.value, "preset", move_nodes, hasMathML, zoomLevelsChanges, fontSizeSection, fontsSize, display_main_text, "", nodeWidth);
 };
 
@@ -1060,6 +1051,13 @@ function fastBackward() {
     displayGraphInstance.set_display_order(displayGraphInstance.current_display_order);
 }
 
+function showUpToSelected() {
+    if (displayGraphInstance.selectedNode != null) {
+        displayGraphInstance.current_display_order = displayGraphInstance.selectedNode.data()["display_order"];
+        displayGraphInstance.set_display_order(displayGraphInstance.current_display_order);
+    }
+}
+
 defineExpose({
     graphContent,
     ToC,
@@ -1069,7 +1067,8 @@ defineExpose({
     forward,
     backward,
     fastForward,
-    fastBackward
+    fastBackward,
+    showUpToSelected
 });
 
 
