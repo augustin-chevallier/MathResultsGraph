@@ -70,7 +70,7 @@ async def list_files():
 # Function to read a text file from the server
 def read_text_file(file_path):
     try:
-        with open(file_path, "r") as file:
+        with open(file_path, "r",encoding="utf8") as file:
             file_content = file.read()
         return file_content
     except FileNotFoundError:
@@ -100,7 +100,7 @@ class FileContent(BaseModel):
 async def save_file(file_content: FileContent):
     #print(file_content.filename)
     try:
-        with open(file_content.filename, 'w') as f:
+        with open(file_content.filename, 'w', encoding="utf-8") as f:
             f.write(file_content.content)
         return {"message": "File saved successfully"}
     except Exception as e:
