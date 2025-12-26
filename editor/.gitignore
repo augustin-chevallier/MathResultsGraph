@@ -1,5 +1,4 @@
 node_modules/
-dist/
 .quasar/
 npm-debug.log*
 yarn-debug.log*
